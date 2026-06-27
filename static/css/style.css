@@ -23,37 +23,20 @@
 }
 
 /* ===== DARK MODE (maroon/pink theme) ===== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --hue: 340;
-    --bg: #120808; --bg-warm: #1c0c0c; --surface: #1e0e0e;
-    --glass: rgba(18,8,8,0.92);
-    --border: rgba(200,80,120,0.25); --border-accent: rgba(232,67,147,0.4);
-    --text-1: #f5e6ed; --text-2: #d4b0c0; --text-3: #a07084; --text-4: #7a4a5e;
-    --accent: #e84393; --accent-soft: rgba(232,67,147,0.12);
-    --accent-hover: #ff6b9d;
-    --green: #4ade80; --green-soft: rgba(74,222,128,0.12);
-    --danger: #f87171; --danger-soft: rgba(248,113,113,0.12);
-    --sh-card: 0 1px 3px rgba(0,0,0,0.3); --sh-card-hover: 0 8px 28px rgba(0,0,0,0.5);
-    --sh-dropdown: 0 12px 40px rgba(0,0,0,0.5);
-    --scroll-t: rgba(232,67,147,0.25); --scroll-h: rgba(232,67,147,0.4);
-    --hover-tint: rgba(232,67,147,0.15); --nav-bg: rgba(30,14,14,0.8);
-  }
-}
-body.dark-mode {
+html[data-theme="dark"] {
   --hue: 340;
-  --bg: #120808; --bg-warm: #1c0c0c; --surface: #1e0e0e;
-  --glass: rgba(18,8,8,0.92);
-  --border: rgba(200,80,120,0.25); --border-accent: rgba(232,67,147,0.4);
-  --text-1: #f5e6ed; --text-2: #d4b0c0; --text-3: #a07084; --text-4: #7a4a5e;
-  --accent: #e84393; --accent-soft: rgba(232,67,147,0.12);
-  --accent-hover: #ff6b9d;
-  --green: #4ade80; --green-soft: rgba(74,222,128,0.12);
-  --danger: #f87171; --danger-soft: rgba(248,113,113,0.12);
-  --sh-card: 0 1px 3px rgba(0,0,0,0.3); --sh-card-hover: 0 8px 28px rgba(0,0,0,0.5);
+  --bg: #1a1018; --bg-warm: #22121a; --surface: #261620;
+  --glass: rgba(26,16,24,0.92);
+  --border: rgba(180,100,130,0.2); --border-accent: rgba(212,90,138,0.35);
+  --text-1: #e8d5e0; --text-2: #c4a8b8; --text-3: #9a7a8a; --text-4: #705868;
+  --accent: #d45a8a; --accent-soft: rgba(212,90,138,0.1);
+  --accent-hover: #e07098;
+  --green: #5bbd7a; --green-soft: rgba(91,189,122,0.1);
+  --danger: #e06060; --danger-soft: rgba(224,96,96,0.1);
+  --sh-card: 0 1px 3px rgba(0,0,0,0.35); --sh-card-hover: 0 8px 28px rgba(0,0,0,0.5);
   --sh-dropdown: 0 12px 40px rgba(0,0,0,0.5);
-  --scroll-t: rgba(232,67,147,0.25); --scroll-h: rgba(232,67,147,0.4);
-  --hover-tint: rgba(232,67,147,0.15); --nav-bg: rgba(30,14,14,0.8);
+  --scroll-t: rgba(212,90,138,0.2); --scroll-h: rgba(212,90,138,0.35);
+  --hover-tint: rgba(212,90,138,0.12); --nav-bg: rgba(38,22,32,0.85);
 }
 
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }

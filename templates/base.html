@@ -76,28 +76,20 @@
     <script>
     (function() {
       const key = 'btg-dark-mode';
-      const body = document.body;
+      const root = document.documentElement;
       const btn = document.getElementById('darkToggle');
       const sun = btn && btn.querySelector('.sun-icon');
       const moon = btn && btn.querySelector('.moon-icon');
       function setDark(enabled) {
-        if (enabled) {
-          body.classList.add('dark-mode');
-          if (sun) sun.style.display = 'none';
-          if (moon) moon.style.display = '';
-        } else {
-          body.classList.remove('dark-mode');
-          if (sun) sun.style.display = '';
-          if (moon) moon.style.display = 'none';
-        }
+        root.toggleAttribute('data-theme', enabled);
+        if (sun) sun.style.display = enabled ? 'none' : '';
+        if (moon) moon.style.display = enabled ? '' : 'none';
       }
-      const stored = localStorage.getItem(key);
-      if (stored === 'true') setDark(true);
-      else if (stored === null && window.matchMedia('(prefers-color-scheme: dark)').matches) setDark(true);
+      if (localStorage.getItem(key) === 'true') setDark(true);
       if (btn) btn.addEventListener('click', () => {
-        const on = !body.classList.contains('dark-mode');
-        setDark(on);
-        localStorage.setItem(key, on);
+        const on = root.hasAttribute('data-theme');
+        setDark(!on);
+        localStorage.setItem(key, !on);
       });
     })();
     </script>
