@@ -22,6 +22,40 @@
     --pad: 3rem; --w: 1100px; --gap: 12px;
 }
 
+/* ===== DARK MODE (maroon/pink theme) ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hue: 340;
+    --bg: #120808; --bg-warm: #1c0c0c; --surface: #1e0e0e;
+    --glass: rgba(18,8,8,0.92);
+    --border: rgba(200,80,120,0.25); --border-accent: rgba(232,67,147,0.4);
+    --text-1: #f5e6ed; --text-2: #d4b0c0; --text-3: #a07084; --text-4: #7a4a5e;
+    --accent: #e84393; --accent-soft: rgba(232,67,147,0.12);
+    --accent-hover: #ff6b9d;
+    --green: #4ade80; --green-soft: rgba(74,222,128,0.12);
+    --danger: #f87171; --danger-soft: rgba(248,113,113,0.12);
+    --sh-card: 0 1px 3px rgba(0,0,0,0.3); --sh-card-hover: 0 8px 28px rgba(0,0,0,0.5);
+    --sh-dropdown: 0 12px 40px rgba(0,0,0,0.5);
+    --scroll-t: rgba(232,67,147,0.25); --scroll-h: rgba(232,67,147,0.4);
+    --hover-tint: rgba(232,67,147,0.15); --nav-bg: rgba(30,14,14,0.8);
+  }
+}
+body.dark-mode {
+  --hue: 340;
+  --bg: #120808; --bg-warm: #1c0c0c; --surface: #1e0e0e;
+  --glass: rgba(18,8,8,0.92);
+  --border: rgba(200,80,120,0.25); --border-accent: rgba(232,67,147,0.4);
+  --text-1: #f5e6ed; --text-2: #d4b0c0; --text-3: #a07084; --text-4: #7a4a5e;
+  --accent: #e84393; --accent-soft: rgba(232,67,147,0.12);
+  --accent-hover: #ff6b9d;
+  --green: #4ade80; --green-soft: rgba(74,222,128,0.12);
+  --danger: #f87171; --danger-soft: rgba(248,113,113,0.12);
+  --sh-card: 0 1px 3px rgba(0,0,0,0.3); --sh-card-hover: 0 8px 28px rgba(0,0,0,0.5);
+  --sh-dropdown: 0 12px 40px rgba(0,0,0,0.5);
+  --scroll-t: rgba(232,67,147,0.25); --scroll-h: rgba(232,67,147,0.4);
+  --hover-tint: rgba(232,67,147,0.15); --nav-bg: rgba(30,14,14,0.8);
+}
+
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body {
     font-family: 'Google Sans', sans-serif;
@@ -99,6 +133,7 @@ img { max-width: 100%; display: block; }
 .nav-toggle.active .icon-menu { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
 .nav-toggle.active .icon-close { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
 .nav-toggle:hover { color: var(--accent); }
+.dark-toggle:hover { color: var(--accent); }
 
 /* ===== MAIN ===== */
 .main { max-width: var(--w); margin: 0 auto; padding: 0 var(--pad) 6rem; }
@@ -875,7 +910,7 @@ img { max-width: 100%; display: block; }
     flex-direction:column;
 }
 .highlight-body h3 {
-    font-family:'Funnel Display',Georgia,serif;
+    font-family:'Google Sans',sans-serif;
     font-size:1.125rem;font-weight:600;
     color:var(--text-1);
     margin-bottom:0.5rem;

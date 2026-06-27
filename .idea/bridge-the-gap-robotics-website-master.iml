@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/btg-pre-tailwind-backup/btg-backup/.venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.14 (bridge-the-gap-robotics-website-master)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
