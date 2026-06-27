@@ -411,3 +411,32 @@ def delete_event(event_id):
         db.session.commit()
         flash('Event deleted successfully!', 'success')
     return redirect(url_for('admin.legacy'))
+
+
+# -- Super admin application views --
+
+
+@admin.route('/admin/applications')
+@super_admin_required
+def applications():
+    apps = Application.query.order_by(Application.created_at.desc()).all()
+    chapters = {c.id: c.name for c in Chapter.query.all()}
+    # Group by chapter
+    from collections import defaultdict
+    grouped = defaultdict(list)
+    for a in apps:
+        grouped[a.chapter_id].append(a)
+    return render_template('admin/applications.html', grouped=dict(grouped), chapters=chapters)
+
+
+@admin.route('/admin/applications/<int:app_id>/status', methods=['POST'])
+@super_admin_required
+def application_status(app_id):
+    app_record = db.session.get(Application, app_id)
+    if not app_record:
+        flash('Application not found.', 'error')
+        return redirect(url_for('admin.applications'))
+    app_record.status = request.form.get('status', 'pending')
+    db.session.commit()
+    flash('Application status updated.', 'success')
+    return redirect(url_for('admin.applications'))

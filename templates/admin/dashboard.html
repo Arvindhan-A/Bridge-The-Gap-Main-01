@@ -83,6 +83,35 @@
             <a href="{{ url_for('secret.roles') }}" class="btn-outline btn-sm">Roles &amp; Permissions</a>
         </div>
     </div>
+
+    <div class="admin-section">
+        <h2>Applications</h2>
+        {% for chapter in chapters[:5] %}
+        {% set chapter_apps = chapter.applications|list %}
+        {% if chapter_apps %}
+        <div class="admin-item">
+            <div class="admin-item-info">
+                <div class="admin-item-title">{{ chapter.name }}</div>
+                <div class="admin-item-date">
+                    {{ chapter_apps|selectattr('status', 'equalto', 'pending')|list|length }} pending &middot;
+                    {{ chapter_apps|selectattr('status', 'equalto', 'accepted')|list|length }} accepted &middot;
+                    {{ chapter_apps|selectattr('status', 'equalto', 'rejected')|list|length }} rejected
+                </div>
+            </div>
+            <div class="admin-actions">
+                <a href="{{ url_for('admin.applications') }}" class="btn-outline btn-sm">View All</a>
+            </div>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="admin-empty">No applications yet.</div>
+        {% endfor %}
+        {% if chapters|length > 5 %}
+        <div class="admin-section-actions">
+            <a href="{{ url_for('admin.applications') }}" class="btn-outline btn-sm">View All Applications</a>
+        </div>
+        {% endif %}
+    </div>
 </div>
 </div>
 {% endblock %}
