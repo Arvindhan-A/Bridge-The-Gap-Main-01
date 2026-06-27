@@ -47,3 +47,4 @@ __pycache__/
 *.pyc
 .pytest_cache/
 data/btg.db
+btg-pre-tailwind-backup/

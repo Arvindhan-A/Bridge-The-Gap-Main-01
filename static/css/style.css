@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Funnel+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -24,7 +24,7 @@
 
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body {
-    font-family: 'Funnel Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Google Sans', sans-serif;
     background: var(--bg); color: var(--text-1);
     line-height: 1.65; min-height: 100vh;
     overflow-x: hidden; font-size: 16px;
@@ -66,7 +66,7 @@ img { max-width: 100%; display: block; }
     filter: drop-shadow(0 0 10px rgba(120,80,200,0.35));
 }
 .nav-brand-text {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.125rem; font-weight: 500;
     color: var(--text-1); letter-spacing: -0.02em;
     line-height: 1.2;
@@ -178,7 +178,7 @@ img { max-width: 100%; display: block; }
     text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1rem;
 }
 .hero h1 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: clamp(3rem, 6vw, 4.5rem);
     font-weight: 400; line-height: 1.05;
     letter-spacing: -0.03em; color: var(--text-1);
@@ -231,7 +231,7 @@ img { max-width: 100%; display: block; }
     display: block;
 }
 .sec-title {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.75rem; font-weight: 400;
     letter-spacing: -0.02em; color: var(--text-1);
 }
@@ -253,7 +253,7 @@ img { max-width: 100%; display: block; }
 }
 .impact-card:hover { transform: translateY(-2px); border-color: var(--border-accent); }
 .impact-val {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 2rem; font-weight: 400; color: var(--accent);
     letter-spacing: -0.03em; display: block; line-height: 1;
 }
@@ -343,7 +343,7 @@ img { max-width: 100%; display: block; }
     display: flex; gap: 1.25rem; align-items: flex-start;
 }
 .why-num {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.5rem; font-weight: 400; color: var(--accent);
     line-height: 1; flex-shrink: 0; opacity: 0.5;
 }
@@ -552,7 +552,7 @@ img { max-width: 100%; display: block; }
     animation: reveal 0.7s var(--ease) 0.1s forwards;
 }
 .post-hero h1 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: clamp(2rem, 4vw, 2.875rem);
     font-weight: 400; line-height: 1.1;
     letter-spacing: -0.03em; margin-bottom: 1rem;
@@ -568,7 +568,7 @@ img { max-width: 100%; display: block; }
 }
 .post-content p { margin-bottom: 1rem; }
 .post-content h2 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.5rem; font-weight: 400; color: var(--text-1);
     margin: 2rem 0 1rem;
 }
@@ -591,7 +591,7 @@ img { max-width: 100%; display: block; }
     display: flex; gap: 0.5rem; flex-wrap: wrap;
 }
 .admin-header h1 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.75rem; font-weight: 400; color: var(--text-1);
 }
 .admin-header p {
@@ -682,7 +682,7 @@ img { max-width: 100%; display: block; }
     padding: 5rem var(--pad) 6rem;
 }
 .form-page h1 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.75rem; font-weight: 400; color: var(--text-1);
     margin-bottom: 2rem;
 }
@@ -714,6 +714,8 @@ img { max-width: 100%; display: block; }
     box-shadow: 0 4px 24px rgba(0,0,0,0.12);
     animation: flashSlide 0.35s var(--ease);
     margin-bottom: 8px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 .flash::after {
     content: ''; position: absolute; left: 14px; top: 50%;
@@ -723,32 +725,32 @@ img { max-width: 100%; display: block; }
     background: currentColor;
 }
 .flash-success {
-    background: var(--green-soft); color: var(--green);
-    border: 1px solid var(--green);
+    background: rgba(45,154,95,0.15); color: #1b6e43;
+    border: 1px solid rgba(45,154,95,0.3);
 }
 .flash-success::after {
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
 }
 .flash-error {
-    background: var(--danger-soft); color: var(--danger);
-    border: 1px solid var(--danger);
+    background: rgba(209,59,59,0.15); color: #a12e2e;
+    border: 1px solid rgba(209,59,59,0.3);
 }
 .flash-error::after {
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'/%3E%3Cline x1='6' y1='6' x2='18' y2='18'/%3E%3C/svg%3E");
 }
 .flash-warning {
-    background: #fffbeb; color: #92400e;
-    border: 1px solid #fde68a;
+    background: rgba(251,191,36,0.15); color: #7c4b00;
+    border: 1px solid rgba(251,191,36,0.3);
 }
 .flash-warning::after {
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
 }
 .flash-info {
-    background: var(--accent-soft); color: var(--accent);
-    border: 1px solid var(--accent);
+    background: rgba(116,56,201,0.15); color: #5c2ea3;
+    border: 1px solid rgba(116,56,201,0.3);
 }
 .flash-info::after {
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
@@ -774,7 +776,7 @@ img { max-width: 100%; display: block; }
     border-radius: var(--r-md); padding: 2.5rem;
 }
 .founder-title {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.5rem; font-weight: 400; color: var(--text-1);
     margin-bottom: 1.5rem;
 }
@@ -802,7 +804,7 @@ img { max-width: 100%; display: block; }
     text-align: center; padding: 5rem 0;
 }
 .cta-section h2 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.75rem; font-weight: 400;
     color: var(--text-1); margin-bottom: 1rem;
 }
@@ -1357,7 +1359,7 @@ img { max-width: 100%; display: block; }
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .chapter-preview-body h3 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.125rem; font-weight: 500; color: var(--text-1);
     margin-bottom: 2px;
 }
@@ -1393,7 +1395,7 @@ img { max-width: 100%; display: block; }
     margin-bottom: 1rem; background: #fff;
 }
 .chapter-hero-content h1 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 2.25rem; font-weight: 500; letter-spacing: -0.02em;
     margin-bottom: 0.25rem;
 }
@@ -1414,7 +1416,7 @@ img { max-width: 100%; display: block; }
     margin-bottom: var(--gap);
 }
 .sidebar-card h3 {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1rem; font-weight: 500; color: var(--text-1);
     margin-bottom: 0.75rem;
 }
@@ -1463,7 +1465,7 @@ img { max-width: 100%; display: block; }
     background: var(--accent-soft); color: var(--accent);
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 0.75rem;
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 1.25rem; font-weight: 600;
 }
 .team-card h4 {
@@ -1556,7 +1558,7 @@ img { max-width: 100%; display: block; }
 }
 .stat-card:hover::before { opacity: 1; }
 .stat-val {
-    font-family: 'Funnel Display', Georgia, serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 2rem; font-weight: 400; color: var(--accent);
     display: block; line-height: 1.1;
 }
