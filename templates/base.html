@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bridge the Gap Robotics Foundation{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     {% block head %}{% endblock %}
@@ -25,7 +28,6 @@
                 <a href="/kits" class="nav-link{% if request.path == '/kits' %} active{% endif %}">Our Kits</a>
                 <a href="/chapters" class="nav-link{% if request.path.startswith('/chapters') %} active{% endif %}">Chapters</a>
                 <a href="/partners" class="nav-link{% if request.path == '/partners' %} active{% endif %}">Partners</a>
-                <a href="/events" class="nav-link{% if request.path.startswith('/events') %} active{% endif %}">Events</a>
                 {% if current_user %}
                 <a href="/dashboard" class="nav-link" style="color:var(--accent);font-weight:600;">Dashboard</a>
                 {% endif %}

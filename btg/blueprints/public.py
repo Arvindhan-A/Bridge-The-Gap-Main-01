@@ -154,12 +154,11 @@ def _render_world_map_svg(topology, chapter_points, hue=262, W=960, H=480):
 
 @public.route('/')
 def home():
-    highlights = Event.query.order_by(Event.created_at.desc()).limit(5).all()
     chapters = Chapter.query.filter_by(published=True).order_by(Chapter.name).all()
     chapter_points = [(ch.longitude or 0, ch.latitude or 0) for ch in chapters]
     world_atlas = _get_world_atlas()
     map_svg = _render_world_map_svg(world_atlas, chapter_points)
-    return render_template('home.html', highlights=highlights, chapters=chapters,
+    return render_template('home.html', chapters=chapters,
                            world_map_svg=map_svg)
 
 
@@ -180,34 +179,6 @@ def partners():
 def contact():
     return render_template('contact.html')
 
-
-# -- Blog-style events (replaces legacy events and blog) --
-
-
-@public.route('/events')
-def events():
-    all_events = Event.query.order_by(Event.created_at.desc()).all()
-    return render_template('events.html', events=all_events)
-
-
-@public.route('/events/<int:event_id>')
-def event_detail(event_id):
-    event = db.session.get(Event, event_id)
-    if not event:
-        flash('Event not found.', 'error')
-        return redirect(url_for('public.events'))
-    chapter = db.session.get(Chapter, event.chapter_id) if event.chapter_id else None
-    return render_template('events/detail.html', event=event, chapter=chapter)
-
-
-@public.route('/blog')
-def blog():
-    return redirect(url_for('public.events'), 301)
-
-
-@public.route('/blog/<path:post_id>')
-def blog_post(post_id):
-    return redirect(url_for('public.events'), 301)
 
 
 # -- Public chapters --

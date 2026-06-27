@@ -322,7 +322,7 @@ def new_post():
         db.session.add(event)
         db.session.commit()
         flash('Event created successfully!', 'success')
-        return redirect(url_for('public.events'))
+        return redirect(url_for('admin.legacy'))
     return render_template('new_event.html')
 
 
@@ -340,7 +340,7 @@ def edit_post(event_id):
         event.description = request.form.get('content', '')[:300]
         db.session.commit()
         flash('Event updated successfully!', 'success')
-        return redirect(url_for('public.events'))
+        return redirect(url_for('admin.legacy'))
     return render_template('edit_event.html', event=event)
 
 
@@ -375,7 +375,7 @@ def new_event():
         db.session.add(event)
         db.session.commit()
         flash('Event created successfully!', 'success')
-        return redirect(url_for('public.events'))
+        return redirect(url_for('admin.legacy'))
     return render_template('new_event.html', event=None)
 
 
@@ -398,7 +398,7 @@ def edit_event(event_id):
         event.status = request.form.get('status', event.status)
         db.session.commit()
         flash('Event updated successfully!', 'success')
-        return redirect(url_for('public.events'))
+        return redirect(url_for('admin.legacy'))
     return render_template('edit_event.html', event=event)
 
 
