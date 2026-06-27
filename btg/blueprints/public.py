@@ -7,6 +7,21 @@ from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcem
 
 public = Blueprint('public', __name__)
 
+# Cached world atlas data for homepage map (no external JS dependency at runtime)
+_world_atlas_cache = None
+
+def _get_world_atlas():
+    global _world_atlas_cache
+    if _world_atlas_cache is None:
+        try:
+            import urllib.request
+            url = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+            with urllib.request.urlopen(url, timeout=10) as r:
+                _world_atlas_cache = json.loads(r.read())
+        except Exception:
+            _world_atlas_cache = {}
+    return _world_atlas_cache
+
 
 # -- Homepage --
 
@@ -23,7 +38,10 @@ def home():
             'lat': ch.latitude or 0,
             'lng': ch.longitude or 0,
         })
-    return render_template('home.html', highlights=highlights, chapters=chapters, chapters_json=json.dumps(chapters_data), hue=262)
+    world_atlas = _get_world_atlas()
+    return render_template('home.html', highlights=highlights, chapters=chapters,
+                           chapters_json=json.dumps(chapters_data),
+                           world_atlas_json=json.dumps(world_atlas), hue=262)
 
 
 # -- Static informational pages --

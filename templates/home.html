@@ -173,8 +173,8 @@
         <h2 class="sec-title">Where We Are</h2>
         <p class="sec-desc">Countries with active Bridge the Gap Robotics chapters are highlighted below.</p>
     </div>
-    <div id="home-map" style="width:100%;max-width:860px;margin:0 auto;opacity:0.6;">
-        <svg id="home-world-svg" viewBox="0 0 960 480" aria-label="World map highlighting BTG chapter countries" style="width:100%;height:auto;display:block;"></svg>
+    <div id="home-map" style="width:100%;max-width:860px;margin:0 auto;aspect-ratio:2/1;background:hsla(262,20%,85%,0.15);border-radius:var(--r-lg);">
+        <svg id="home-world-svg" viewBox="0 0 960 480" aria-label="World map highlighting BTG chapter countries" style="width:100%;height:100%;display:block;"></svg>
     </div>
 </section>
 {% endif %}
@@ -263,44 +263,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ---- Homepage world map (subtle, no borders, no pins, just highlighted countries) ---- */
 (function() {
-    const svg = d3.select("#home-world-svg");
-    if (svg.empty()) return;
-    const W = 960, H = 480;
-    const hue = {{ hue }};
-    const projection = d3.geoNaturalEarth1().scale(153).translate([W / 2, H / 2]);
-    const geoPath = d3.geoPath(projection);
-    const gLand = svg.append("g");
+    var container = document.getElementById("home-map");
+    var svg = d3.select("#home-world-svg");
+    if (svg.empty() || !container) return;
+    var W = 960, H = 480;
+    var hue = {{ hue }};
+    var chapterData = {{ chapters_json|safe }};
+    var world = {{ world_atlas_json|safe }};
+    if (!world || !world.objects) { container.style.display = 'none'; return; }
 
-    // Chapter coordinates from the server
-    const chapterData = {{ chapters_json|safe }};
+    var countries = topojson.feature(world, world.objects.countries);
+    var projection = d3.geoNaturalEarth1().scale(153).translate([W / 2, H / 2]);
+    var geoPath = d3.geoPath(projection);
+    var gLand = svg.append("g");
 
-    d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-        .then(world => {
-            const countries = topojson.feature(world, world.objects.countries);
-            const countryPaths = gLand.selectAll("path")
-                .data(countries.features)
-                .join("path")
-                .attr("d", geoPath)
-                .attr("fill", `hsla(${hue}, 20%, 85%, 0.35)`)
-                .attr("stroke", "none");
+    var countryPaths = gLand.selectAll("path")
+        .data(countries.features)
+        .join("path")
+        .attr("d", geoPath)
+        .attr("fill", "hsla(" + hue + ", 20%, 85%, 0.3)")
+        .attr("stroke", "none");
 
-            // Determine which countries have chapters
-            const highlighted = new Set();
-            chapterData.forEach(ch => {
-                const pt = [ch.lng, ch.lat];
-                for (let i = 0; i < countries.features.length; i++) {
-                    if (d3.geoContains(countries.features[i], pt)) {
-                        highlighted.add(i);
-                        break;
-                    }
-                }
-            });
+    var highlighted = {};
+    chapterData.forEach(function(ch) {
+        var pt = [ch.lng, ch.lat];
+        for (var i = 0; i < countries.features.length; i++) {
+            if (d3.geoContains(countries.features[i], pt)) {
+                highlighted[i] = true;
+                break;
+            }
+        }
+    });
 
-            countryPaths.filter(function(d, i) {
-                return highlighted.has(i);
-            }).attr("fill", `hsla(${hue}, 55%, 55%, 0.25)`);
-        })
-        .catch(() => {});
+    countryPaths.filter(function(d, i) { return highlighted[i]; })
+        .attr("fill", "hsla(" + hue + ", 55%, 55%, 0.3)");
+
+    container.style.opacity = "0.45";
+    container.style.transition = "opacity 0.6s ease";
 })();
 </script>
 {% endblock %}
