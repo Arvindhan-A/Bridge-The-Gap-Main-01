@@ -490,7 +490,6 @@ def profile():
         password = request.form.get('password', '')
         if password:
             user.set_password(password)
-            user.must_change_password = True
         db.session.commit()
         flash('Profile updated!', 'success')
         return redirect(url_for('dashboard.profile'))
