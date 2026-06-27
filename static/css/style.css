@@ -698,12 +698,13 @@ img { max-width: 100%; display: block; }
 
 /* ===== FLASH MESSAGES ===== */
 .flash {
-    padding: 14px 44px 14px 44px;
+    padding: 14px 44px;
     border-radius: var(--r-md);
     font-size: 0.875rem; font-weight: 600; line-height: 1.5;
-    margin-bottom: 1rem; position: relative;
-    box-shadow: var(--sh-card);
-    animation: flashIn 0.35s var(--ease);
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    animation: flashSlide 0.35s var(--ease);
+    margin-bottom: 8px;
 }
 .flash::after {
     content: ''; position: absolute; left: 14px; top: 50%;
@@ -752,8 +753,8 @@ img { max-width: 100%; display: block; }
     transition: opacity 0.2s;
 }
 .flash .flash-close:hover { opacity: 1; }
-@keyframes flashIn {
-    from { opacity: 0; transform: translateY(-8px); }
+@keyframes flashSlide {
+    from { opacity: 0; transform: translateY(-16px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1180,7 +1181,7 @@ img { max-width: 100%; display: block; }
     .hue-label { font-size: 0.625rem; }
     .foot { padding: 2.5rem 1rem 2rem; }
     .foot p { font-size: 0.6875rem; }
-    .flash { font-size: 0.8125rem; padding: 10px 12px; }
+    .flash { font-size: 0.8125rem; padding: 10px 36px; }
     .form-page { padding: 2.5rem 1rem 3rem; }
     .form-page h1 { font-size: 1.25rem; margin-bottom: 1.25rem; }
     .form-group input, .form-group textarea, .form-group select { font-size: 0.8125rem; padding: 9px 11px; }
@@ -1295,7 +1296,7 @@ img { max-width: 100%; display: block; }
     .hue-label { font-size: 0.625rem; }
     .foot { padding: 2.5rem 1rem 2rem; }
     .foot p { font-size: 0.6875rem; }
-    .flash { font-size: 0.8125rem; padding: 10px 12px; }
+    .flash { font-size: 0.8125rem; padding: 10px 36px 10px 36px; }
     .form-page { padding: 3rem 1rem 4rem; }
     .form-page h1 { font-size: 1.375rem; margin-bottom: 1.5rem; }
     .form-group input, .form-group textarea, .form-group select { font-size: 0.875rem; padding: 10px 12px; }

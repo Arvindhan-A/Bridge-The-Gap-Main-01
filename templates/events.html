@@ -14,9 +14,9 @@
             <span class="sec-label">Latest</span>
             <h2 class="sec-title" style="margin:0;">All Events</h2>
         </div>
-        <div class="blog-search" style="position:relative;max-width:280px;width:100%;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-3);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Search events…" style="width:100%;padding:0.5rem 0.75rem 0.5rem 2rem;border:1px solid var(--border);border-radius:var(--r-pill);font-family:inherit;font-size:0.8125rem;background:var(--surface);color:var(--text);">
+        <div class="search-wrap">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="search-input" placeholder="Search events…">
         </div>
     </div>
 
@@ -164,10 +164,32 @@
     font-weight:500;
 }
 .event-card-author svg { width:14px;height:14px; }
+.search-wrap {
+    position:relative; max-width:280px; width:100%;
+}
+.search-icon {
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; color:var(--text-4); pointer-events:none;
+    transition:color 0.25s;
+}
+.search-input {
+    width:100%; padding:0.5625rem 0.75rem 0.5625rem 2.25rem;
+    border:1.5px solid var(--border); border-radius:var(--r-pill);
+    font-family:inherit; font-size:0.8125rem; font-weight:500;
+    background:var(--bg); color:var(--text);
+    transition:all 0.25s; outline:none;
+}
+.search-input::placeholder { color:var(--text-4); font-weight:400; }
+.search-input:focus {
+    border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);
+    background:var(--surface);
+}
+.search-wrap:focus-within .search-icon { color:var(--accent); }
 @media(max-width:768px){
     .events-grid{grid-template-columns:1fr;}
     .event-card-body{padding:1rem;}
     .event-card-media{aspect-ratio:4/3;}
+    .search-wrap{max-width:100%;}
 }
 </style>
 {% endblock %}
