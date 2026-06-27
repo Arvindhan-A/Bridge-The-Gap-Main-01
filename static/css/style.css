@@ -643,7 +643,16 @@ img { max-width: 100%; display: block; }
 .admin-actions a:hover, .admin-actions button:hover {
     border-color: var(--accent); color: var(--accent);
 }
-.admin-actions .btn-delete:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+.btn-delete {
+    font-size: 0.75rem; font-weight: 500; padding: 5px 12px;
+    border-radius: var(--r-pill); text-decoration: none;
+    transition: all 0.2s; cursor: pointer; font-family: inherit;
+    border: 1px solid var(--border);
+    background: var(--surface); color: var(--text-2);
+    white-space: nowrap;
+}
+.btn-delete:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+.btn-delete:active { background: #fee2e2; }
 .admin-empty {
     color: var(--text-3); font-size: 0.875rem; padding: 1.25rem 0;
 }
