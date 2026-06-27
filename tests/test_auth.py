@@ -14,15 +14,23 @@ def test_public_pages(client):
 
 def test_login_success(client):
     resp = client.post('/login', data={
-        'email': 'admin@bridgethegaprobotics.org',
-        'password': 'btg-admin-2026',
+        'email': 'arvindtrial@gmail.com',
+        'password': 'trial@123',
+    })
+    assert resp.status_code == 302  # redirect to dashboard
+
+
+def test_login_by_username(client):
+    resp = client.post('/login', data={
+        'email': 'arvind',
+        'password': 'trial@123',
     })
     assert resp.status_code == 302  # redirect to dashboard
 
 
 def test_login_failure(client):
     resp = client.post('/login', data={
-        'email': 'admin@bridgethegaprobotics.org',
+        'email': 'arvindtrial@gmail.com',
         'password': 'wrong-password',
     })
     assert resp.status_code == 200  # re-renders login page
@@ -30,8 +38,8 @@ def test_login_failure(client):
 
 def test_logout(client):
     client.post('/login', data={
-        'email': 'admin@bridgethegaprobotics.org',
-        'password': 'btg-admin-2026',
+        'email': 'arvindtrial@gmail.com',
+        'password': 'trial@123',
     })
     resp = client.get('/logout')
     assert resp.status_code == 302

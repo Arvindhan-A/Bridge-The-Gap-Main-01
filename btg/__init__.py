@@ -1,11 +1,12 @@
 import os
+import json
 import logging
 from flask import Flask, session, render_template
 from datetime import datetime
 
 from btg.config import Config, BASE_DIR
 from btg.extensions import db, csrf, migrate
-from btg.models import User, Chapter, Event, EventImage, TeamMember, GalleryImage, Announcement, Application
+from btg.models import User, Chapter, Event, EventImage, TeamMember, GalleryImage, Announcement, Application, Role, PERMISSIONS
 from btg.blueprints.public import public
 from btg.blueprints.auth_bp import auth
 from btg.blueprints.admin import admin
@@ -85,18 +86,47 @@ def create_app(config_class=Config):
 
 
 def _seed_data():
-    """Seed admin user and sample chapters if DB is empty."""
+    """Seed admin user, roles, and sample chapters if DB is empty."""
+
+    # Seed default roles
+    if Role.query.count() == 0:
+        super_admin_role = Role(
+            name='Super Admin',
+            description='Full access to all features.',
+            permissions=json.dumps([p[0] for p in PERMISSIONS]),
+            is_system=True,
+        )
+        db.session.add(super_admin_role)
+
+        president_role = Role(
+            name='Chapter President',
+            description='Manage their own chapter events, team, announcements, and applications.',
+            permissions=json.dumps(['manage_events', 'manage_announcements', 'manage_applications']),
+            is_system=True,
+        )
+        db.session.add(president_role)
+
+        viewer_role = Role(
+            name='Viewer',
+            description='Read-only access to analytics and content.',
+            permissions=json.dumps(['view_analytics']),
+            is_system=True,
+        )
+        db.session.add(viewer_role)
+        db.session.commit()
+
+    # Seed master admin
     admin = User.query.filter_by(role='super_admin').first()
     if not admin:
-        admin_email = Config.SEED_ADMIN_EMAIL
-        admin_pw = Config.SEED_ADMIN_PASSWORD or 'btg-admin-2026'
         admin = User(
-            name='Admin',
-            email=admin_email,
+            name='Arvind',
+            email='arvindtrial@gmail.com',
+            username='arvind',
             role='super_admin',
+            role_id=Role.query.filter_by(name='Super Admin').first().id,
             must_change_password=False,
         )
-        admin.set_password(admin_pw)
+        admin.set_password('trial@123')
         db.session.add(admin)
 
     if Chapter.query.count() == 0:
@@ -125,13 +155,16 @@ def _seed_data():
             db.session.add(c)
         db.session.commit()
 
+        pres_role_id = Role.query.filter_by(name='Chapter President').first().id
         pres_pw = Config.SEED_PRESIDENT_PASSWORD or 'btg-chennai-2026'
         pres = User.query.filter_by(role='chapter_president').first()
         if not pres:
             pres = User(
                 name='Chennai President',
                 email='president.chennai@bridgethegaprobotics.org',
+                username='chennai_president',
                 role='chapter_president',
+                role_id=pres_role_id,
                 chapter_id=Chapter.query.filter_by(slug='chennai').first().id,
                 must_change_password=True,
             )
@@ -142,7 +175,9 @@ def _seed_data():
         pres2 = User(
             name='Bangalore President',
             email='president.bangalore@bridgethegaprobotics.org',
+            username='bangalore_president',
             role='chapter_president',
+            role_id=pres_role_id,
             chapter_id=Chapter.query.filter_by(slug='bangalore').first().id,
             must_change_password=True,
         )

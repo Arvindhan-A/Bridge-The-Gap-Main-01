@@ -41,10 +41,11 @@ def _seed_test_data():
     """Seed minimal test data for each test."""
     if not User.query.first():
         admin = User(
-            name='Admin', email='admin@bridgethegaprobotics.org',
+            name='Arvind', email='arvindtrial@gmail.com',
+            username='arvind',
             role='super_admin', must_change_password=False,
         )
-        admin.set_password('btg-admin-2026')
+        admin.set_password('trial@123')
         _db.session.add(admin)
         _db.session.commit()
 

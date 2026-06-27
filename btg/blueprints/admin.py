@@ -220,19 +220,24 @@ def users():
 def user_create():
     name = request.form.get('name', '').strip()
     email = request.form.get('email', '').strip().lower()
+    username = request.form.get('username', '').strip().lower()
     password = request.form.get('password', '')
     role = request.form.get('role', 'chapter_president')
     chapter_id = request.form.get('chapter_id', type=int)
 
-    if not name or not email or not password:
-        flash('Name, email, and password are required.', 'error')
+    if not name or not email or not password or not username:
+        flash('Name, email, username, and password are required.', 'error')
         return redirect(url_for('admin.users'))
 
     if User.query.filter_by(email=email).first():
         flash('Email already in use.', 'error')
         return redirect(url_for('admin.users'))
 
-    user = User(name=name, email=email, role=role, chapter_id=chapter_id)
+    if User.query.filter_by(username=username).first():
+        flash('Username already taken.', 'error')
+        return redirect(url_for('admin.users'))
+
+    user = User(name=name, email=email, username=username, role=role, chapter_id=chapter_id)
     user.set_password(password)
     user.must_change_password = True
     db.session.add(user)
@@ -261,6 +266,12 @@ def user_edit(user_id):
         return redirect(url_for('admin.users'))
     user.name = request.form.get('name', user.name)
     user.email = request.form.get('email', user.email).strip().lower()
+    username = request.form.get('username', '').strip().lower()
+    if username and username != user.username:
+        if User.query.filter_by(username=username).first():
+            flash('Username already taken.', 'error')
+            return redirect(url_for('admin.user_edit_page', user_id=user_id))
+        user.username = username
     user.role = request.form.get('role', user.role)
     user.chapter_id = request.form.get('chapter_id', type=int)
     password = request.form.get('password', '')

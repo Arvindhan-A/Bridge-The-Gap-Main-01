@@ -17,6 +17,10 @@
             <input type="email" name="email" value="{{ user.email }}" required>
         </div>
         <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" value="{{ user.username or '' }}" required>
+        </div>
+        <div class="form-group">
             <label>Role</label>
             <select name="role">
                 <option value="chapter_president" {% if user.role == 'chapter_president' %}selected{% endif %}>Chapter President</option>

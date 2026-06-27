@@ -16,9 +16,11 @@ def login():
             flash('Too many login attempts. Try again in 60 seconds.', 'error')
             return render_template('login.html')
 
-        email = request.form.get('email', '').strip().lower()
+        credential = request.form.get('email', '').strip().lower()
         password = request.form.get('password', '')
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter(
+            db.or_(User.email == credential, User.username == credential)
+        ).first()
         if user and user.check_password(password):
             session['user_id'] = user.id
             session['role'] = user.role

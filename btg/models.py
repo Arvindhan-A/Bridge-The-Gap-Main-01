@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -10,8 +11,10 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(60), unique=True, nullable=True)
     password_hash = db.Column(db.String(256), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='chapter_president')
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=True)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapters.id'), nullable=True)
     must_change_password = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -22,6 +25,39 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+# Predefined permission flags
+PERMISSIONS = [
+    ('manage_users', 'Manage Users'),
+    ('manage_chapters', 'Manage Chapters'),
+    ('manage_events', 'Manage Events'),
+    ('manage_announcements', 'Manage Announcements'),
+    ('manage_applications', 'Manage Applications'),
+    ('manage_roles', 'Manage Roles'),
+    ('view_analytics', 'View Analytics'),
+]
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.Text, default='')
+    permissions = db.Column(db.Text, default='[]')
+    is_system = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    users = db.relationship('User', backref='custom_role', lazy='dynamic')
+
+    def get_permissions(self):
+        return json.loads(self.permissions) if self.permissions else []
+
+    def set_permissions(self, perms_list):
+        self.permissions = json.dumps(perms_list)
+
+    def has_permission(self, perm):
+        return perm in self.get_permissions()
 
 
 class Chapter(db.Model):

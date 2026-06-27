@@ -487,6 +487,12 @@ def profile():
                 flash('Email already in use.', 'error')
                 return redirect(url_for('dashboard.profile'))
             user.email = email
+        username = request.form.get('username', '').strip().lower()
+        if username and username != user.username:
+            if User.query.filter_by(username=username).first():
+                flash('Username already taken.', 'error')
+                return redirect(url_for('dashboard.profile'))
+            user.username = username
         password = request.form.get('password', '')
         if password:
             user.set_password(password)
