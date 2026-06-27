@@ -15,7 +15,15 @@ public = Blueprint('public', __name__)
 def home():
     highlights = Event.query.order_by(Event.created_at.desc()).limit(5).all()
     chapters = Chapter.query.filter_by(published=True).order_by(Chapter.name).all()
-    return render_template('home.html', highlights=highlights, chapters=chapters)
+    chapters_data = []
+    for ch in chapters:
+        chapters_data.append({
+            'id': ch.slug,
+            'name': ch.name,
+            'lat': ch.latitude or 0,
+            'lng': ch.longitude or 0,
+        })
+    return render_template('home.html', highlights=highlights, chapters=chapters, chapters_json=json.dumps(chapters_data), hue=262)
 
 
 # -- Static informational pages --
@@ -112,6 +120,12 @@ def chapter_detail(slug):
         upcoming_events=upcoming, past_events=past,
         gallery=gallery, announcements=announcements
     )
+
+
+@public.route('/chapters/<slug>/apply')
+def chapter_apply_page(slug):
+    chapter = Chapter.query.filter_by(slug=slug, published=True).first_or_404()
+    return render_template('chapters/apply.html', chapter=chapter)
 
 
 @public.route('/chapters/<slug>/join', methods=['POST'])

@@ -49,9 +49,10 @@
         <div class="admin-item">
             <div class="admin-item-info">
                 <div class="admin-item-title">{{ user.name }} <span style="font-weight:400;color:var(--text-3);">({{ user.role.replace('_', ' ') }})</span></div>
-                <div class="admin-item-date">{{ user.email }} &middot; Chapter: {{ user.chapter_id or 'None' }}</div>
+                <div class="admin-item-date">{{ user.email }} &middot; Chapter: {{ chapter_map.get(user.chapter_id, 'None') }}</div>
             </div>
             <div class="admin-actions">
+                <a href="{{ url_for('admin.user_edit_page', user_id=user.id) }}" class="btn-outline btn-sm">Edit</a>
                 {% if user.role != 'super_admin' %}
                 <form method="POST" action="{{ url_for('admin.user_delete', user_id=user.id) }}" style="display:inline;" onsubmit="return confirm('Delete this user?')">
                     <button type="submit" class="btn-delete">Delete</button>

@@ -181,38 +181,9 @@
             </div>
             {% endif %}
 
-            <div style="margin-top:1.5rem;">
-                <a href="#" class="btn btn-accent" style="width:100%;text-align:center;" onclick="document.getElementById('joinForm').style.display='block';return false;">Join This Chapter</a>
+            <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem;">
+                <a href="{{ url_for('public.chapter_apply_page', slug=chapter.slug) }}" class="btn btn-accent" style="width:100%;text-align:center;">Apply to Join</a>
             </div>
-        </div>
-
-        <!-- Join Form -->
-        <div class="sidebar-card" id="joinForm" style="display:none;">
-            <h3>Join {{ chapter.name }}</h3>
-            <form method="POST" action="{{ url_for('public.chapter_apply', slug=chapter.slug) }}" class="join-form">
-                <div class="form-group">
-                    <input type="text" name="name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" name="email" placeholder="Your Email" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" name="school" placeholder="School / College">
-                </div>
-                <div class="form-group">
-                    <input type="text" name="city" placeholder="Your City">
-                </div>
-                <div class="form-group">
-                    <input type="text" name="interests" placeholder="Interests">
-                </div>
-                <div class="form-group">
-                    <textarea name="motivation" placeholder="Why do you want to join?" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn btn-accent" style="width:100%;">Submit Application</button>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-            </form>
-        </div>
     </div>
 </div>
 {% endblock %}

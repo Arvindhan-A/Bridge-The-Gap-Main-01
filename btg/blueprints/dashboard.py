@@ -472,6 +472,31 @@ def announcement_delete(ann_id):
     return redirect(url_for('dashboard.announcements', chapter_id=c.id))
 
 
+# -- Profile --
+
+
+@dashboard.route('/dashboard/profile', methods=['GET', 'POST'])
+@chapter_president_required
+def profile():
+    user = db.session.get(User, session['user_id'])
+    if request.method == 'POST':
+        user.name = request.form.get('name', user.name)
+        email = request.form.get('email', '').strip().lower()
+        if email and email != user.email:
+            if User.query.filter_by(email=email).first():
+                flash('Email already in use.', 'error')
+                return redirect(url_for('dashboard.profile'))
+            user.email = email
+        password = request.form.get('password', '')
+        if password:
+            user.set_password(password)
+            user.must_change_password = True
+        db.session.commit()
+        flash('Profile updated!', 'success')
+        return redirect(url_for('dashboard.profile'))
+    return render_template('dashboard/profile.html', user=user)
+
+
 # -- Settings --
 
 

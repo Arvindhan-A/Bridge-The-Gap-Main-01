@@ -1,45 +1,38 @@
 {% extends "base.html" %}
-{% block title %}{{ event.title }} - Events{% endblock %}
+{% block title %}{{ event.title }} — Events{% endblock %}
 {% block content %}
 
-<!-- Hero banner -->
-<div class="detail-hero">
-    {% if event.banner %}
-    <div class="detail-hero-bg" style="background-image:url('{{ url_for('static', filename=event.banner) }}');"></div>
-    <div class="detail-hero-overlay"></div>
-    {% else %}
-    <div class="detail-hero-bg detail-hero-bg-gradient"></div>
-    <div class="detail-hero-overlay"></div>
-    {% endif %}
-    <div class="detail-hero-content">
-        <a href="{{ url_for('public.events') }}" class="detail-back">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
-            All Events
-        </a>
-        <div class="detail-hero-text">
+<!-- Hero (chapter-style) -->
+<div class="chapter-hero" {% if event.banner %}style="background-image:url('{{ url_for('static', filename=event.banner) }}')"{% endif %}>
+    <div class="chapter-hero-overlay">
+        <div class="chapter-hero-content">
+            <a href="{{ url_for('public.events') }}" style="display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.7);font-size:0.8125rem;font-weight:500;margin-bottom:1rem;transition:color 0.2s;text-decoration:none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
+                Back to Events
+            </a>
             {% if chapter %}
-            <span class="detail-chapter-tag">{{ chapter.name }}</span>
+            <span style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);color:#fff;font-size:0.6875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;padding:4px 12px;border-radius:var(--r-pill);margin-bottom:0.75rem;">{{ chapter.name }}</span>
             {% endif %}
             <h1>{{ event.title }}</h1>
-            <div class="detail-meta">
-                <span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div style="display:flex;flex-wrap:wrap;gap:1.25rem;color:rgba(255,255,255,0.75);font-size:0.8125rem;margin-top:1rem;">
+                <span style="display:flex;align-items:center;gap:5px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7;flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     {{ event.created_at.strftime('%B %d, %Y') if event.created_at else event.date.strftime('%B %d, %Y') }}
                 </span>
                 {% if event.time %}
-                <span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style="display:flex;align-items:center;gap:5px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     {{ event.time }}
                 </span>
                 {% endif %}
                 {% if event.venue %}
-                <span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="display:flex;align-items:center;gap:5px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7;flex-shrink:0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     {{ event.venue }}
                 </span>
                 {% endif %}
-                <span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span style="display:flex;align-items:center;gap:5px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.7;flex-shrink:0;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     {{ event.author or 'Admin' }}
                 </span>
             </div>
@@ -48,292 +41,53 @@
 </div>
 
 <!-- Article body -->
-<div class="detail-body">
-    {% if event.status == 'upcoming' or event.status == 'ongoing' %}
-    <div class="detail-cta-bar">
-        <div>
-            <span class="detail-status-badge {{ event.status }}">{{ event.status|title }}</span>
-            {% if event.date %}
-            <span class="detail-countdown">{{ event.date.strftime('%A, %B %d, %Y') }}</span>
+<div class="chapter-layout" style="padding-bottom:3rem;">
+    <div class="chapter-main">
+        {% if event.status == 'upcoming' or event.status == 'ongoing' %}
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:1rem 1.5rem;margin-bottom:2rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span style="display:inline-block;font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 12px;border-radius:var(--r-pill);background:{% if event.status == 'upcoming' %}var(--accent-soft);color:var(--accent){% else %}var(--green-soft);color:var(--green){% endif %};">{{ event.status|title }}</span>
+                <span style="font-size:0.875rem;color:var(--text-2);font-weight:500;">{{ event.date.strftime('%A, %B %d, %Y') }}</span>
+            </div>
+            {% if event.registration_link %}
+            <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Register Now</a>
             {% endif %}
         </div>
-        {% if event.registration_link %}
-        <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Register Now</a>
+        {% endif %}
+
+        <section class="section" style="padding-top:0;border-top:none;">
+            {% if event.content %}
+            <div class="chapter-content" style="font-size:1rem;line-height:1.85;color:var(--text-2);max-width:720px;">{{ event.content | safe }}</div>
+            {% else %}
+            <div style="font-size:1rem;line-height:1.85;color:var(--text-2);max-width:720px;"><p>{{ event.description }}</p></div>
+            {% endif %}
+        </section>
+
+        {% if event.registration_link and event.status != 'upcoming' and event.status != 'ongoing' %}
+        <section class="section">
+            <div style="background:linear-gradient(135deg,var(--accent-soft),var(--bg-warm));border:1px solid var(--border-accent);border-radius:var(--r-lg);padding:2rem;text-align:center;max-width:720px;">
+                <h3 style="font-family:'Funnel Display',Georgia,serif;font-size:1.25rem;font-weight:500;color:var(--text-1);margin-bottom:0.5rem;">Interested?</h3>
+                <p style="font-size:0.875rem;color:var(--text-3);margin-bottom:1rem;">Learn more or get involved with this event.</p>
+                <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Visit Event Page</a>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if event.images and event.images.count() %}
+        <section class="section">
+            <span class="sec-label">Gallery</span>
+            <h2 class="sec-title">Moments from this Event</h2>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap);">
+                {% for img in event.images.order_by('display_order') %}
+                <a href="{{ url_for('static', filename=img.image) }}" target="_blank" style="position:relative;border-radius:var(--r-sm);overflow:hidden;aspect-ratio:4/3;display:block;" onmouseover="this.querySelector('img').style.transform='scale(1.08)'" onmouseout="this.querySelector('img').style.transform='scale(1)'">
+                    <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy" style="width:100%;height:100%;object-fit:cover;transition:transform 0.4s var(--ease);">
+                    {% if img.caption %}<span style="position:absolute;bottom:0;left:0;right:0;padding:0.5rem 0.75rem;background:linear-gradient(transparent,rgba(0,0,0,0.6));color:#fff;font-size:0.75rem;">{{ img.caption }}</span>{% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </section>
         {% endif %}
     </div>
-    {% endif %}
-
-    <div class="detail-article">
-        {% if event.content %}
-        {{ event.content | safe }}
-        {% else %}
-        <p>{{ event.description }}</p>
-        {% endif %}
-    </div>
-
-    {% if event.registration_link and event.status != 'upcoming' and event.status != 'ongoing' %}
-    <div class="detail-cta-card">
-        <h3>Interested?</h3>
-        <p>Learn more or get involved with this event.</p>
-        <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Visit Event Page</a>
-    </div>
-    {% endif %}
-
-    {% if event.images and event.images.count() %}
-    <section class="detail-gallery">
-        <h2>Gallery</h2>
-        <div class="detail-gallery-grid">
-            {% for img in event.images.order_by('display_order') %}
-            <a href="{{ url_for('static', filename=img.image) }}" class="detail-gallery-item" target="_blank">
-                <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
-                {% if img.caption %}<span class="detail-gallery-caption">{{ img.caption }}</span>{% endif %}
-            </a>
-            {% endfor %}
-        </div>
-    </section>
-    {% endif %}
 </div>
 
-<style>
-/* ===== HERO ===== */
-.detail-hero {
-    position:relative;
-    width:100%;
-    min-height:380px;
-    display:flex;
-    align-items:flex-end;
-    overflow:hidden;
-    border-radius:var(--r-lg);
-    margin-bottom:2rem;
-}
-.detail-hero-bg {
-    position:absolute;
-    inset:0;
-    background-size:cover;
-    background-position:center;
-}
-.detail-hero-bg-gradient {
-    background:linear-gradient(135deg,var(--accent),#4a2d7a 50%,#1a1333);
-}
-.detail-hero-overlay {
-    position:absolute;
-    inset:0;
-    background:linear-gradient(transparent 30%,rgba(0,0,0,0.7));
-}
-.detail-hero-content {
-    position:relative;
-    z-index:2;
-    width:100%;
-    padding:2rem var(--pad) 2.5rem;
-    max-width:var(--w);
-    margin:0 auto;
-}
-.detail-back {
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    color:rgba(255,255,255,0.7);
-    font-size:0.8125rem;
-    font-weight:500;
-    margin-bottom:1.25rem;
-    transition:color 0.2s;
-    text-decoration:none;
-}
-.detail-back:hover { color:#fff; }
-.detail-hero-text { max-width:720px; }
-.detail-chapter-tag {
-    display:inline-block;
-    background:rgba(255,255,255,0.15);
-    backdrop-filter:blur(8px);
-    color:#fff;
-    font-size:0.6875rem;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    padding:4px 12px;
-    border-radius:var(--r-pill);
-    margin-bottom:0.75rem;
-}
-.detail-hero-text h1 {
-    font-family:'Funnel Display',Georgia,serif;
-    font-size:clamp(1.75rem,4vw,2.75rem);
-    font-weight:500;
-    color:#fff;
-    line-height:1.1;
-    letter-spacing:-0.02em;
-    margin-bottom:1rem;
-}
-.detail-meta {
-    display:flex;
-    flex-wrap:wrap;
-    gap:1.25rem;
-    color:rgba(255,255,255,0.75);
-    font-size:0.8125rem;
-}
-.detail-meta span {
-    display:flex;
-    align-items:center;
-    gap:5px;
-}
-.detail-meta svg { width:15px;height:15px;opacity:0.7;flex-shrink:0; }
-
-/* ===== BODY ===== */
-.detail-body {
-    max-width:var(--w);
-    margin:0 auto;
-    padding:0 var(--pad) 4rem;
-}
-.detail-cta-bar {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    flex-wrap:wrap;
-    gap:1rem;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--r-md);
-    padding:1rem 1.5rem;
-    margin-bottom:2rem;
-    box-shadow:var(--sh-card);
-}
-.detail-status-badge {
-    display:inline-block;
-    font-size:0.6875rem;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    padding:4px 12px;
-    border-radius:var(--r-pill);
-    margin-right:0.75rem;
-}
-.detail-status-badge.upcoming {
-    background:var(--accent-soft);
-    color:var(--accent);
-}
-.detail-status-badge.ongoing {
-    background:var(--green-soft);
-    color:var(--green);
-}
-.detail-countdown {
-    font-size:0.875rem;
-    color:var(--text-2);
-    font-weight:500;
-}
-.detail-article {
-    font-size:1rem;
-    line-height:1.85;
-    color:var(--text-2);
-    max-width:720px;
-}
-.detail-article p { margin-bottom:1rem; }
-.detail-article h2 {
-    font-family:'Funnel Display',Georgia,serif;
-    font-size:1.5rem;
-    font-weight:400;
-    color:var(--text-1);
-    margin:2rem 0 1rem;
-}
-.detail-article h3 {
-    font-size:1.125rem;
-    font-weight:600;
-    color:var(--text-1);
-    margin:1.5rem 0 0.75rem;
-}
-.detail-article ul,.detail-article ol {
-    margin-bottom:1rem;
-    padding-left:1.5rem;
-}
-.detail-article li { margin-bottom:0.5rem; }
-.detail-article img {
-    border-radius:var(--r-sm);
-    margin:1.5rem auto;
-    max-width:100%;
-}
-
-/* ===== CTA CARD ===== */
-.detail-cta-card {
-    background:linear-gradient(135deg,var(--accent-soft),var(--bg-warm));
-    border:1px solid var(--border-accent);
-    border-radius:var(--r-lg);
-    padding:2rem;
-    text-align:center;
-    margin-top:2.5rem;
-    max-width:720px;
-}
-.detail-cta-card h3 {
-    font-family:'Funnel Display',Georgia,serif;
-    font-size:1.25rem;
-    font-weight:500;
-    color:var(--text-1);
-    margin-bottom:0.5rem;
-}
-.detail-cta-card p {
-    font-size:0.875rem;
-    color:var(--text-3);
-    margin-bottom:1rem;
-}
-
-/* ===== GALLERY ===== */
-.detail-gallery {
-    margin-top:3rem;
-    max-width:720px;
-}
-.detail-gallery h2 {
-    font-family:'Funnel Display',Georgia,serif;
-    font-size:1.25rem;
-    font-weight:500;
-    color:var(--text-1);
-    margin-bottom:1rem;
-}
-.detail-gallery-grid {
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:var(--gap);
-}
-.detail-gallery-item {
-    position:relative;
-    border-radius:var(--r-sm);
-    overflow:hidden;
-    aspect-ratio:4/3;
-    display:block;
-}
-.detail-gallery-item img {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    transition:transform 0.4s var(--ease);
-}
-.detail-gallery-item:hover img {
-    transform:scale(1.08);
-}
-.detail-gallery-caption {
-    position:absolute;
-    bottom:0;
-    left:0;right:0;
-    padding:0.5rem 0.75rem;
-    background:linear-gradient(transparent,rgba(0,0,0,0.6));
-    color:#fff;
-    font-size:0.75rem;
-}
-
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-    .detail-hero{min-height:280px;border-radius:var(--r-md);}
-    .detail-hero-content{padding:1.5rem 1.25rem;}
-    .detail-hero-text h1{font-size:1.5rem;}
-    .detail-meta{gap:0.75rem;font-size:0.75rem;}
-    .detail-cta-bar{flex-direction:column;align-items:stretch;text-align:center;}
-    .detail-article{font-size:0.9375rem;}
-    .detail-gallery-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media(max-width:480px){
-    .detail-hero{min-height:220px;}
-    .detail-hero-content{padding:1rem;}
-    .detail-hero-text h1{font-size:1.25rem;}
-    .detail-meta{gap:0.5rem;font-size:0.6875rem;flex-direction:column;}
-    .detail-cta-bar{padding:0.875rem 1rem;}
-    .detail-article{font-size:0.875rem;}
-    .detail-gallery-grid{grid-template-columns:1fr;}
-}
-</style>
 {% endblock %}

@@ -211,7 +211,8 @@ def chapter_toggle(chapter_id):
 def users():
     users = User.query.order_by(User.name).all()
     chapters = Chapter.query.order_by(Chapter.name).all()
-    return render_template('admin/users.html', users=users, chapters=chapters)
+    chapter_map = {c.id: c.name for c in chapters}
+    return render_template('admin/users.html', users=users, chapters=chapters, chapter_map=chapter_map)
 
 
 @admin.route('/admin/users/create', methods=['POST'])
@@ -238,6 +239,17 @@ def user_create():
     db.session.commit()
     flash(f'User "{user.name}" created!', 'success')
     return redirect(url_for('admin.users'))
+
+
+@admin.route('/admin/users/<int:user_id>/edit', methods=['GET'])
+@super_admin_required
+def user_edit_page(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        flash('User not found.', 'error')
+        return redirect(url_for('admin.users'))
+    chapters = Chapter.query.order_by(Chapter.name).all()
+    return render_template('admin/user_edit.html', user=user, chapters=chapters)
 
 
 @admin.route('/admin/users/<int:user_id>/edit', methods=['POST'])
