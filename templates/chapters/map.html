@@ -49,45 +49,14 @@
   stroke-dasharray: 2,7;
 }
 .chapter-pin { cursor: pointer; }
-.pin-ripple {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.2;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: pin-ripple 3s ease-out infinite;
-}
-.pin-ripple.r2 { animation-delay: 1.5s; }
-@keyframes pin-ripple {
-  0%   { transform: scale(1);   opacity: .75; }
-  100% { transform: scale(3.4); opacity: 0;   }
-}
-.pin-ring {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.6;
-  transition: stroke .2s;
-}
-.pin-core {
+.pin-dot {
   fill: var(--accent);
-  transition: fill .2s;
+  r: 3;
 }
-.chapter-pin:hover .pin-ring  { stroke: var(--accent-hover); }
-.chapter-pin:hover .pin-core  { fill:  var(--accent-hover); }
-.chapter-pin.active .pin-ring { stroke: var(--accent-hover); }
-.chapter-pin.active .pin-core { fill:  var(--accent-hover); }
+.chapter-pin:hover .pin-dot { fill: var(--accent-hover); }
+.chapter-pin.active .pin-dot { fill: var(--accent-hover); }
 .pins-remove .chapter-pin { cursor: not-allowed; }
-.pins-remove .chapter-pin:hover .pin-ring { stroke: #c23b3b; }
-.pins-remove .chapter-pin:hover .pin-core { fill:  #c23b3b; }
-.pin-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .05em;
-  fill: var(--text-2);
-  text-anchor: middle;
-  dominant-baseline: hanging;
-  pointer-events: none;
-}
+.pins-remove .chapter-pin:hover .pin-dot { fill: #c23b3b; }
 #bdg-tip {
   position: absolute;
   pointer-events: none;
@@ -558,11 +527,7 @@ function drawPins() {
     const g = gPins.append("g")
       .attr("class", "chapter-pin")
       .attr("transform", `translate(${cx},${cy})`);
-    g.append("circle").attr("class", "pin-ripple").attr("r", 8);
-    g.append("circle").attr("class", "pin-ripple r2").attr("r", 8);
-    g.append("circle").attr("class", "pin-ring").attr("r", 9);
-    g.append("circle").attr("class", "pin-core").attr("r", 4.5);
-    g.append("text").attr("class", "pin-label").attr("y", 14).text(ch.name);
+    g.append("circle").attr("class", "pin-dot");
     g.on("mouseenter", () => { if (!removing) showTip(ch.name, cx, cy - 12); });
     g.on("mouseleave", hideTip);
     g.on("click", e => {
