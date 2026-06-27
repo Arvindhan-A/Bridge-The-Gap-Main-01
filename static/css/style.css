@@ -38,6 +38,9 @@
   --scroll-t: rgba(212,90,138,0.2); --scroll-h: rgba(212,90,138,0.35);
   --hover-tint: rgba(212,90,138,0.12); --nav-bg: rgba(38,22,32,0.85);
 }
+.nav-logo-dark { display: none; }
+:root.dark-mode .nav-logo-light { display: none; }
+:root.dark-mode .nav-logo-dark { display: inline; }
 
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 body {
