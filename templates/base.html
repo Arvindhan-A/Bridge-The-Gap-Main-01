@@ -75,21 +75,23 @@
 
     <script>
     (function() {
-      const key = 'btg-dark-mode';
-      const root = document.documentElement;
-      const btn = document.getElementById('darkToggle');
-      const sun = btn && btn.querySelector('.sun-icon');
-      const moon = btn && btn.querySelector('.moon-icon');
+      var key = 'btg-dark-mode';
+      var root = document.documentElement;
+      var btn = document.getElementById('darkToggle');
+      var sun = btn && btn.querySelector('.sun-icon');
+      var moon = btn && btn.querySelector('.moon-icon');
       function setDark(enabled) {
-        root.toggleAttribute('data-theme', enabled);
+        root.classList.toggle('dark-mode', enabled);
         if (sun) sun.style.display = enabled ? 'none' : '';
         if (moon) moon.style.display = enabled ? '' : 'none';
       }
-      if (localStorage.getItem(key) === 'true') setDark(true);
-      if (btn) btn.addEventListener('click', () => {
-        const on = root.hasAttribute('data-theme');
+      try {
+        if (localStorage.getItem(key) === 'true') setDark(true);
+      } catch(e) {}
+      if (btn) btn.addEventListener('click', function() {
+        var on = root.classList.contains('dark-mode');
         setDark(!on);
-        localStorage.setItem(key, !on);
+        try { localStorage.setItem(key, !on); } catch(e) {}
       });
     })();
     </script>

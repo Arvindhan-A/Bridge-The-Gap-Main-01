@@ -23,7 +23,7 @@
 }
 
 /* ===== DARK MODE (maroon/pink theme) ===== */
-html[data-theme="dark"] {
+:root.dark-mode {
   --hue: 340;
   --bg: #1a1018; --bg-warm: #22121a; --surface: #261620;
   --glass: rgba(26,16,24,0.92);
@@ -839,7 +839,7 @@ img { max-width: 100%; display: block; }
 }
 .highlights-grid {
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
     gap:var(--gap);
     max-width:var(--w);
     margin:0 auto;
