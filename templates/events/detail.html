@@ -1,103 +1,339 @@
 {% extends "base.html" %}
 {% block title %}{{ event.title }} - Events{% endblock %}
 {% block content %}
-<a href="{{ url_for('public.events') }}" class="back">
-    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
-    Back to Events
-</a>
 
-{% if event.banner %}
-<div class="event-cover">
-    <img src="{{ url_for('static', filename=event.banner) }}" alt="{{ event.title }}">
-</div>
-{% endif %}
-
-<article class="post-hero">
-    <h1>{{ event.title }}</h1>
-    <div class="post-meta">
-        <span>by {{ event.author or 'Admin' }}</span>
-        <span>{{ event.created_at.strftime('%B %d, %Y') if event.created_at else event.date.strftime('%B %d, %Y') }}</span>
-        {% if chapter %}
-        <span>Hosted by <a href="{{ url_for('public.chapter_detail', slug=chapter.slug) }}" style="color:var(--accent);">{{ chapter.name }}</a></span>
-        {% endif %}
-        {% if event.status %}
-        <span class="event-status {{ event.status }}" style="font-size:0.75rem;">{{ event.status|title }}</span>
-        {% endif %}
-        {% if event.venue %} | <span>{{ event.venue }}</span>{% endif %}
-        {% if event.time %} | <span>{{ event.time }}</span>{% endif %}
-    </div>
-</article>
-
-<div class="post-content">
-    {% if event.content %}
-    {{ event.content | safe }}
+<!-- Hero banner -->
+<div class="detail-hero">
+    {% if event.banner %}
+    <div class="detail-hero-bg" style="background-image:url('{{ url_for('static', filename=event.banner) }}');"></div>
+    <div class="detail-hero-overlay"></div>
     {% else %}
-    <p>{{ event.description }}</p>
+    <div class="detail-hero-bg detail-hero-bg-gradient"></div>
+    <div class="detail-hero-overlay"></div>
+    {% endif %}
+    <div class="detail-hero-content">
+        <a href="{{ url_for('public.events') }}" class="detail-back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
+            All Events
+        </a>
+        <div class="detail-hero-text">
+            {% if chapter %}
+            <span class="detail-chapter-tag">{{ chapter.name }}</span>
+            {% endif %}
+            <h1>{{ event.title }}</h1>
+            <div class="detail-meta">
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    {{ event.created_at.strftime('%B %d, %Y') if event.created_at else event.date.strftime('%B %d, %Y') }}
+                </span>
+                {% if event.time %}
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {{ event.time }}
+                </span>
+                {% endif %}
+                {% if event.venue %}
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {{ event.venue }}
+                </span>
+                {% endif %}
+                <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    {{ event.author or 'Admin' }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Article body -->
+<div class="detail-body">
+    {% if event.status == 'upcoming' or event.status == 'ongoing' %}
+    <div class="detail-cta-bar">
+        <div>
+            <span class="detail-status-badge {{ event.status }}">{{ event.status|title }}</span>
+            {% if event.date %}
+            <span class="detail-countdown">{{ event.date.strftime('%A, %B %d, %Y') }}</span>
+            {% endif %}
+        </div>
+        {% if event.registration_link %}
+        <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Register Now</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="detail-article">
+        {% if event.content %}
+        {{ event.content | safe }}
+        {% else %}
+        <p>{{ event.description }}</p>
+        {% endif %}
+    </div>
+
+    {% if event.registration_link and event.status != 'upcoming' and event.status != 'ongoing' %}
+    <div class="detail-cta-card">
+        <h3>Interested?</h3>
+        <p>Learn more or get involved with this event.</p>
+        <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Visit Event Page</a>
+    </div>
+    {% endif %}
+
+    {% if event.images and event.images.count() %}
+    <section class="detail-gallery">
+        <h2>Gallery</h2>
+        <div class="detail-gallery-grid">
+            {% for img in event.images.order_by('display_order') %}
+            <a href="{{ url_for('static', filename=img.image) }}" class="detail-gallery-item" target="_blank">
+                <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
+                {% if img.caption %}<span class="detail-gallery-caption">{{ img.caption }}</span>{% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </section>
     {% endif %}
 </div>
 
-{% if event.registration_link %}
-<div style="text-align:center;margin-top:2rem;">
-    <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Register Now</a>
-</div>
-{% endif %}
-
-{% if event.images and event.images.count() %}
-<section class="event-section" style="margin-top:3rem;">
-    <h2>Gallery</h2>
-    <div class="event-gallery-grid">
-        {% for img in event.images.order_by('display_order') %}
-        <a href="{{ url_for('static', filename=img.image) }}" class="event-gallery-item" target="_blank" data-caption="{{ img.caption or '' }}">
-            <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
-            {% if img.caption %}<span class="event-gallery-caption">{{ img.caption }}</span>{% endif %}
-        </a>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
 <style>
-.event-cover {
-    max-width:720px;
-    margin:0 auto 2rem;
-    border-radius:var(--r-sm);
-    overflow:hidden;
-}
-.event-cover img {
+/* ===== HERO ===== */
+.detail-hero {
+    position:relative;
     width:100%;
-    display:block;
+    min-height:380px;
+    display:flex;
+    align-items:flex-end;
+    overflow:hidden;
+    border-radius:var(--r-lg);
+    margin-bottom:2rem;
 }
-.event-gallery-grid {
+.detail-hero-bg {
+    position:absolute;
+    inset:0;
+    background-size:cover;
+    background-position:center;
+}
+.detail-hero-bg-gradient {
+    background:linear-gradient(135deg,var(--accent),#4a2d7a 50%,#1a1333);
+}
+.detail-hero-overlay {
+    position:absolute;
+    inset:0;
+    background:linear-gradient(transparent 30%,rgba(0,0,0,0.7));
+}
+.detail-hero-content {
+    position:relative;
+    z-index:2;
+    width:100%;
+    padding:2rem var(--pad) 2.5rem;
+    max-width:var(--w);
+    margin:0 auto;
+}
+.detail-back {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    color:rgba(255,255,255,0.7);
+    font-size:0.8125rem;
+    font-weight:500;
+    margin-bottom:1.25rem;
+    transition:color 0.2s;
+    text-decoration:none;
+}
+.detail-back:hover { color:#fff; }
+.detail-hero-text { max-width:720px; }
+.detail-chapter-tag {
+    display:inline-block;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(8px);
+    color:#fff;
+    font-size:0.6875rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    padding:4px 12px;
+    border-radius:var(--r-pill);
+    margin-bottom:0.75rem;
+}
+.detail-hero-text h1 {
+    font-family:'Funnel Display',Georgia,serif;
+    font-size:clamp(1.75rem,4vw,2.75rem);
+    font-weight:500;
+    color:#fff;
+    line-height:1.1;
+    letter-spacing:-0.02em;
+    margin-bottom:1rem;
+}
+.detail-meta {
+    display:flex;
+    flex-wrap:wrap;
+    gap:1.25rem;
+    color:rgba(255,255,255,0.75);
+    font-size:0.8125rem;
+}
+.detail-meta span {
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+.detail-meta svg { width:15px;height:15px;opacity:0.7;flex-shrink:0; }
+
+/* ===== BODY ===== */
+.detail-body {
+    max-width:var(--w);
+    margin:0 auto;
+    padding:0 var(--pad) 4rem;
+}
+.detail-cta-bar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:1rem;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r-md);
+    padding:1rem 1.5rem;
+    margin-bottom:2rem;
+    box-shadow:var(--sh-card);
+}
+.detail-status-badge {
+    display:inline-block;
+    font-size:0.6875rem;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    padding:4px 12px;
+    border-radius:var(--r-pill);
+    margin-right:0.75rem;
+}
+.detail-status-badge.upcoming {
+    background:var(--accent-soft);
+    color:var(--accent);
+}
+.detail-status-badge.ongoing {
+    background:var(--green-soft);
+    color:var(--green);
+}
+.detail-countdown {
+    font-size:0.875rem;
+    color:var(--text-2);
+    font-weight:500;
+}
+.detail-article {
+    font-size:1rem;
+    line-height:1.85;
+    color:var(--text-2);
+    max-width:720px;
+}
+.detail-article p { margin-bottom:1rem; }
+.detail-article h2 {
+    font-family:'Funnel Display',Georgia,serif;
+    font-size:1.5rem;
+    font-weight:400;
+    color:var(--text-1);
+    margin:2rem 0 1rem;
+}
+.detail-article h3 {
+    font-size:1.125rem;
+    font-weight:600;
+    color:var(--text-1);
+    margin:1.5rem 0 0.75rem;
+}
+.detail-article ul,.detail-article ol {
+    margin-bottom:1rem;
+    padding-left:1.5rem;
+}
+.detail-article li { margin-bottom:0.5rem; }
+.detail-article img {
+    border-radius:var(--r-sm);
+    margin:1.5rem auto;
+    max-width:100%;
+}
+
+/* ===== CTA CARD ===== */
+.detail-cta-card {
+    background:linear-gradient(135deg,var(--accent-soft),var(--bg-warm));
+    border:1px solid var(--border-accent);
+    border-radius:var(--r-lg);
+    padding:2rem;
+    text-align:center;
+    margin-top:2.5rem;
+    max-width:720px;
+}
+.detail-cta-card h3 {
+    font-family:'Funnel Display',Georgia,serif;
+    font-size:1.25rem;
+    font-weight:500;
+    color:var(--text-1);
+    margin-bottom:0.5rem;
+}
+.detail-cta-card p {
+    font-size:0.875rem;
+    color:var(--text-3);
+    margin-bottom:1rem;
+}
+
+/* ===== GALLERY ===== */
+.detail-gallery {
+    margin-top:3rem;
+    max-width:720px;
+}
+.detail-gallery h2 {
+    font-family:'Funnel Display',Georgia,serif;
+    font-size:1.25rem;
+    font-weight:500;
+    color:var(--text-1);
+    margin-bottom:1rem;
+}
+.detail-gallery-grid {
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:var(--gap);
 }
-.event-gallery-item {
+.detail-gallery-item {
     position:relative;
     border-radius:var(--r-sm);
     overflow:hidden;
     aspect-ratio:4/3;
     display:block;
 }
-.event-gallery-item img {
+.detail-gallery-item img {
     width:100%;
     height:100%;
     object-fit:cover;
-    transition:transform 0.3s ease;
+    transition:transform 0.4s var(--ease);
 }
-.event-gallery-item:hover img {
-    transform:scale(1.05);
+.detail-gallery-item:hover img {
+    transform:scale(1.08);
 }
-.event-gallery-caption {
+.detail-gallery-caption {
     position:absolute;
     bottom:0;
     left:0;right:0;
     padding:0.5rem 0.75rem;
     background:linear-gradient(transparent,rgba(0,0,0,0.6));
     color:#fff;
-    font-size:0.8rem;
+    font-size:0.75rem;
 }
-@media(max-width:768px){.event-gallery-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:480px){.event-gallery-grid{grid-template-columns:1fr;}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+    .detail-hero{min-height:280px;border-radius:var(--r-md);}
+    .detail-hero-content{padding:1.5rem 1.25rem;}
+    .detail-hero-text h1{font-size:1.5rem;}
+    .detail-meta{gap:0.75rem;font-size:0.75rem;}
+    .detail-cta-bar{flex-direction:column;align-items:stretch;text-align:center;}
+    .detail-article{font-size:0.9375rem;}
+    .detail-gallery-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:480px){
+    .detail-hero{min-height:220px;}
+    .detail-hero-content{padding:1rem;}
+    .detail-hero-text h1{font-size:1.25rem;}
+    .detail-meta{gap:0.5rem;font-size:0.6875rem;flex-direction:column;}
+    .detail-cta-bar{padding:0.875rem 1rem;}
+    .detail-article{font-size:0.875rem;}
+    .detail-gallery-grid{grid-template-columns:1fr;}
+}
 </style>
 {% endblock %}
