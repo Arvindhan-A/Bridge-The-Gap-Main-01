@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} - Events{% endblock %}
+{% block content %}
+<a href="{{ url_for('public.events') }}" class="back">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
+    Back to Events
+</a>
+
+{% if event.banner %}
+<div class="event-cover">
+    <img src="{{ url_for('static', filename=event.banner) }}" alt="{{ event.title }}">
+</div>
+{% endif %}
+
+<article class="post-hero">
+    <h1>{{ event.title }}</h1>
+    <div class="post-meta">
+        <span>by {{ event.author or 'Admin' }}</span>
+        <span>{{ event.created_at.strftime('%B %d, %Y') if event.created_at else event.date.strftime('%B %d, %Y') }}</span>
+        {% if chapter %}
+        <span>Hosted by <a href="{{ url_for('public.chapter_detail', slug=chapter.slug) }}" style="color:var(--accent);">{{ chapter.name }}</a></span>
+        {% endif %}
+        {% if event.status %}
+        <span class="event-status {{ event.status }}" style="font-size:0.75rem;">{{ event.status|title }}</span>
+        {% endif %}
+        {% if event.venue %} | <span>{{ event.venue }}</span>{% endif %}
+        {% if event.time %} | <span>{{ event.time }}</span>{% endif %}
+    </div>
+</article>
+
+<div class="post-content">
+    {% if event.content %}
+    {{ event.content | safe }}
+    {% else %}
+    <p>{{ event.description }}</p>
+    {% endif %}
+</div>
+
+{% if event.registration_link %}
+<div style="text-align:center;margin-top:2rem;">
+    <a href="{{ event.registration_link }}" target="_blank" class="btn btn-accent">Register Now</a>
+</div>
+{% endif %}
+
+{% if event.images and event.images.count() %}
+<section class="event-section" style="margin-top:3rem;">
+    <h2>Gallery</h2>
+    <div class="event-gallery-grid">
+        {% for img in event.images.order_by('display_order') %}
+        <a href="{{ url_for('static', filename=img.image) }}" class="event-gallery-item" target="_blank" data-caption="{{ img.caption or '' }}">
+            <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
+            {% if img.caption %}<span class="event-gallery-caption">{{ img.caption }}</span>{% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<style>
+.event-cover {
+    max-width:720px;
+    margin:0 auto 2rem;
+    border-radius:var(--r-sm);
+    overflow:hidden;
+}
+.event-cover img {
+    width:100%;
+    display:block;
+}
+.event-gallery-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:var(--gap);
+}
+.event-gallery-item {
+    position:relative;
+    border-radius:var(--r-sm);
+    overflow:hidden;
+    aspect-ratio:4/3;
+    display:block;
+}
+.event-gallery-item img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:transform 0.3s ease;
+}
+.event-gallery-item:hover img {
+    transform:scale(1.05);
+}
+.event-gallery-caption {
+    position:absolute;
+    bottom:0;
+    left:0;right:0;
+    padding:0.5rem 0.75rem;
+    background:linear-gradient(transparent,rgba(0,0,0,0.6));
+    color:#fff;
+    font-size:0.8rem;
+}
+@media(max-width:768px){.event-gallery-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.event-gallery-grid{grid-template-columns:1fr;}}
+</style>
+{% endblock %}

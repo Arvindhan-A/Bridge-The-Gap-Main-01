@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Events - Bridge the Gap{% endblock %}
+{% block content %}
+<section class="hero hero-compact">
+    <p class="hero-tagline">Our Stories</p>
+    <h1>Events</h1>
+    <p class="hero-sub">Insights, stories, and updates from the Bridge the Gap Robotics Foundation.</p>
+</section>
+
+<section class="section">
+    <div class="blog-controls">
+        <div class="blog-search">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search events...">
+        </div>
+    </div>
+
+    {% if events %}
+    <div class="post-grid">
+        {% for event in events %}
+        <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="post-card">
+            <span class="post-date">{{ event.created_at.strftime('%Y-%m-%d') if event.created_at else event.date.strftime('%b %d, %Y') }}</span>
+            <h3>{{ event.title }}</h3>
+            <p>{{ event.content[:150] if event.content else event.description[:150] }}{% if (event.content or event.description)|length > 150 %}...{% endif %}</p>
+            <span class="post-author">by {{ event.author or 'Admin' }}</span>
+            {% if event.chapter_id %}<span class="post-chapter">{{ event.chapter.name if event.chapter else '' }}</span>{% endif %}
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="post-empty">
+        <h3>No events yet</h3>
+        <p>Be the first to share your engineering knowledge!</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="section cta-section">
+    <h2>Want to Help?</h2>
+    <p>We're always looking for volunteers to help at events and with kit preparation.</p>
+    <div class="cta-links">
+        <a href="https://forms.gle/UWsqRaCa9YAyUJLB8" class="btn btn-accent" target="_blank">Sign Up to Volunteer</a>
+    </div>
+</section>
+{% endblock %}
