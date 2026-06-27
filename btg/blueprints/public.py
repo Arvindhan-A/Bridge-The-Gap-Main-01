@@ -1,4 +1,5 @@
 import json
+import math
 from datetime import date
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 
@@ -7,8 +8,9 @@ from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcem
 
 public = Blueprint('public', __name__)
 
-# Cached world atlas data for homepage map (no external JS dependency at runtime)
+# Cached world atlas data for homepage map
 _world_atlas_cache = None
+
 
 def _get_world_atlas():
     global _world_atlas_cache
@@ -23,6 +25,130 @@ def _get_world_atlas():
     return _world_atlas_cache
 
 
+def _decode_arcs(topology):
+    """Decode TopoJSON arcs to lists of [lng, lat] coordinates."""
+    if not topology or 'arcs' not in topology:
+        return []
+    transform = topology.get('transform', {})
+    scale_x, scale_y = transform.get('scale', [1, 1])
+    trans_x, trans_y = transform.get('translate', [0, 0])
+    decoded = []
+    for arc in topology['arcs']:
+        points = []
+        x, y = 0, 0
+        for dx, dy in arc:
+            x += dx
+            y += dy
+            lng = x * scale_x + trans_x
+            lat = y * scale_y + trans_y
+            points.append([lng, lat])
+        decoded.append(points)
+    return decoded
+
+
+def _flatten_arcs(arc_indices):
+    """Recursively flatten TopoJSON arc indices to a list of integers."""
+    result = []
+    for item in arc_indices:
+        if isinstance(item, list):
+            result.extend(_flatten_arcs(item))
+        else:
+            result.append(item)
+    return result
+
+
+def _arc_to_svg_path(arc_indices, decoded_arcs):
+    """Convert TopoJSON arc references to an SVG path d string (equirectangular)."""
+    W, H = 960, 480
+    parts = []
+    for idx in _flatten_arcs(arc_indices):
+        if idx < 0:
+            idx = ~idx
+            arc = list(reversed(decoded_arcs[idx]))
+        else:
+            arc = decoded_arcs[idx]
+        for i, (lng, lat) in enumerate(arc):
+            x = (lng + 180) / 360 * W
+            y = (90 - lat) / 180 * H
+            if i == 0:
+                parts.append(f"M{x:.1f},{y:.1f}")
+            else:
+                parts.append(f"L{x:.1f},{y:.1f}")
+        parts.append("Z")
+    return " ".join(parts)
+
+
+def _point_in_polygon(lng, lat, polygon):
+    """Ray-casting point-in-polygon test."""
+    x, y = lng, lat
+    inside = False
+    n = len(polygon)
+    for i in range(n):
+        x1, y1 = polygon[i]
+        x2, y2 = polygon[(i + 1) % n]
+        if ((y1 > y) != (y2 > y)) and (x < (x2 - x1) * (y - y1) / (y2 - y1) + x1):
+            inside = not inside
+    return inside
+
+
+def _get_arc_points(arc_idx, decoded_arcs):
+    """Get decoded coordinate list for an arc (handles negative indices for reverse)."""
+    if arc_idx < 0:
+        idx = ~arc_idx
+        return list(reversed(decoded_arcs[idx]))
+    return decoded_arcs[arc_idx]
+
+
+def _country_contains_point(geom, decoded_arcs, pt_lng, pt_lat):
+    """Check if a TopoJSON geometry contains a point."""
+    def _first_arc_idx(arcs_struct):
+        """Get the first arc index from a nested arcs structure."""
+        for item in _flatten_arcs(arcs_struct):
+            return item
+        return None
+
+    first_idx = _first_arc_idx(geom.get('arcs', []))
+    if first_idx is not None:
+        outer_list = _get_arc_points(first_idx, decoded_arcs)
+        return _point_in_polygon(pt_lng, pt_lat, outer_list)
+    return False
+
+
+def _render_world_map_svg(topology, chapter_points, hue=262, W=960, H=480):
+    """Return an SVG string of the world map with highlighted chapter countries."""
+    decoded = _decode_arcs(topology)
+    if not decoded:
+        return ""
+
+    objects = topology.get('objects', {})
+    countries_data = None
+    for key in objects:
+        obj = objects[key]
+        if obj.get('type') == 'GeometryCollection':
+            countries_data = obj.get('geometries', [])
+            break
+    if not countries_data:
+        return ""
+
+    # Determine which country indices contain chapter points
+    highlighted = set()
+    for i, geom in enumerate(countries_data):
+        for pt_lng, pt_lat in chapter_points:
+            if _country_contains_point(geom, decoded, pt_lng, pt_lat):
+                highlighted.add(i)
+                break
+
+    parts = []
+    for i, geom in enumerate(countries_data):
+        d = _arc_to_svg_path(geom.get('arcs', []), decoded)
+        if not d:
+            continue
+        is_hl = i in highlighted
+        fill = f"hsla({hue}, 55%, 55%, 0.2)" if is_hl else f"hsla({hue}, 20%, 85%, 0.2)"
+        parts.append(f'<path d="{d}" fill="{fill}" stroke="none"/>')
+    return "".join(parts)
+
+
 # -- Homepage --
 
 
@@ -30,18 +156,11 @@ def _get_world_atlas():
 def home():
     highlights = Event.query.order_by(Event.created_at.desc()).limit(5).all()
     chapters = Chapter.query.filter_by(published=True).order_by(Chapter.name).all()
-    chapters_data = []
-    for ch in chapters:
-        chapters_data.append({
-            'id': ch.slug,
-            'name': ch.name,
-            'lat': ch.latitude or 0,
-            'lng': ch.longitude or 0,
-        })
+    chapter_points = [(ch.longitude or 0, ch.latitude or 0) for ch in chapters]
     world_atlas = _get_world_atlas()
+    map_svg = _render_world_map_svg(world_atlas, chapter_points)
     return render_template('home.html', highlights=highlights, chapters=chapters,
-                           chapters_json=json.dumps(chapters_data),
-                           world_atlas_json=json.dumps(world_atlas), hue=262)
+                           world_map_svg=map_svg)
 
 
 # -- Static informational pages --

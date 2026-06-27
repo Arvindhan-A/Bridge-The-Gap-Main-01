@@ -16,12 +16,17 @@
         <div class="shape shape-cross s11"></div>
         <div class="shape shape-cross s12"></div>
     </div>
-    <p class="hero-tagline">Building Futures, One Robot at a Time</p>
-    <h1>Bridge the Gap<br>Robotics Foundation</h1>
-    <p class="hero-sub">We donate commercial and custom-designed robotics kits to underserved communities — because every child deserves the chance to innovate.</p>
-    <div class="hero-links">
-        <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="btn btn-accent" target="_blank">Donate Now</a>
-        <a href="/kits" class="btn-outline">Our Kits</a>
+    {% if world_map_svg %}
+    <div class="hero-map-bg" aria-hidden="true">{{ world_map_svg|safe }}</div>
+    {% endif %}
+    <div class="hero-content">
+        <p class="hero-tagline">Building Futures, One Robot at a Time</p>
+        <h1>Bridge the Gap<br>Robotics Foundation</h1>
+        <p class="hero-sub">We donate commercial and custom-designed robotics kits to underserved communities — because every child deserves the chance to innovate.</p>
+        <div class="hero-links">
+            <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="btn btn-accent" target="_blank">Donate Now</a>
+            <a href="/kits" class="btn-outline">Our Kits</a>
+        </div>
     </div>
 </section>
 
@@ -166,19 +171,6 @@
 </section>
 {% endif %}
 
-{% if chapters %}
-<section class="section" style="overflow:hidden;padding-bottom:0;">
-    <div class="sec-header" style="margin-bottom:1.5rem;">
-        <span class="sec-label">Global Reach</span>
-        <h2 class="sec-title">Where We Are</h2>
-        <p class="sec-desc">Countries with active Bridge the Gap Robotics chapters are highlighted below.</p>
-    </div>
-    <div id="home-map" style="width:100%;max-width:860px;margin:0 auto;aspect-ratio:2/1;background:hsla(262,20%,85%,0.15);border-radius:var(--r-lg);">
-        <svg id="home-world-svg" viewBox="0 0 960 480" aria-label="World map highlighting BTG chapter countries" style="width:100%;height:100%;display:block;"></svg>
-    </div>
-</section>
-{% endif %}
-
 {% if highlights %}
 <section class="highlights-section">
     <div class="sec-header">
@@ -241,8 +233,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const slider = document.getElementById('hueSlider');
@@ -260,46 +250,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-/* ---- Homepage world map (subtle, no borders, no pins, just highlighted countries) ---- */
-(function() {
-    var container = document.getElementById("home-map");
-    var svg = d3.select("#home-world-svg");
-    if (svg.empty() || !container) return;
-    var W = 960, H = 480;
-    var hue = {{ hue }};
-    var chapterData = {{ chapters_json|safe }};
-    var world = {{ world_atlas_json|safe }};
-    if (!world || !world.objects) { container.style.display = 'none'; return; }
-
-    var countries = topojson.feature(world, world.objects.countries);
-    var projection = d3.geoNaturalEarth1().scale(153).translate([W / 2, H / 2]);
-    var geoPath = d3.geoPath(projection);
-    var gLand = svg.append("g");
-
-    var countryPaths = gLand.selectAll("path")
-        .data(countries.features)
-        .join("path")
-        .attr("d", geoPath)
-        .attr("fill", "hsla(" + hue + ", 20%, 85%, 0.3)")
-        .attr("stroke", "none");
-
-    var highlighted = {};
-    chapterData.forEach(function(ch) {
-        var pt = [ch.lng, ch.lat];
-        for (var i = 0; i < countries.features.length; i++) {
-            if (d3.geoContains(countries.features[i], pt)) {
-                highlighted[i] = true;
-                break;
-            }
-        }
-    });
-
-    countryPaths.filter(function(d, i) { return highlighted[i]; })
-        .attr("fill", "hsla(" + hue + ", 55%, 55%, 0.3)");
-
-    container.style.opacity = "0.45";
-    container.style.transition = "opacity 0.6s ease";
-})();
 </script>
 {% endblock %}
