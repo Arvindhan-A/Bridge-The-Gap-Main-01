@@ -179,20 +179,27 @@
         <p class="sec-desc">A look back at our events and kit donations across the community.</p>
     </div>
 
-    {% for event in highlights %}
-    <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="chapter-card" data-chapter="{{ loop.index0 }}" style="text-decoration:none;color:inherit;">
-        <div class="chapter-header">
-            <h3>{{ event.title }}</h3>
-            <span class="chapter-date">{{ event.created_at.strftime('%b %Y') if event.created_at else '' }}</span>
-        </div>
-        <p class="chapter-desc">{{ event.description[:200] if event.description else event.content[:200] }}{% if (event.description or event.content)|length > 200 %}...{% endif %}</p>
-        {% if event.banner %}
-        <div style="margin-top:0.75rem;">
-            <img src="{{ url_for('static', filename=event.banner) }}" alt="{{ event.title }}" style="width:100%;max-height:200px;object-fit:cover;border-radius:var(--r-sm);">
-        </div>
-        {% endif %}
-    </a>
-    {% endfor %}
+    <div class="highlights-grid">
+        {% for event in highlights %}
+        <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="highlight-card" style="text-decoration:none;color:inherit;">
+            <div class="highlight-media">
+                {% if event.banner %}
+                <img src="{{ url_for('static', filename=event.banner) }}" alt="{{ event.title }}" loading="lazy">
+                {% else %}
+                <div class="highlight-media-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                {% endif %}
+                <span class="highlight-badge">{{ event.created_at.strftime('%b %Y') if event.created_at else '' }}</span>
+            </div>
+            <div class="highlight-body">
+                <h3>{{ event.title }}</h3>
+                <p>{{ event.content[:150] if event.content else event.description[:150] }}{% if (event.content or event.description)|length > 150 %}…{% endif %}</p>
+                <span class="highlight-read">Read more</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
 </section>
 {% endif %}
 
