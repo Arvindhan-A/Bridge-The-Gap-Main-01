@@ -9,7 +9,7 @@
         </div>
         <div class="admin-header-actions">
             <a href="{{ url_for('admin.legacy') }}" class="btn-outline btn-sm">Blog &amp; Events</a>
-            <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm">Logout</a>
+            <a href="{{ url_for('secret.dashboard') }}" class="btn-outline btn-sm">Secret Panel</a>
         </div>
     </div>
 
@@ -78,10 +78,11 @@
             {% else %}
             <div class="admin-empty">No users yet.</div>
             {% endfor %}
-            <div class="admin-section-actions">
-                <a href="{{ url_for('admin.users') }}" class="btn-outline btn-sm">Manage Users</a>
-            </div>
+        <div class="admin-section-actions">
+            <a href="{{ url_for('admin.users') }}" class="btn-outline btn-sm">Manage Users</a>
+            <a href="{{ url_for('secret.roles') }}" class="btn-outline btn-sm">Roles &amp; Permissions</a>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
