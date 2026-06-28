@@ -89,22 +89,11 @@
 <script>
 document.querySelectorAll('.gallery-grid .chapter-slide').forEach(slide => {
     slide.addEventListener('click', function() {
-        const src = this.dataset.src;
-        const index = Array.from(this.parentElement.children).indexOf(this);
-        openLightbox(src, index);
+        const slides = document.querySelectorAll('.gallery-grid .chapter-slide');
+        const images = Array.from(slides).map(s => s.dataset.src);
+        const index = Array.from(slides).indexOf(this);
+        if (window.openLightbox) window.openLightbox(images, index);
     });
 });
-function openLightbox(src, startIndex) {
-    const slides = document.querySelectorAll('.gallery-grid .chapter-slide');
-    let index = startIndex;
-    const overlay = document.createElement('div');
-    overlay.id = 'eventLightbox';
-    overlay.style = 'display:flex;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:2rem;';
-    function updateImg() {
-        overlay.innerHTML = '<button onclick="document.getElementById(\'eventLightbox\').remove()" style="position:absolute;top:1.5rem;right:1.5rem;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><img src="' + slides[index].dataset.src + '" style="max-width:90vw;max-height:85vh;border-radius:var(--r-md);object-fit:contain;">';
-    }
-    updateImg();
-    document.body.appendChild(overlay);
-}
 </script>
 {% endblock %}

@@ -106,7 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateCounter() {
-        lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+        if (currentImages.length <= 1) {
+            lightboxCounter.textContent = '';
+        } else {
+            lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+        }
     }
 
     function navigate(direction) {
@@ -114,6 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxImg.src = currentImages[currentIndex];
         updateCounter();
     }
+
+    // Expose openLightbox globally for page-specific scripts
+    window.openLightbox = openLightbox;
 
     // Attach click events to chapter slides
     document.querySelectorAll('.chapter-track').forEach(track => {

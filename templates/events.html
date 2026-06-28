@@ -54,24 +54,15 @@
 {% block scripts %}
 {{ super() }}
 <script>
-document.querySelectorAll('.event-card-slide').forEach(slide => {
-    slide.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const src = this.dataset.src;
-        const existing = document.querySelector('.lightbox');
-        if (existing) {
-            document.querySelector('.lightbox-img').src = src;
-            existing.classList.add('open');
-        } else {
-            const lb = document.createElement('div');
-            lb.className = 'lightbox open';
-            lb.innerHTML = '<img class="lightbox-img" src="' + src + '" alt=""><button class="lightbox-close" onclick="this.parentElement.classList.remove(\'open\')">✕</button>';
-            lb.addEventListener('click', function(e) {
-                if (e.target === this) this.classList.remove('open');
-            });
-            document.body.appendChild(lb);
-        }
+document.querySelectorAll('.event-card').forEach(card => {
+    const slides = card.querySelectorAll('.event-card-slide');
+    const images = Array.from(slides).map(s => s.dataset.src);
+    slides.forEach((slide, i) => {
+        slide.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.openLightbox) window.openLightbox(images, i);
+        });
     });
 });
 </script>
