@@ -238,13 +238,14 @@ img { max-width: 100%; display: block; }
 }
 .nav-inner {
     max-width: var(--w); margin: 0 auto;
-    display: flex; align-items: center;
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center;
     padding: 0 var(--pad); height: 60px; gap: 1rem;
 }
 
 .nav-brand {
     display: flex; align-items: center; gap: 10px;
-    text-decoration: none; flex-shrink: 0;
+    text-decoration: none;
 }
 .nav-logo {
     height: 44px; width: auto;
@@ -265,17 +266,17 @@ img { max-width: 100%; display: block; }
 }
 
 .nav-links {
-    display: flex; gap: 2px; align-items: center;
-    flex-shrink: 1; min-width: 0;
+    display: flex; gap: 2px; justify-self: center;
+    align-items: center; flex-wrap: nowrap;
 }
 .nav-link {
     font-size: 0.8125rem; font-weight: 500; color: var(--text-3);
     text-decoration: none; padding: 6px 12px; border-radius: var(--r-pill);
-    transition: all 0.25s; white-space: nowrap; flex-shrink: 0;
+    transition: all 0.25s; white-space: nowrap;
 }
 .nav-link:hover { color: var(--text-1); background: var(--nav-bg); }
 .nav-link.active { color: var(--text-1); font-weight: 600; }
-.nav-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.nav-controls { display: flex; align-items: center; gap: 8px; justify-self: end; }
 
 /* Mobile nav toggle */
 .nav-toggle {
@@ -1200,7 +1201,7 @@ img { max-width: 100%; display: block; }
 @media (max-width: 768px) {
     :root { --pad: 1.25rem; --gap: 10px; }
     .main { padding-bottom: 3rem; }
-    .nav-inner { justify-content: space-between; }
+    .nav-inner { display: flex; justify-content: space-between; gap: 0.5rem; }
     .nav-links { display: none; margin-left: 0; }
     .nav-toggle { display: block; z-index: 101; }
     .nav-links.open {
