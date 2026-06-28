@@ -35,6 +35,9 @@
   height: auto;
   aspect-ratio: 2 / 1;
 }
+.map-sphere {
+  fill: #e8e2f2;
+}
 .country {
   fill: #d5cce6;
   stroke: #b8accc;
@@ -47,6 +50,16 @@
   stroke: rgba(168,158,200,.35);
   stroke-width: .35;
   stroke-dasharray: 2,7;
+}
+.map-borders {
+  fill: none;
+  stroke: rgba(100,93,119,.2);
+  stroke-width: 0.25;
+}
+.map-outline {
+  fill: none;
+  stroke: rgba(100,93,119,.45);
+  stroke-width: 0.7;
 }
 .chapter-pin { cursor: pointer; }
 .pin-ripple {
@@ -328,17 +341,26 @@
 }
 /* ===== DARK MODE MAP ===== */
 :root.dark-mode #bdg-map {
-  background: #1a1a1a;
-  box-shadow: 0 2px 12px rgba(0,0,0,.5);
+  background: #0c1520;
+  box-shadow: 0 2px 16px rgba(0,0,0,.6);
+}
+:root.dark-mode .map-sphere {
+  fill: #0f1923;
 }
 :root.dark-mode .country {
-  fill: #2a2a2a;
-  stroke: #3d3d3d;
+  fill: #1e2d3d;
+  stroke: #2a4055;
 }
-:root.dark-mode .country:hover { fill: #383838; }
-:root.dark-mode .country-highlighted { fill: #383838 !important; }
+:root.dark-mode .country:hover { fill: #283d52; }
+:root.dark-mode .country-highlighted { fill: #283d52 !important; }
 :root.dark-mode .graticule {
-  stroke: rgba(120,120,120,.25);
+  stroke: rgba(100,160,220,.12);
+}
+:root.dark-mode .map-borders {
+  stroke: rgba(100,160,220,.15);
+}
+:root.dark-mode .map-outline {
+  stroke: rgba(100,160,220,.25);
 }
 :root.dark-mode .pu-card {
   background: var(--surface);
@@ -379,6 +401,8 @@
   border-color: var(--border);
 }
 :root.dark-mode .pin-label { fill: var(--text-2); }
+:root.dark-mode .map-error-text { fill: rgba(150,170,200,.5); }
+:root.dark-mode .map-dots { fill: rgba(100,160,220,.06); }
 </style>
 {% endblock %}
 {% block content %}
@@ -505,7 +529,8 @@ const dotPat = defs.append("pattern")
   .attr("patternUnits", "userSpaceOnUse");
 dotPat.append("circle")
   .attr("cx", 1).attr("cy", 1).attr("r", 0.85)
-  .attr("fill", "rgba(103,80,164,.08)");
+  .attr("fill", "rgba(103,80,164,.08)")
+  .attr("class", "map-dots");
 
 const projection = d3.geoNaturalEarth1()
   .scale(153)
@@ -524,6 +549,7 @@ const gPins    = svg.append("g");
 gSphere.append("path")
   .datum({ type: "Sphere" })
   .attr("d", geoPath)
+  .attr("class", "map-sphere")
   .attr("fill", "#e8e2f2");
 
 gDots.append("path")
@@ -762,15 +788,11 @@ d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
 
     gBorders.append("path")
       .datum(borders)
-      .attr("fill",         "none")
-      .attr("stroke",       "rgba(100,93,119,.2)")
-      .attr("stroke-width", 0.25)
+      .attr("class", "map-borders")
       .attr("d", geoPath);
     gBorders.append("path")
       .datum({ type: "Sphere" })
-      .attr("fill",         "none")
-      .attr("stroke",       "rgba(100,93,119,.45)")
-      .attr("stroke-width", 0.7)
+      .attr("class", "map-outline")
       .attr("d", geoPath);
     drawPins();
 
@@ -806,6 +828,7 @@ d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
       .attr("fill", "rgba(157,151,174,.5)")
       .attr("font-size", 13)
       .attr("font-family", "system-ui, sans-serif")
+      .attr("class", "map-error-text")
       .text("Map data could not load \u2014 check your internet connection.");
     drawPins();
   });
