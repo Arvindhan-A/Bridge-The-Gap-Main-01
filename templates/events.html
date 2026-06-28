@@ -55,7 +55,9 @@
 {{ super() }}
 <script>
 document.querySelectorAll('.event-card-slide').forEach(slide => {
-    slide.addEventListener('click', function() {
+    slide.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         const src = this.dataset.src;
         const existing = document.querySelector('.lightbox');
         if (existing) {
