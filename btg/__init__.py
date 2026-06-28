@@ -125,6 +125,8 @@ def _seed_data():
     # Seed master admin
     admin = User.query.filter_by(role='super_admin').first()
     if not admin:
+        admin = User.query.filter_by(username='arvind').first()
+    if not admin:
         admin = User(
             name='Arvind',
             email='arvindtrial@gmail.com',
@@ -135,6 +137,7 @@ def _seed_data():
         )
         admin.set_password('trial@123')
         db.session.add(admin)
+        db.session.commit()
 
     if Chapter.query.count() == 0:
         samples = [
@@ -179,17 +182,19 @@ def _seed_data():
             db.session.add(pres)
 
         pres_pw2 = Config.SEED_PRESIDENT_PASSWORD or 'btg-bangalore-2026'
-        pres2 = User(
-            name='Bangalore President',
-            email='president.bangalore@bridgethegaprobotics.org',
-            username='bangalore_president',
-            role='chapter_president',
-            role_id=pres_role_id,
-            chapter_id=Chapter.query.filter_by(slug='bangalore').first().id,
-            must_change_password=True,
-        )
-        pres2.set_password(pres_pw2)
-        db.session.add(pres2)
+        pres2 = User.query.filter_by(role='chapter_president').first()
+        if not pres2:
+            pres2 = User(
+                name='Bangalore President',
+                email='president.bangalore@bridgethegaprobotics.org',
+                username='bangalore_president',
+                role='chapter_president',
+                role_id=pres_role_id,
+                chapter_id=Chapter.query.filter_by(slug='bangalore').first().id,
+                must_change_password=True,
+            )
+            pres2.set_password(pres_pw2)
+            db.session.add(pres2)
 
     # Seed sample event with gallery images
     if Event.query.filter_by(title='Robotics Workshop Series').first() is None:
