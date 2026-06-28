@@ -616,7 +616,6 @@ function drawPins() {
       .attr("class", "chapter-pin")
       .attr("transform", `translate(${cx},${cy})`);
     g.append("circle").attr("class", "pin-core").attr("r", 5);
-    g.append("text").attr("class", "pin-label").attr("y", 14).text(ch.name);
     g.on("mouseenter", () => { if (!removing) showTip(ch.name, cx, cy - 12); });
     g.on("mouseleave", hideTip);
     g.on("click", e => {
