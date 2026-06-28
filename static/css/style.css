@@ -1190,9 +1190,10 @@ img { max-width: 100%; display: block; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-    .nav-brand-text { display: none; }
     .nav-brand { gap: 8px; }
-    .nav-logo { height: 36px; }
+    .nav-logo { height: 34px; }
+    .nav-brand-text { font-size: 0.875rem; }
+    .nav-brand-sub { font-size: 0.5625rem; }
     .nav-link { font-size: 0.75rem; padding: 5px 8px; }
     .nav-controls .btn { display: none; }
 }
@@ -1291,8 +1292,9 @@ img { max-width: 100%; display: block; }
 @media (max-width: 480px) {
     :root { --pad: 1rem; }
     .nav-inner { padding: 0 1rem; gap: 0.5rem; }
-    .nav-logo { height: 36px; }
-    .nav-brand { gap: 8px; }
+    .nav-logo { height: 32px; }
+    .nav-brand { gap: 6px; }
+    .nav-brand-text { font-size: 0.8125rem; }
     .nav-links.open { padding: 4rem 1rem 1.25rem; }
     .nav-links.open .nav-link { padding: 0.875rem 1rem; font-size: 1rem; max-width: 280px; background: var(--accent-soft); }
     .nav-links.open .nav-link:hover { background: var(--accent); color: #fff; }
