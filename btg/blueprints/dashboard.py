@@ -203,6 +203,11 @@ def team_reorder():
 @dashboard.route('/dashboard/events')
 @chapter_president_required
 def events():
+    import os
+    events_folder = os.path.join('static', 'images', 'events')
+    existing_images = []
+    if os.path.exists(events_folder):
+        existing_images = [f for f in os.listdir(events_folder) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp'))]
     user = db.session.get(User, session['user_id'])
     chapter = get_president_chapter() if user.role != 'super_admin' else None
     chapter_id = chapter.id if chapter else request.args.get('chapter_id', type=int)
@@ -219,7 +224,7 @@ def events():
             edit_event = None
 
     evts = Event.query.filter_by(chapter_id=c.id).order_by(Event.date.desc()).all()
-    return render_template('dashboard/events.html', chapter=c, events=evts, edit_event=edit_event)
+    return render_template('dashboard/events.html', chapter=c, events=evts, edit_event=edit_event, existing_images=existing_images)
 
 
 @dashboard.route('/dashboard/events/create', methods=['POST'])
@@ -294,6 +299,13 @@ def event_update():
 
 
 def save_event_gallery(event):
+    import os
+    existing = request.form.getlist('existing_gallery')
+    for img_name in existing:
+        path = os.path.join('images', 'events', img_name)
+        if os.path.exists(os.path.join('static', path)):
+            img = EventImage(event_id=event.id, image=path, display_order=event.images.count())
+            db.session.add(img)
     files = request.files.getlist('gallery_images')
     for file in files:
         if file and file.filename:

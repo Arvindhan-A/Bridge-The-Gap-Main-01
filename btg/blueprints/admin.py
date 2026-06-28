@@ -335,9 +335,19 @@ def edit_post(event_id):
         return redirect(url_for('admin.legacy'))
     if request.method == 'POST':
         event.title = request.form['title']
-        event.content = request.form['content']
-        event.author = request.form.get('author', event.author or 'Admin')
-        event.description = request.form.get('content', '')[:300]
+        event.content = request.form.get('content', '')
+        event.author = request.form.get('author', 'Admin')
+        event.description = request.form.get('description', request.form.get('content', '')[:300])
+        event.venue = request.form.get('venue', '')
+        try:
+            event.date = datetime.strptime(request.form.get('date', ''), '%Y-%m-%d').date()
+        except (ValueError, KeyError):
+            pass
+        event.time = request.form.get('time', '')
+        event.status = request.form.get('status', event.status)
+        event.registration_link = request.form.get('registration_link', '')
+        if 'banner' in request.files and request.files['banner'].filename:
+            event.banner = save_upload(request.files['banner'], 'events')
         db.session.commit()
         flash('Event updated successfully!', 'success')
         return redirect(url_for('admin.legacy'))

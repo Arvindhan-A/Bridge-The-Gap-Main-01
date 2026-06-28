@@ -4,7 +4,7 @@ from datetime import date
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 
 from btg.extensions import db
-from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcement, Application
+from btg.models import User, Chapter, TeamMember, Event, EventImage, GalleryImage, Announcement, Application
 
 public = Blueprint('public', __name__)
 
@@ -158,8 +158,9 @@ def home():
     chapter_points = [(ch.longitude or 0, ch.latitude or 0) for ch in chapters]
     world_atlas = _get_world_atlas()
     map_svg = _render_world_map_svg(world_atlas, chapter_points)
+    highlights = Event.query.order_by(Event.created_at.desc()).limit(3).all()
     return render_template('home.html', chapters=chapters,
-                           world_map_svg=map_svg)
+                           world_map_svg=map_svg, highlights=highlights)
 
 
 # -- Static informational pages --
@@ -179,6 +180,24 @@ def partners():
 def contact():
     return render_template('contact.html')
 
+
+
+# -- Public events (all chapters) --
+
+
+@public.route('/events')
+def events():
+    all_events = Event.query.order_by(Event.created_at.desc()).all()
+    return render_template('events.html', events=all_events)
+
+
+@public.route('/events/<int:event_id>')
+def event_detail(event_id):
+    event = db.session.get(Event, event_id)
+    if not event:
+        abort(404)
+    images = event.images.order_by(EventImage.display_order).all()
+    return render_template('event_detail.html', event=event, images=images)
 
 
 # -- Public chapters --

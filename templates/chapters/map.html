@@ -49,14 +49,45 @@
   stroke-dasharray: 2,7;
 }
 .chapter-pin { cursor: pointer; }
-.pin-dot {
-  fill: var(--accent);
-  r: 3;
+.pin-ripple {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pin-ripple 3s ease-out infinite;
 }
-.chapter-pin:hover .pin-dot { fill: var(--accent-hover); }
-.chapter-pin.active .pin-dot { fill: var(--accent-hover); }
+.pin-ripple.r2 { animation-delay: 1.5s; }
+@keyframes pin-ripple {
+  0%   { transform: scale(1);   opacity: .75; }
+  100% { transform: scale(3.4); opacity: 0;   }
+}
+.pin-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  transition: stroke .2s;
+}
+.pin-core {
+  fill: var(--accent);
+  transition: fill .2s;
+}
+.chapter-pin:hover .pin-ring  { stroke: var(--accent-hover); }
+.chapter-pin:hover .pin-core  { fill:  var(--accent-hover); }
+.chapter-pin.active .pin-ring { stroke: var(--accent-hover); }
+.chapter-pin.active .pin-core { fill:  var(--accent-hover); }
 .pins-remove .chapter-pin { cursor: not-allowed; }
-.pins-remove .chapter-pin:hover .pin-dot { fill: #c23b3b; }
+.pins-remove .chapter-pin:hover .pin-ring { stroke: #c23b3b; }
+.pins-remove .chapter-pin:hover .pin-core { fill:  #c23b3b; }
+.pin-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  fill: var(--text-2);
+  text-anchor: middle;
+  dominant-baseline: hanging;
+  pointer-events: none;
+}
 #bdg-tip {
   position: absolute;
   pointer-events: none;
@@ -286,7 +317,7 @@
 }
 .chapter-card-item.is-highlighted .chapter-preview {
   border-color: var(--accent);
-  box-shadow: 0 4px 16px rgba(116,56,201,.15);
+  box-shadow: 0 4px 16px rgba(103,80,164,.15);
 }
 .chapter-preview-img-placeholder {
   height: 140px;
@@ -295,6 +326,59 @@
 @media (max-width: 768px) {
   .chapters-map-section { display: none; }
 }
+/* ===== DARK MODE MAP ===== */
+:root.dark-mode #bdg-map {
+  background: #1a1a1a;
+  box-shadow: 0 2px 12px rgba(0,0,0,.5);
+}
+:root.dark-mode .country {
+  fill: #2a2a2a;
+  stroke: #3d3d3d;
+}
+:root.dark-mode .country:hover { fill: #383838; }
+:root.dark-mode .country-highlighted { fill: #383838 !important; }
+:root.dark-mode .graticule {
+  stroke: rgba(120,120,120,.25);
+}
+:root.dark-mode .pu-card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+:root.dark-mode .pu-card::after {
+  background: var(--surface);
+}
+:root.dark-mode .pu-eyebrow { color: var(--accent); }
+:root.dark-mode .pu-name { color: var(--text-1); }
+:root.dark-mode .pu-pres-label { color: var(--text-3); }
+:root.dark-mode .pu-pres-name { color: var(--text-1); }
+:root.dark-mode #bdg-admin {
+  background: rgba(20,20,20,.96);
+  border-color: rgba(255,255,255,.12);
+}
+:root.dark-mode .adm-f {
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.15);
+  color: var(--text-1);
+}
+:root.dark-mode .adm-f::placeholder { color: var(--text-4); }
+:root.dark-mode .adm-status { color: var(--text-3); }
+:root.dark-mode .btn-rem {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.12);
+  color: var(--text-3);
+}
+:root.dark-mode .btn-rem:hover { background: rgba(255,255,255,.15); }
+:root.dark-mode .btn-export {
+  border-color: rgba(255,255,255,.15);
+  color: var(--text-3);
+}
+:root.dark-mode .btn-export:hover { border-color: var(--text-2); color: var(--text-2); }
+:root.dark-mode #bdg-tip {
+  background: var(--surface);
+  color: var(--text-1);
+  border-color: var(--border);
+}
+:root.dark-mode .pin-label { fill: var(--text-2); }
 </style>
 {% endblock %}
 {% block content %}
@@ -421,7 +505,7 @@ const dotPat = defs.append("pattern")
   .attr("patternUnits", "userSpaceOnUse");
 dotPat.append("circle")
   .attr("cx", 1).attr("cy", 1).attr("r", 0.85)
-  .attr("fill", "rgba(116,56,201,.08)");
+  .attr("fill", "rgba(103,80,164,.08)");
 
 const projection = d3.geoNaturalEarth1()
   .scale(153)
@@ -527,7 +611,11 @@ function drawPins() {
     const g = gPins.append("g")
       .attr("class", "chapter-pin")
       .attr("transform", `translate(${cx},${cy})`);
-    g.append("circle").attr("class", "pin-dot");
+    g.append("circle").attr("class", "pin-ripple").attr("r", 8);
+    g.append("circle").attr("class", "pin-ripple r2").attr("r", 8);
+    g.append("circle").attr("class", "pin-ring").attr("r", 9);
+    g.append("circle").attr("class", "pin-core").attr("r", 4.5);
+    g.append("text").attr("class", "pin-label").attr("y", 14).text(ch.name);
     g.on("mouseenter", () => { if (!removing) showTip(ch.name, cx, cy - 12); });
     g.on("mouseleave", hideTip);
     g.on("click", e => {

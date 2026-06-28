@@ -56,7 +56,8 @@ def dashboard():
 def users():
     users = User.query.order_by(User.name).all()
     chapters = Chapter.query.order_by(Chapter.name).all()
-    return render_template('admin/secret_users.html', users=users, chapters=chapters)
+    roles = Role.query.order_by(Role.name).all()
+    return render_template('admin/secret_users.html', users=users, chapters=chapters, roles=roles)
 
 
 @secret.route('/gokul007/users/create', methods=['POST'])
@@ -68,6 +69,7 @@ def user_create():
     password = request.form.get('password', '')
     role = request.form.get('role', 'chapter_president')
     chapter_id = request.form.get('chapter_id', type=int)
+    role_id = request.form.get('role_id', type=int)
 
     if not name or not email or not password or not username:
         flash('Name, email, username, and password are required.', 'error')
@@ -81,7 +83,7 @@ def user_create():
         flash('Username already taken.', 'error')
         return redirect(url_for('secret.users'))
 
-    user = User(name=name, email=email, username=username, role=role, chapter_id=chapter_id)
+    user = User(name=name, email=email, username=username, role=role, chapter_id=chapter_id, role_id=role_id)
     user.set_password(password)
     user.must_change_password = True
     db.session.add(user)
@@ -107,6 +109,7 @@ def user_edit(user_id):
         user.username = username
     user.role = request.form.get('role', user.role)
     user.chapter_id = request.form.get('chapter_id', type=int)
+    user.role_id = request.form.get('role_id', type=int) or None
     password = request.form.get('password', '')
     if password:
         user.set_password(password)

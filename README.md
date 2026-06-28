@@ -7,7 +7,7 @@ Bridge the Gap Robotics Foundation website with a complete Chapter Management Sy
 - **Backend**: Python + Flask (Werkzeug, Jinja2) with Blueprint architecture
 - **Database**: SQLite + SQLAlchemy ORM + Alembic migrations
 - **Auth**: Session-based with password hashing, CSRF protection, rate limiting
-- **Frontend**: HTML/CSS with responsive grid layouts, Google Fonts (Funnel Sans / Funnel Display)
+- **Frontend**: HTML/CSS with responsive grid layouts, Google Fonts (Google Sans)
 - **File Storage**: Local `static/uploads/` directory with magic-byte validation and EXIF stripping
 
 ## Quick Start

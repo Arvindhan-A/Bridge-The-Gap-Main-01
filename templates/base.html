@@ -28,6 +28,7 @@
                 <a href="/kits" class="nav-link{% if request.path == '/kits' %} active{% endif %}">Our Kits</a>
                 <a href="/chapters" class="nav-link{% if request.path.startswith('/chapters') %} active{% endif %}">Chapters</a>
                 <a href="/partners" class="nav-link{% if request.path == '/partners' %} active{% endif %}">Partners</a>
+                <a href="/events" class="nav-link{% if request.path.startswith('/events') %} active{% endif %}">Events</a>
                 {% if current_user %}
                 <a href="/dashboard" class="nav-link" style="color:var(--accent);font-weight:600;">Dashboard</a>
                 {% endif %}

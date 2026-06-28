@@ -1,6 +1,7 @@
 import os
 import json
 import logging
+import glob
 from flask import Flask, session, render_template
 from datetime import datetime
 
@@ -25,12 +26,16 @@ def create_app(config_class=Config):
     csrf.init_app(app)
     migrate.init_app(app, db)
 
-    # Ensure upload directories exist
-    for sub in ['logos', 'covers', 'team', 'events', 'events/gallery', 'gallery']:
-        os.makedirs(os.path.join(Config.UPLOAD_FOLDER, sub), exist_ok=True)
+    # Skip directory creation in serverless environments (read-only filesystem)
+    is_serverless = os.environ.get('VERCEL') or os.environ.get('NETLIFY') or os.environ.get('AWS_LAMBDA_FUNCTION_NAME')
+    
+    if not is_serverless:
+        # Ensure upload directories exist (only in non-serverless environments)
+        for sub in ['logos', 'covers', 'team', 'events', 'events/gallery', 'gallery']:
+            os.makedirs(os.path.join(Config.UPLOAD_FOLDER, sub), exist_ok=True)
 
-    # Ensure data directory exists
-    os.makedirs(os.path.join(BASE_DIR, 'data'), exist_ok=True)
+        # Ensure data directory exists
+        os.makedirs(os.path.join(BASE_DIR, 'data'), exist_ok=True)
 
     # Register blueprints
     app.register_blueprint(public)
@@ -80,7 +85,9 @@ def create_app(config_class=Config):
     # Initialize database
     with app.app_context():
         db.create_all()
-        _seed_data()
+        # Only seed data in non-serverless environments or on first deploy
+        if not is_serverless:
+            _seed_data()
 
     return app
 
@@ -183,5 +190,35 @@ def _seed_data():
         )
         pres2.set_password(pres_pw2)
         db.session.add(pres2)
+
+    # Seed sample event with gallery images
+    if Event.query.filter_by(title='Robotics Workshop Series').first() is None:
+        chennai = Chapter.query.filter_by(slug='chennai').first()
+        if chennai:
+            event = Event(
+                chapter_id=chennai.id,
+                title='Robotics Workshop Series',
+                description='Join us for an exciting robotics workshop series covering fundamentals to advanced concepts.',
+                content='<p>Learn to build and program robots with our hands-on workshops.</p><ul><li>Week 1: Introduction to Robotics</li><li>Week 2: Programming Basics</li><li>Week 3: Advanced Challenges</li></ul>',
+                venue='Chennai Community Center',
+                date=datetime(2026, 7, 15),
+                time='10:00 AM - 4:00 PM',
+                status='upcoming',
+                registration_link='https://example.com/register',
+            )
+            db.session.add(event)
+            db.session.commit()
+
+            # Add all images from static/images/events as gallery
+            images_dir = os.path.join(BASE_DIR, 'static', 'images', 'events')
+            for img_path in sorted(glob.glob(os.path.join(images_dir, '*.jpg')) + glob.glob(os.path.join(images_dir, '*.jpeg')) + glob.glob(os.path.join(images_dir, '*.png'))):
+                img_name = os.path.basename(img_path)
+                img = EventImage(
+                    event_id=event.id,
+                    image=f'images/events/{img_name}',
+                    display_order=event.images.count(),
+                )
+                db.session.add(img)
+            db.session.commit()
 
     db.session.commit()
