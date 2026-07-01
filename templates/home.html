@@ -1,17 +1,60 @@
 {% extends "base.html" %}
 {% block title %}Bridge the Gap Robotics Foundation{% endblock %}
 {% block content %}
-<section class="hero">
-    {% if world_map_svg %}
-    <div class="hero-map-bg" aria-hidden="true">{{ world_map_svg|safe }}</div>
-    {% endif %}
-    <div class="hero-content">
-        <p class="hero-tagline">Building Futures, One Robot at a Time</p>
-        <h1>Bridge the Gap<br>Robotics Foundation</h1>
-        <p class="hero-sub">Robotics kits for communities that need them most.</p>
-        <div class="hero-links">
-            <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="btn btn-accent" target="_blank">Donate Now</a>
-            <a href="/kits" class="btn-outline">Our Kits</a>
+<section class="hero-new">
+    <div class="hero-bg-effects" aria-hidden="true">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-glow hero-glow-3"></div>
+        <div class="hero-mesh"></div>
+    </div>
+
+    <div class="hero-image-full anim-hero-img" style="--d:0.2s" aria-hidden="true">
+        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&q=80&auto=format&fit=crop" alt="" loading="eager">
+        <div class="hero-photo-badge">
+            <span class="hero-badge-dot"></span>
+            Live Workshop
+        </div>
+    </div>
+
+    <div class="hero-new-inner">
+        <div class="hero-new-right">
+            <h1 class="hero-new-title anim-hero" style="--d:0.1s">Bridge the Gap<br><span class="hero-title-accent">Robotics Foundation</span></h1>
+            <p class="hero-new-sub anim-hero" style="--d:0.15s">Every child deserves the opportunity to build, create, and innovate through robotics education. We make that possible.</p>
+            <p class="hero-mission anim-hero" style="--d:0.2s">Every donation helps place robotics kits into classrooms that otherwise couldn't afford them.</p>
+            <div class="hero-new-ctas anim-hero" style="--d:0.25s">
+                <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="hero-btn hero-btn-primary" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    Donate Now
+                </a>
+                <a href="/kits" class="hero-btn hero-btn-secondary">
+                    Explore Our Kits
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+                </a>
+            </div>
+            <div class="hero-stats anim-hero" style="--d:0.3s">
+                <div class="hero-stat-card">
+                    <div class="hero-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <span class="hero-stat-val">--</span>
+                    <span class="hero-stat-lbl">Kits Delivered</span>
+                </div>
+                <div class="hero-stat-card">
+                    <div class="hero-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    </div>
+                    <span class="hero-stat-val">--</span>
+                    <span class="hero-stat-lbl">Student Chapters</span>
+                </div>
+                <div class="hero-stat-card">
+                    <div class="hero-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </div>
+                    <span class="hero-stat-val">--</span>
+                    <span class="hero-stat-lbl">Students Reached</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -114,15 +157,15 @@
     </div>
     <div class="home-grid-3">
         <div class="impact-card">
-            <span class="impact-val">$700+</span>
+            <span class="impact-val">--</span>
             <span class="impact-lbl">Dollars Raised</span>
         </div>
         <div class="impact-card">
-            <span class="impact-val">80+</span>
+            <span class="impact-val">--</span>
             <span class="impact-lbl">Kits Donated</span>
         </div>
         <div class="impact-card">
-            <span class="impact-val">100+</span>
+            <span class="impact-val">--</span>
             <span class="impact-lbl">Students Reached</span>
         </div>
     </div>

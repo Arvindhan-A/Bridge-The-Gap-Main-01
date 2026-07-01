@@ -69,12 +69,38 @@
     </main>
 
     <footer class="foot">
-        <p>&copy; 2026 Bridge the Gap Robotics Foundation. All rights reserved.</p>
-        <p class="foot-sub">
-            <a href="mailto:bridgethegap.robotics@gmail.com" style="color:var(--accent);text-decoration:none;">bridgethegap.robotics@gmail.com</a>
-            &nbsp;&middot;&nbsp;
-            <a href="https://instagram.com/" target="_blank" style="color:var(--accent);text-decoration:none;">@bridgethegap.robotics</a>
-        </p>
+        <div class="foot-inner">
+            <div class="foot-brand">
+                <a href="/" class="foot-logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BTG" class="foot-logo-img">
+                    <span class="foot-logo-text">Bridge the Gap<br><span>Robotics Foundation</span></span>
+                </a>
+                <p class="foot-desc">Building pathways to STEM education through robotics kits, workshops, and mentorship for underserved communities.</p>
+            </div>
+            <div class="foot-col">
+                <h4 class="foot-heading">Navigate</h4>
+                <a href="/" class="foot-link">Home</a>
+                <a href="/kits" class="foot-link">Our Kits</a>
+                <a href="/chapters" class="foot-link">Chapters</a>
+                <a href="/partners" class="foot-link">Partners</a>
+                <a href="/events" class="foot-link">Events</a>
+            </div>
+            <div class="foot-col">
+                <h4 class="foot-heading">Get Involved</h4>
+                <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="foot-link" target="_blank">Donate</a>
+                <a href="/chapters/apply" class="foot-link">Start a Chapter</a>
+                <a href="/partners" class="foot-link">Become a Partner</a>
+                <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">Contact Us</a>
+            </div>
+            <div class="foot-col">
+                <h4 class="foot-heading">Connect</h4>
+                <a href="https://instagram.com/" target="_blank" class="foot-link">Instagram</a>
+                <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">Email</a>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <p>&copy; 2026 Bridge the Gap Robotics Foundation. All rights reserved.</p>
+        </div>
     </footer>
 
     <script>
