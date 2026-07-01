@@ -4,114 +4,207 @@
 <div class="admin-wrap">
     <div class="admin-header">
         <div>
-            <h1>Admin Dashboard</h1>
-            <p style="color:var(--text-3);font-size:0.875rem;">Super admin panel</p>
+            <h1>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Admin Dashboard
+            </h1>
+            <p>Full system control</p>
         </div>
         <div class="admin-header-actions">
             <a href="{{ url_for('admin.legacy') }}" class="btn-outline btn-sm">Blog &amp; Events</a>
-            <a href="{{ url_for('secret.dashboard') }}" class="btn-outline btn-sm">Secret Panel</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm">Logout</a>
         </div>
     </div>
 
     <div class="admin-stats">
         <div class="stat-card">
-            <span class="stat-val">{{ total_chapters }}</span>
-            <span class="stat-lbl">Chapters</span>
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ chapters|length }}</span>
+                <span class="stat-lbl">Chapters</span>
+            </div>
         </div>
         <div class="stat-card">
-            <span class="stat-val">{{ total_members }}</span>
-            <span class="stat-lbl">Team Members</span>
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ users|length }}</span>
+                <span class="stat-lbl">Users</span>
+            </div>
         </div>
         <div class="stat-card">
-            <span class="stat-val">{{ total_events }}</span>
-            <span class="stat-lbl">Events</span>
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ all_members }}</span>
+                <span class="stat-lbl">Team Members</span>
+            </div>
         </div>
         <div class="stat-card">
-            <span class="stat-val">{{ total_apps }}</span>
-            <span class="stat-lbl">Applications</span>
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ all_events }}</span>
+                <span class="stat-lbl">Events</span>
+            </div>
         </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ all_gallery }}</span>
+                <span class="stat-lbl">Gallery</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ all_apps }}</span>
+                <span class="stat-lbl">Applications</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-nav">
+        <a href="{{ url_for('admin.users') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Manage Users</span>
+                <span class="dash-nav-desc">Create / edit / delete users &amp; chapter presidents</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.chapters') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Manage Chapters</span>
+                <span class="dash-nav-desc">Create / delete / publish chapters</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.analytics') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Analytics</span>
+                <span class="dash-nav-desc">View stats, per-chapter breakdowns</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.roles') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Roles &amp; Permissions</span>
+                <span class="dash-nav-desc">Create custom roles with granular permissions</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.applications') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Applications</span>
+                <span class="dash-nav-desc">Review membership applications</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.logs') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Audit Logs</span>
+                <span class="dash-nav-desc">Track all system changes</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.sessions') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Sessions</span>
+                <span class="dash-nav-desc">Active user sessions</span>
+            </div>
+        </a>
     </div>
 
     <div class="admin-grid">
         <div class="admin-section">
-            <h2>Chapters</h2>
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                All Chapters <span class="count">({{ chapters|length }})</span>
+            </h2>
             {% for chapter in chapters %}
             <div class="admin-item">
                 <div class="admin-item-info">
                     <div class="admin-item-title">{{ chapter.name }}</div>
-                    <div class="admin-item-date">{{ chapter.city }} &middot; {{ 'Published' if chapter.published else 'Unpublished' }}</div>
+                    <div class="admin-item-date">
+                        {{ chapter.city }} &middot;
+                        {{ chapter.status }} &middot;
+                        {{ 'Published' if chapter.published else 'Unpublished' }}
+                        &middot;
+                        {% set pres = users|selectattr('chapter_id', 'equalto', chapter.id)|selectattr('role', 'equalto', 'chapter_president')|list %}
+                        {% if pres %}President: {{ pres[0].name }}{% else %}<span style="color:var(--danger);">No president</span>{% endif %}
+                    </div>
                 </div>
                 <div class="admin-actions">
-                    <a href="{{ url_for('admin.chapter_edit', chapter_id=chapter.id) }}">Edit</a>
-                    <form method="POST" action="{{ url_for('admin.chapter_toggle', chapter_id=chapter.id) }}" style="display:inline;">
-                        <button type="submit">{{ 'Unpublish' if chapter.published else 'Publish' }}</button>
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                    </form>
+                    <a href="{{ url_for('admin.chapter_edit', chapter_id=chapter.id) }}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                        Edit
+                    </a>
                 </div>
             </div>
             {% else %}
             <div class="admin-empty">No chapters yet.</div>
             {% endfor %}
-            <div class="admin-section-actions">
-                <a href="{{ url_for('admin.chapter_create') }}" class="btn btn-sm">Create Chapter</a>
-                <a href="{{ url_for('admin.chapters') }}" class="btn-outline btn-sm">Manage All</a>
-            </div>
         </div>
 
         <div class="admin-section">
-            <h2>Recent Users</h2>
-            {% for user in users[:5] %}
-            <div class="admin-item">
-                <div class="admin-item-info">
-                    <div class="admin-item-title">{{ user.name }}</div>
-                    <div class="admin-item-date">{{ user.email }} &middot; {{ user.role.replace('_', ' ') }}</div>
-                </div>
-                <div class="admin-actions">
-                    <form method="POST" action="{{ url_for('admin.user_delete', user_id=user.id) }}" style="display:inline;" onsubmit="return confirm('Delete this user?')">
-                        <button type="submit" class="btn-delete">Delete</button>
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                    </form>
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                All Users <span class="count">({{ users|length }})</span>
+            </h2>
+            {% for user in users %}
+            <div class="user-card">
+                <div class="user-card-header">
+                    <div class="user-card-info">
+                        <div class="user-card-name">{{ user.name }}</div>
+                        <div class="user-card-meta">
+                            <span class="email">{{ user.email }}</span>
+                            <span>&middot;</span>
+                            <span class="username">@{{ user.username or '—' }}</span>
+                            <span class="user-role-badge {% if user.is_super_admin %}admin{% endif %}">{{ user.display_role_name }}</span>
+                            {% if user.chapter_id %}
+                            {% set ch_list = chapters|selectattr('id', 'equalto', user.chapter_id)|list %}
+                            <span class="user-chapter-badge">Chapter: {{ ch_list[0].name if ch_list else user.chapter_id }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="user-card-actions">
+                        {% if not user.is_super_admin %}
+                        <form method="POST" action="{{ url_for('admin.user_delete', user_id=user.id) }}" onsubmit="return confirm('Delete {{ user.name }}?')" style="display:inline;">
+                            <button type="submit" class="btn-delete">Delete</button>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
             {% else %}
-            <div class="admin-empty">No users yet.</div>
+            <div class="admin-empty">No users.</div>
             {% endfor %}
-        <div class="admin-section-actions">
-            <a href="{{ url_for('admin.users') }}" class="btn-outline btn-sm">Manage Users</a>
-            <a href="{{ url_for('secret.roles') }}" class="btn-outline btn-sm">Roles &amp; Permissions</a>
         </div>
     </div>
-
-    <div class="admin-section">
-        <h2>Applications</h2>
-        {% for chapter in chapters[:5] %}
-        {% set chapter_apps = chapter.applications|list %}
-        {% if chapter_apps %}
-        <div class="admin-item">
-            <div class="admin-item-info">
-                <div class="admin-item-title">{{ chapter.name }}</div>
-                <div class="admin-item-date">
-                    {{ chapter_apps|selectattr('status', 'equalto', 'pending')|list|length }} pending &middot;
-                    {{ chapter_apps|selectattr('status', 'equalto', 'accepted')|list|length }} accepted &middot;
-                    {{ chapter_apps|selectattr('status', 'equalto', 'rejected')|list|length }} rejected
-                </div>
-            </div>
-            <div class="admin-actions">
-                <a href="{{ url_for('admin.applications') }}" class="btn-outline btn-sm">View All</a>
-            </div>
-        </div>
-        {% endif %}
-        {% else %}
-        <div class="admin-empty">No applications yet.</div>
-        {% endfor %}
-        {% if chapters|length > 5 %}
-        <div class="admin-section-actions">
-            <a href="{{ url_for('admin.applications') }}" class="btn-outline btn-sm">View All Applications</a>
-        </div>
-        {% endif %}
-    </div>
-</div>
 </div>
 {% endblock %}

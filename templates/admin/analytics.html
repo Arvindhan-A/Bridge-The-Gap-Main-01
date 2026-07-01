@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block title %}Analytics | BTG{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+    <div class="admin-header">
+        <div>
+            <h1>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Analytics
+            </h1>
+            <p>View stats, per-chapter breakdowns</p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline btn-sm">Back to Panel</a>
+        </div>
+    </div>
+
+    <div class="dashboard-nav">
+        <a href="{{ url_for('admin.users') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Users</span>
+                <span class="dash-nav-desc">Manage all users</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.roles') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Roles</span>
+                <span class="dash-nav-desc">Configure permissions</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.logs') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Audit Logs</span>
+                <span class="dash-nav-desc">Track all system changes</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ stats.total_chapters }}</span>
+                <span class="stat-lbl">Chapters</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ stats.total_users }}</span>
+                <span class="stat-lbl">Users</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ stats.total_members }}</span>
+                <span class="stat-lbl">Team Members</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ stats.total_events }}</span>
+                <span class="stat-lbl">Events</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ stats.total_gallery }}</span>
+                <span class="stat-lbl">Gallery</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="stat-card-text">
+                <span class="stat-val">{{ stats.total_applications }}</span>
+                <span class="stat-lbl">Applications</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-grid">
+        <div class="admin-section">
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                Users by Role
+            </h2>
+            {% set max_role = stats.users_by_role.values()|max if stats.users_by_role.values()|list else 1 %}
+            {% for role_name, count in stats.users_by_role.items() %}
+            <div class="analytics-breakdown">
+                <span class="user-role-badge {% if role_name == 'super_admin' %}admin{% endif %}" style="min-width:120px;">{{ role_name.replace('_', ' ') }}</span>
+                <div class="analytics-breakdown-bar">
+                    <div class="analytics-breakdown-fill" style="width:{{ (count / max_role * 100)|int }}%;"></div>
+                </div>
+                <span class="analytics-breakdown-val">{{ count }}</span>
+            </div>
+            {% else %}
+            <div class="admin-empty">No users yet.</div>
+            {% endfor %}
+        </div>
+
+        <div class="admin-section">
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Chapters by Status
+            </h2>
+            {% set max_ch_status = stats.chapters_by_status.values()|max if stats.chapters_by_status.values()|list else 1 %}
+            {% for status_name, count in stats.chapters_by_status.items() %}
+            <div class="analytics-breakdown">
+                <span class="analytics-breakdown-label">{{ status_name }}</span>
+                <div class="analytics-breakdown-bar">
+                    <div class="analytics-breakdown-fill" style="width:{{ (count / max_ch_status * 100)|int }}%;"></div>
+                </div>
+                <span class="analytics-breakdown-val">{{ count }}</span>
+            </div>
+            {% else %}
+            <div class="admin-empty">No chapters yet.</div>
+            {% endfor %}
+        </div>
+
+        <div class="admin-section">
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Applications by Status
+            </h2>
+            {% set max_app_status = stats.apps_by_status.values()|max if stats.apps_by_status.values()|list else 1 %}
+            {% for status_name, count in stats.apps_by_status.items() %}
+            <div class="analytics-breakdown">
+                <span class="analytics-breakdown-label">
+                    <span class="user-role-badge {% if status_name == 'rejected' %}admin{% endif %}">{{ status_name }}</span>
+                </span>
+                <div class="analytics-breakdown-bar">
+                    <div class="analytics-breakdown-fill" style="width:{{ (count / max_app_status * 100)|int }}%;"></div>
+                </div>
+                <span class="analytics-breakdown-val">{{ count }}</span>
+            </div>
+            {% else %}
+            <div class="admin-empty">No applications yet.</div>
+            {% endfor %}
+        </div>
+
+        <div class="admin-section">
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                Per-Chapter Breakdown
+            </h2>
+            {% for ch in stats.per_chapter %}
+            <div class="admin-item">
+                <div class="admin-item-info">
+                    <div class="admin-item-title">{{ ch.name }}</div>
+                    <div class="admin-item-date" style="display:flex;gap:1rem;flex-wrap:wrap;">
+                        <span style="display:flex;align-items:center;gap:4px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            {{ ch.events }} events
+                        </span>
+                        <span style="display:flex;align-items:center;gap:4px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                            {{ ch.members }} members
+                        </span>
+                        <span style="display:flex;align-items:center;gap:4px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            {{ ch.applications }} applications
+                        </span>
+                        <span style="display:flex;align-items:center;gap:4px;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            {{ ch.gallery }} gallery
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="admin-empty">No chapters yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

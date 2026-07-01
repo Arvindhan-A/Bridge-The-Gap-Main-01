@@ -5,11 +5,30 @@ from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 
 from btg.extensions import db
-from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcement, Application
+from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcement, Application, Role, AuditLog, UserSession
 from btg.auth import login_required, super_admin_required
 from btg.services.upload import save_upload
 
 admin = Blueprint('admin', __name__)
+
+ARVIND_USERNAME = 'arvind'
+
+
+def log_audit(action, entity_type, entity_id=None, entity_name='', details=''):
+    user_id = session.get('user_id')
+    user = db.session.get(User, user_id) if user_id else None
+    entry = AuditLog(
+        user_id=user_id,
+        user_name=user.name if user else 'System',
+        action=action,
+        entity_type=entity_type,
+        entity_id=entity_id,
+        entity_name=entity_name,
+        details=details,
+        ip_address=request.remote_addr or '',
+    )
+    db.session.add(entry)
+    db.session.commit()
 
 
 def try_float(val):
@@ -55,22 +74,23 @@ def slugify(text):
 
 
 @admin.route('/admin')
-@login_required
+@super_admin_required
 def dashboard():
     user = db.session.get(User, session['user_id'])
     if user.role == 'chapter_president':
         return redirect(url_for('dashboard.overview'))
+    from btg.models import GalleryImage
     chapters = Chapter.query.order_by(Chapter.name).all()
     users = User.query.order_by(User.name).all()
-    total_chapters = Chapter.query.count()
-    total_members = TeamMember.query.count()
-    total_events = Event.query.count()
-    total_apps = Application.query.count()
+    all_members = TeamMember.query.count()
+    all_events = Event.query.count()
+    all_gallery = GalleryImage.query.count()
+    all_apps = Application.query.count()
     return render_template(
         'admin/dashboard.html',
         chapters=chapters, users=users,
-        total_chapters=total_chapters, total_members=total_members,
-        total_events=total_events, total_apps=total_apps
+        all_members=all_members, all_events=all_events,
+        all_gallery=all_gallery, all_apps=all_apps
     )
 
 
@@ -211,8 +231,9 @@ def chapter_toggle(chapter_id):
 def users():
     users = User.query.order_by(User.name).all()
     chapters = Chapter.query.order_by(Chapter.name).all()
+    roles = Role.query.order_by(Role.name).all()
     chapter_map = {c.id: c.name for c in chapters}
-    return render_template('admin/users.html', users=users, chapters=chapters, chapter_map=chapter_map)
+    return render_template('admin/users.html', users=users, chapters=chapters, chapter_map=chapter_map, roles=roles)
 
 
 @admin.route('/admin/users/create', methods=['POST'])
@@ -222,7 +243,7 @@ def user_create():
     email = request.form.get('email', '').strip().lower()
     username = request.form.get('username', '').strip().lower()
     password = request.form.get('password', '')
-    role = request.form.get('role', 'chapter_president')
+    role_id = request.form.get('role_id', type=int)
     chapter_id = request.form.get('chapter_id', type=int)
 
     if not name or not email or not password or not username:
@@ -237,7 +258,8 @@ def user_create():
         flash('Username already taken.', 'error')
         return redirect(url_for('admin.users'))
 
-    user = User(name=name, email=email, username=username, role=role, chapter_id=chapter_id)
+    user = User(name=name, email=email, username=username, role_id=role_id, chapter_id=chapter_id)
+    user.sync_role_string()
     user.set_password(password)
     user.must_change_password = True
     db.session.add(user)
@@ -254,7 +276,8 @@ def user_edit_page(user_id):
         flash('User not found.', 'error')
         return redirect(url_for('admin.users'))
     chapters = Chapter.query.order_by(Chapter.name).all()
-    return render_template('admin/user_edit.html', user=user, chapters=chapters)
+    roles = Role.query.order_by(Role.name).all()
+    return render_template('admin/user_edit.html', user=user, chapters=chapters, roles=roles)
 
 
 @admin.route('/admin/users/<int:user_id>/edit', methods=['POST'])
@@ -272,7 +295,8 @@ def user_edit(user_id):
             flash('Username already taken.', 'error')
             return redirect(url_for('admin.user_edit_page', user_id=user_id))
         user.username = username
-    user.role = request.form.get('role', user.role)
+    user.role_id = request.form.get('role_id', type=int) or None
+    user.sync_role_string()
     user.chapter_id = request.form.get('chapter_id', type=int)
     password = request.form.get('password', '')
     if password:
@@ -287,7 +311,7 @@ def user_edit(user_id):
 @super_admin_required
 def user_delete(user_id):
     user = db.session.get(User, user_id)
-    if user and user.role != 'super_admin':
+    if user and not user.is_super_admin:
         db.session.delete(user)
         db.session.commit()
         flash('User deleted.', 'info')
@@ -300,14 +324,14 @@ def user_delete(user_id):
 
 
 @admin.route('/admin/legacy')
-@login_required
+@super_admin_required
 def legacy():
     events = Event.query.order_by(Event.created_at.desc()).all()
     return render_template('admin.html', events=events)
 
 
 @admin.route('/admin/post/new', methods=['GET', 'POST'])
-@login_required
+@super_admin_required
 def new_post():
     if request.method == 'POST':
         event = Event(
@@ -327,7 +351,7 @@ def new_post():
 
 
 @admin.route('/admin/post/<int:event_id>/edit', methods=['GET', 'POST'])
-@login_required
+@super_admin_required
 def edit_post(event_id):
     event = db.session.get(Event, event_id)
     if not event:
@@ -355,7 +379,7 @@ def edit_post(event_id):
 
 
 @admin.route('/admin/post/<int:event_id>/delete', methods=['POST'])
-@login_required
+@super_admin_required
 def delete_post(event_id):
     event = db.session.get(Event, event_id)
     if event:
@@ -366,7 +390,7 @@ def delete_post(event_id):
 
 
 @admin.route('/admin/event/new', methods=['GET', 'POST'])
-@login_required
+@super_admin_required
 def new_event():
     if request.method == 'POST':
         try:
@@ -390,7 +414,7 @@ def new_event():
 
 
 @admin.route('/admin/event/<int:event_id>/edit', methods=['GET', 'POST'])
-@login_required
+@super_admin_required
 def edit_event(event_id):
     event = db.session.get(Event, event_id)
     if not event:
@@ -413,7 +437,7 @@ def edit_event(event_id):
 
 
 @admin.route('/admin/event/<int:event_id>/delete', methods=['POST'])
-@login_required
+@super_admin_required
 def delete_event(event_id):
     event = db.session.get(Event, event_id)
     if event:
@@ -450,3 +474,149 @@ def application_status(app_id):
     db.session.commit()
     flash('Application status updated.', 'success')
     return redirect(url_for('admin.applications'))
+
+
+# -- Role Management --
+
+
+@admin.route('/admin/roles')
+@super_admin_required
+def roles():
+    from btg.models import PERMISSIONS
+    all_roles = Role.query.order_by(Role.name).all()
+    return render_template('admin/roles.html', roles=all_roles, permissions=PERMISSIONS)
+
+
+@admin.route('/admin/roles/create', methods=['POST'])
+@super_admin_required
+def role_create():
+    from btg.models import PERMISSIONS
+    name = request.form.get('name', '').strip()
+    description = request.form.get('description', '').strip()
+    if not name:
+        flash('Role name is required.', 'error')
+        return redirect(url_for('admin.roles'))
+    if Role.query.filter_by(name=name).first():
+        flash('Role already exists.', 'error')
+        return redirect(url_for('admin.roles'))
+    selected = request.form.getlist('permissions')
+    role = Role(name=name, description=description)
+    role.set_permissions(selected)
+    db.session.add(role)
+    db.session.commit()
+    log_audit('create', 'role', role.id, role.name)
+    flash(f'Role "{name}" created!', 'success')
+    return redirect(url_for('admin.roles'))
+
+
+@admin.route('/admin/roles/<int:role_id>/edit', methods=['POST'])
+@super_admin_required
+def role_edit(role_id):
+    role = db.session.get(Role, role_id)
+    if not role:
+        flash('Role not found.', 'error')
+        return redirect(url_for('admin.roles'))
+    role.name = request.form.get('name', role.name)
+    role.description = request.form.get('description', '').strip()
+    selected = request.form.getlist('permissions')
+    role.set_permissions(selected)
+    db.session.commit()
+    log_audit('update', 'role', role.id, role.name)
+    flash(f'Role "{role.name}" updated!', 'success')
+    return redirect(url_for('admin.roles'))
+
+
+@admin.route('/admin/roles/<int:role_id>/delete', methods=['POST'])
+@super_admin_required
+def role_delete(role_id):
+    role = db.session.get(Role, role_id)
+    if not role:
+        flash('Role not found.', 'error')
+        return redirect(url_for('admin.roles'))
+    if role.is_system:
+        flash('System roles cannot be deleted.', 'error')
+        return redirect(url_for('admin.roles'))
+    log_audit('delete', 'role', role.id, role.name)
+    db.session.delete(role)
+    db.session.commit()
+    flash(f'Role "{role.name}" deleted.', 'info')
+    return redirect(url_for('admin.roles'))
+
+
+# -- Analytics --
+
+
+@admin.route('/admin/analytics')
+@super_admin_required
+def analytics():
+    from btg.models import GalleryImage
+    total_chapters = Chapter.query.count()
+    total_users = User.query.count()
+    total_members = TeamMember.query.count()
+    total_events = Event.query.count()
+    total_gallery = GalleryImage.query.count()
+    total_apps = Application.query.count()
+
+    users_by_role = {}
+    for user in User.query.all():
+        role_name = user.display_role_name
+        users_by_role[role_name] = users_by_role.get(role_name, 0) + 1
+
+    chapters_by_status = {}
+    for ch in Chapter.query.all():
+        chapters_by_status[ch.status] = chapters_by_status.get(ch.status, 0) + 1
+
+    per_chapter = []
+    for c in Chapter.query.order_by(Chapter.name).all():
+        per_chapter.append({
+            'name': c.name,
+            'members': TeamMember.query.filter_by(chapter_id=c.id).count(),
+            'events': Event.query.filter_by(chapter_id=c.id).count(),
+            'gallery': GalleryImage.query.filter_by(chapter_id=c.id).count(),
+            'applications': Application.query.filter_by(chapter_id=c.id).count(),
+        })
+
+    apps_by_status = {}
+    for app in Application.query.all():
+        apps_by_status[app.status] = apps_by_status.get(app.status, 0) + 1
+
+    stats = {
+        'total_chapters': total_chapters,
+        'total_users': total_users,
+        'total_members': total_members,
+        'total_events': total_events,
+        'total_gallery': total_gallery,
+        'total_applications': total_apps,
+        'users_by_role': users_by_role,
+        'chapters_by_status': chapters_by_status,
+        'per_chapter': per_chapter,
+        'apps_by_status': apps_by_status,
+    }
+    return render_template('admin/analytics.html', stats=stats)
+
+
+# -- Audit Logs --
+
+
+@admin.route('/admin/logs')
+@super_admin_required
+def logs():
+    from btg.models import AuditLog
+    page = request.args.get('page', 1, type=int)
+    logs = AuditLog.query.order_by(AuditLog.created_at.desc()).paginate(page=page, per_page=50)
+    return render_template('admin/logs.html', logs=logs)
+
+
+# -- Sessions --
+
+
+@admin.route('/admin/sessions')
+@super_admin_required
+def sessions():
+    from btg.models import UserSession
+    page = request.args.get('page', 1, type=int)
+    sessions_query = UserSession.query.order_by(UserSession.last_active.desc()).paginate(page=page, per_page=50)
+    user_map = {u.id: u.name for u in User.query.all()}
+    for s in sessions_query.items:
+        s.user_name = user_map.get(s.user_id, 'Unknown')
+    return render_template('admin/sessions.html', sessions=sessions_query)

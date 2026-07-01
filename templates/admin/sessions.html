@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Sessions | BTG{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+    <div class="admin-header">
+        <div>
+            <h1>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Sessions
+            </h1>
+            <p>Active user sessions</p>
+        </div>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline btn-sm">Back to Panel</a>
+        </div>
+    </div>
+
+    <div class="dashboard-nav">
+        <a href="{{ url_for('admin.users') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Users</span>
+                <span class="dash-nav-desc">Manage all users</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.roles') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Roles</span>
+                <span class="dash-nav-desc">Configure permissions</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.logs') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Audit Logs</span>
+                <span class="dash-nav-desc">Track all system changes</span>
+            </div>
+        </a>
+    </div>
+
+    <div class="admin-section">
+        <h2>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Active Sessions <span class="count">({{ sessions.total }})</span>
+        </h2>
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>IP Address</th>
+                    <th>Browser</th>
+                    <th>Last Active</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions.items %}
+                <tr>
+                    <td style="font-weight:500;color:var(--text-1);">{{ session.user_name }}</td>
+                    <td style="font-family:monospace;font-size:0.75rem;color:var(--text-3);">{{ session.ip_address }}</td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ session.user_agent[:60] }}{% if session.user_agent|length > 60 %}...{% endif %}</td>
+                    <td style="white-space:nowrap;color:var(--text-3);">{{ session.last_active.strftime('%b %d, %H:%M') }}</td>
+                    <td>
+                        <span class="user-role-badge {% if not session.is_active %}admin{% endif %}">{{ 'Active' if session.is_active else 'Expired' }}</span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--text-3);">No sessions yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if sessions.pages > 1 %}
+        <div class="dash-pagination">
+            {% if sessions.has_prev %}
+            <a href="?page={{ sessions.prev_num }}" class="btn-outline btn-sm">Previous</a>
+            {% endif %}
+            <span>Page {{ sessions.page }} of {{ sessions.pages }}</span>
+            {% if sessions.has_next %}
+            <a href="?page={{ sessions.next_num }}" class="btn-outline btn-sm">Next</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

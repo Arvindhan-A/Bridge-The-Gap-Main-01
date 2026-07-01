@@ -19,6 +19,24 @@ class User(db.Model):
     must_change_password = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    custom_role = db.relationship('Role', backref='users', lazy=True)
+
+    @property
+    def is_super_admin(self):
+        if self.custom_role and self.custom_role.name == 'Super Admin':
+            return True
+        return self.role == 'super_admin'
+
+    @property
+    def display_role_name(self):
+        if self.custom_role:
+            return self.custom_role.name
+        return self.role.replace('_', ' ').title()
+
+    def sync_role_string(self):
+        if self.custom_role:
+            self.role = self.custom_role.name.lower().replace(' ', '_')
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
         self.must_change_password = False
@@ -47,8 +65,6 @@ class Role(db.Model):
     permissions = db.Column(db.Text, default='[]')
     is_system = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    users = db.relationship('User', backref='custom_role', lazy='dynamic')
 
     def get_permissions(self):
         return json.loads(self.permissions) if self.permissions else []
@@ -188,3 +204,33 @@ class Application(db.Model):
     motivation = db.Column(db.Text, default='')
     status = db.Column(db.String(20), default='pending')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class AuditLog(db.Model):
+    __tablename__ = 'audit_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_name = db.Column(db.String(120), default='System')
+    action = db.Column(db.String(50), nullable=False)
+    entity_type = db.Column(db.String(50), nullable=False)
+    entity_id = db.Column(db.Integer, nullable=True)
+    entity_name = db.Column(db.String(200), default='')
+    details = db.Column(db.Text, default='')
+    ip_address = db.Column(db.String(50), default='')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref='audit_logs', lazy=True)
+
+
+class UserSession(db.Model):
+    __tablename__ = 'user_sessions'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    session_token = db.Column(db.String(256), unique=True, nullable=False)
+    ip_address = db.Column(db.String(50), default='')
+    user_agent = db.Column(db.String(500), default='')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    last_active = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+
+    user = db.relationship('User', backref='sessions', lazy=True)

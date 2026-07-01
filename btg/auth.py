@@ -26,9 +26,7 @@ def super_admin_required(f):
             flash('Please log in first.', 'warning')
             return redirect(url_for('auth.login'))
         user = db.session.get(User, session['user_id'])
-        if not user or user.role != 'super_admin':
-            if user and user.custom_role and user.custom_role.has_permission('manage_roles'):
-                return f(*args, **kwargs)
+        if not user or not user.is_super_admin:
             flash('Access denied. Super admin privileges required.', 'error')
             return redirect(url_for('dashboard.overview'))
         return f(*args, **kwargs)
@@ -42,9 +40,7 @@ def chapter_president_required(f):
             flash('Please log in first.', 'warning')
             return redirect(url_for('auth.login'))
         user = db.session.get(User, session['user_id'])
-        if not user or user.role not in ('chapter_president', 'super_admin'):
-            if user and user.custom_role and user.custom_role.has_permission('manage_events'):
-                return f(*args, **kwargs)
+        if not user or not (user.is_super_admin or user.role in ('chapter_president',)):
             flash('Access denied.', 'error')
             return redirect(url_for('public.home'))
         return f(*args, **kwargs)

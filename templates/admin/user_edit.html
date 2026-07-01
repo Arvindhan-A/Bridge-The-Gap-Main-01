@@ -1,50 +1,103 @@
 {% extends "base.html" %}
 {% block title %}Edit User | BTG{% endblock %}
 {% block content %}
-<div class="form-page" style="max-width:480px;">
-    <a href="{{ url_for('admin.users') }}" class="back">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15,18 9,12 15,6"/></svg>
-        Back to Users
-    </a>
-    <h1>Edit User</h1>
-    <form method="POST" action="{{ url_for('admin.user_edit', user_id=user.id) }}">
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" name="name" value="{{ user.name }}" required>
+<div class="admin-wrap">
+    <div class="admin-header">
+        <div>
+            <h1>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                Edit User
+            </h1>
+            <p>{{ user.name }}</p>
         </div>
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" value="{{ user.email }}" required>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.users') }}" class="btn-outline btn-sm">Back to Users</a>
         </div>
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" name="username" value="{{ user.username or '' }}" required>
+    </div>
+
+    <div class="admin-grid">
+        <div class="admin-section">
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                User Details
+            </h2>
+            <form method="POST" action="{{ url_for('admin.user_edit', user_id=user.id) }}" style="display:grid;grid-template-columns:1fr;gap:0.75rem;">
+                <div class="form-group" style="margin:0;">
+                    <label style="font-size:0.75rem;font-weight:600;color:var(--text-3);margin-bottom:4px;display:block;">Name</label>
+                    <input type="text" name="name" value="{{ user.name }}" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label style="font-size:0.75rem;font-weight:600;color:var(--text-3);margin-bottom:4px;display:block;">Email</label>
+                    <input type="email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label style="font-size:0.75rem;font-weight:600;color:var(--text-3);margin-bottom:4px;display:block;">Username</label>
+                    <input type="text" name="username" value="{{ user.username or '' }}">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label style="font-size:0.75rem;font-weight:600;color:var(--text-3);margin-bottom:4px;display:block;">New Password <span style="font-weight:400;color:var(--text-4);">(leave blank to keep)</span></label>
+                    <input type="password" name="password" placeholder="New password">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label style="font-size:0.75rem;font-weight:600;color:var(--text-3);margin-bottom:4px;display:block;">Role</label>
+                    <select name="role_id" required>
+                        <option value="">Select role</option>
+                        {% for r in roles %}
+                        <option value="{{ r.id }}" {% if user.role_id == r.id %}selected{% endif %}>{{ r.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label style="font-size:0.75rem;font-weight:600;color:var(--text-3);margin-bottom:4px;display:block;">Chapter</label>
+                    <select name="chapter_id">
+                        <option value="">No chapter</option>
+                        {% for ch in chapters %}
+                        <option value="{{ ch.id }}" {% if user.chapter_id == ch.id %}selected{% endif %}>{{ ch.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-top:0.5rem;">
+                    <button type="submit" class="btn btn-sm">Save Changes</button>
+                </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            </form>
         </div>
-        <div class="form-group">
-            <label>Role</label>
-            <select name="role">
-                <option value="chapter_president" {% if user.role == 'chapter_president' %}selected{% endif %}>Chapter President</option>
-                <option value="super_admin" {% if user.role == 'super_admin' %}selected{% endif %}>Super Admin</option>
-            </select>
+
+        <div class="admin-section">
+            <h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                Current Info
+            </h2>
+            <div class="user-card" style="margin-bottom:0;">
+                <div class="user-card-header">
+                    <div class="user-card-info">
+                        <div class="user-card-name">{{ user.name }}</div>
+                        <div class="user-card-meta">
+                            <span class="email">{{ user.email }}</span>
+                            <span>&middot;</span>
+                            <span class="username">@{{ user.username or '—' }}</span>
+                        </div>
+                        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">
+                            <span class="user-role-badge {% if user.is_super_admin %}admin{% endif %}">{{ user.display_role_name }}</span>
+                            {% if user.chapter_id %}
+                            {% set ch_list = chapters|selectattr('id', 'equalto', user.chapter_id)|list %}
+                            <span class="user-chapter-badge">Chapter: {{ ch_list[0].name if ch_list else user.chapter_id }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--text-3);">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                        <span>Created</span>
+                        <span>{{ user.created_at.strftime('%b %d, %Y') if user.created_at else '—' }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span>Must change password</span>
+                        <span>{{ 'Yes' if user.must_change_password else 'No' }}</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label>Chapter</label>
-            <select name="chapter_id">
-                <option value="">No chapter</option>
-                {% for ch in chapters %}
-                <option value="{{ ch.id }}" {% if user.chapter_id == ch.id %}selected{% endif %}>{{ ch.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label>New Password <span style="font-weight:400;color:var(--text-3);">(leave blank to keep current)</span></label>
-            <input type="password" name="password" placeholder="••••••••">
-        </div>
-        <div class="form-actions">
-            <button type="submit" class="btn">Save Changes</button>
-            <a href="{{ url_for('admin.users') }}" class="btn-outline">Cancel</a>
-        </div>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    </form>
+    </div>
 </div>
 {% endblock %}
