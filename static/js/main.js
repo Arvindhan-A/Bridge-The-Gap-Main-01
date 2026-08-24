@@ -48,16 +48,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.1 });
+    // Scroll reveal (with staggered children)
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealTargets = document.querySelectorAll('.section, .band, .chapter-card');
 
-    document.querySelectorAll('.section, .chapter-card').forEach(s => observer.observe(s));
+    // Tag direct children of card grids so they can fade in one after another.
+    // Only do this when the grid sits inside something we actually observe,
+    // otherwise the children would be hidden with nothing to reveal them.
+    if (!reduceMotion) {
+        document.querySelectorAll(
+            '.home-grid-2, .home-grid-3, .home-grid-4, .home-grid-5, .big-stats, ' +
+            '.how-strip, .quote-grid, .pillar-grid, .list-tiles, .steps-grid, ' +
+            '.kit-grid, .advisor-grid, .lp-wwd-cards, .lp-stats-right'
+        ).forEach(grid => {
+            if (!grid.closest('.section, .band, .chapter-card')) return;
+            Array.from(grid.children).forEach((child, i) => {
+                child.classList.add('reveal-child');
+                child.style.setProperty('--stagger', Math.min(i * 70, 420) + 'ms');
+            });
+        });
+    }
+
+    if (reduceMotion) {
+        // Show everything immediately; the CSS also guards this.
+        revealTargets.forEach(s => s.classList.add('visible'));
+    } else {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);  // reveal once, then stop watching
+                }
+            });
+            // rootMargin fires slightly before the section scrolls into view, and
+            // a low threshold keeps very tall sections from never qualifying.
+        }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+        revealTargets.forEach(s => observer.observe(s));
+
+        // Anything already on screen at load should not wait for a scroll event
+        requestAnimationFrame(() => {
+            revealTargets.forEach(s => {
+                const r = s.getBoundingClientRect();
+                if (r.top < window.innerHeight && r.bottom > 0) s.classList.add('visible');
+            });
+        });
+    }
 
     // Active nav link
     const currentPath = window.location.pathname;

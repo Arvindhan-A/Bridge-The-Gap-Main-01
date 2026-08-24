@@ -96,6 +96,8 @@ class Chapter(db.Model):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     address = db.Column(db.String(500), default='')
+    timezone = db.Column(db.String(20), default='')
+    tags = db.Column(db.String(300), default='')
     google_maps = db.Column(db.String(500), default='')
     instagram = db.Column(db.String(500), default='')
     linkedin = db.Column(db.String(500), default='')
@@ -270,3 +272,63 @@ class SiteStat(db.Model):
             db.session.add(stat)
             db.session.commit()
         return stat
+
+
+class Curriculum(db.Model):
+    __tablename__ = 'curricula'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, default='')
+    status = db.Column(db.String(20), default='in_progress')  # complete | in_progress
+    category = db.Column(db.String(120), default='')
+    grade_level = db.Column(db.String(60), default='')
+    file_url = db.Column(db.String(500), default='')
+    published = db.Column(db.Boolean, default=True)
+    display_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Curriculum {self.title}>'
+
+
+class Advisor(db.Model):
+    __tablename__ = 'advisors'
+    id = db.Column(db.Integer, primary_key=True)
+    slug = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    title = db.Column(db.String(200), default='')
+    avatar = db.Column(db.String(500), default='')
+    bio = db.Column(db.Text, default='')
+    published = db.Column(db.Boolean, default=True)
+    display_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    initiatives = db.relationship('AdvisorInitiative', backref='advisor',
+                                  lazy='dynamic', cascade='all, delete-orphan')
+
+    def delete_files(self):
+        delete_upload(self.avatar)
+
+    def __repr__(self):
+        return f'<Advisor {self.name}>'
+
+
+class Subscriber(db.Model):
+    __tablename__ = 'subscribers'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(200), unique=True, nullable=False)
+    source = db.Column(db.String(60), default='')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Subscriber {self.email}>'
+
+
+class AdvisorInitiative(db.Model):
+    __tablename__ = 'advisor_initiatives'
+    id = db.Column(db.Integer, primary_key=True)
+    advisor_id = db.Column(db.Integer, db.ForeignKey('advisors.id'), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    role = db.Column(db.String(120), default='')
+    description = db.Column(db.Text, default='')
+    display_order = db.Column(db.Integer, default=0)

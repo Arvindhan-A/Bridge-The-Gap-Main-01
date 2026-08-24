@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Curriculum Library | Bridge the Gap Robotics{% endblock %}
+{% block content %}
+
+<section class="hero hero-compact">
+    <p class="hero-tagline">Open Source</p>
+    <h1>Curriculum Library</h1>
+    <p class="hero-sub">A growing library of open-source STEM curriculum developed by Bridge the Gap volunteers and chapter leaders.</p>
+</section>
+
+<section class="section band band-teal" style="border-top:none;">
+    {% if items %}
+    <div class="pill-tabs" id="curriculumFilters">
+        <button class="pill-tab is-on" data-filter="all">All</button>
+        <button class="pill-tab" data-filter="complete">Complete</button>
+        <button class="pill-tab" data-filter="in_progress">In Progress</button>
+    </div>
+
+    <div class="home-grid-3" id="curriculumGrid" style="margin-top:2rem;">
+        {% for item in items %}
+        {% set st = item.status or 'in_progress' %}
+        {% if item.file_url %}
+        <a href="{{ item.file_url }}" target="_blank" rel="noopener"
+           class="home-card curriculum-item" data-status="{{ st }}"
+           style="text-decoration:none;color:inherit;display:block;">
+        {% else %}
+        <div class="home-card curriculum-item" data-status="{{ st }}">
+        {% endif %}
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:0.7rem;">
+                <h3 style="margin:0;">{{ item.title }}</h3>
+                <span class="status-badge {{ st }}">{{ 'Complete' if st == 'complete' else 'In Progress' }}</span>
+            </div>
+            <p>{{ item.description }}</p>
+            {% if item.grade_level or item.category %}
+            <div class="tag-row" style="margin-top:0.85rem;">
+                {% if item.category %}<span class="tag tag-purple">{{ item.category }}</span>{% endif %}
+                {% if item.grade_level %}<span class="tag tag-teal">{{ item.grade_level }}</span>{% endif %}
+            </div>
+            {% endif %}
+        {% if item.file_url %}</a>{% else %}</div>{% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        </div>
+        <h3>Curriculum coming soon.</h3>
+        <p>Our volunteers are writing the first modules right now. Want to be notified when they land?</p>
+        <form class="newsletter-form" method="POST" action="{{ url_for('public.subscribe') }}">
+            <input type="email" name="email" placeholder="you@example.com" aria-label="Email address" required>
+            <button type="submit">Notify Me</button>
+            <input type="hidden" name="source" value="curriculum">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        </form>
+    </div>
+    {% endif %}
+</section>
+
+<section class="cta-banner">
+    <div class="cta-banner-inner">
+        <h2>Want to write curriculum with us?</h2>
+        <p>Every module here was written by a student volunteer. If you've taught a lesson that worked, help us turn it into something every chapter can use.</p>
+        <a href="mailto:bridgethegap.robotics@gmail.com" class="lp-btn">
+            Get in Touch
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const bar = document.getElementById('curriculumFilters');
+    if (!bar) return;
+    bar.addEventListener('click', e => {
+        const pill = e.target.closest('.pill-tab');
+        if (!pill) return;
+        const want = pill.dataset.filter;
+        bar.querySelectorAll('.pill-tab').forEach(p => p.classList.toggle('is-on', p === pill));
+        document.querySelectorAll('.curriculum-item').forEach(card => {
+            card.style.display = (want === 'all' || card.dataset.status === want) ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

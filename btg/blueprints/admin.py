@@ -3,7 +3,9 @@ from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 
 from btg.extensions import db
-from btg.models import User, Chapter, TeamMember, Event, EventImage, GalleryImage, Announcement, Application, Role, AuditLog, UserSession, Sponsor, SiteStat
+from btg.models import (User, Chapter, TeamMember, Event, EventImage, GalleryImage,
+                        Announcement, Application, Role, AuditLog, UserSession, Sponsor,
+                        SiteStat, Curriculum, Advisor, AdvisorInitiative, Subscriber)
 from btg.auth import super_admin_required
 from btg.services.upload import save_upload, delete_upload
 from btg.blueprints._shared import (
@@ -102,6 +104,8 @@ def chapter_create():
             contact_email=request.form.get('contact_email', ''),
             contact_phone=request.form.get('contact_phone', ''),
             address=request.form.get('address', ''),
+            timezone=request.form.get('timezone', ''),
+            tags=request.form.get('tags', ''),
             instagram=request.form.get('instagram', ''),
             linkedin=request.form.get('linkedin', ''),
             website=request.form.get('website', ''),
@@ -142,6 +146,8 @@ def chapter_edit(chapter_id):
         chapter.contact_email = request.form.get('contact_email', '')
         chapter.contact_phone = request.form.get('contact_phone', '')
         chapter.address = request.form.get('address', '')
+        chapter.timezone = request.form.get('timezone', '')
+        chapter.tags = request.form.get('tags', '')
         chapter.google_maps = request.form.get('google_maps', '')
         chapter.instagram = request.form.get('instagram', '')
         chapter.linkedin = request.form.get('linkedin', '')
@@ -720,3 +726,210 @@ def sessions():
     for s in sessions_query.items:
         s.user_name = user_map.get(s.user_id, 'Unknown')
     return render_template('admin/sessions.html', sessions=sessions_query)
+
+
+# -- Curriculum CRUD --
+
+
+@admin.route('/admin/curriculum')
+@super_admin_required
+def curriculum():
+    items = Curriculum.query.order_by(Curriculum.display_order, Curriculum.title).all()
+    return render_template('admin/curriculum.html', items=items)
+
+
+@admin.route('/admin/curriculum/create', methods=['GET', 'POST'])
+@super_admin_required
+def curriculum_create():
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        if not title:
+            flash('Title is required.', 'error')
+            return render_template('admin/curriculum_form.html', item=None)
+        item = Curriculum(
+            title=title,
+            description=request.form.get('description', '').strip(),
+            status=request.form.get('status', 'in_progress'),
+            category=request.form.get('category', '').strip(),
+            grade_level=request.form.get('grade_level', '').strip(),
+            file_url=_clean_website(request.form.get('file_url')),
+            published='published' in request.form,
+            display_order=request.form.get('display_order', 0, type=int) or 0,
+        )
+        db.session.add(item)
+        db.session.commit()
+        log_audit('create', 'curriculum', item.id, item.title)
+        flash(f'Curriculum "{item.title}" added!', 'success')
+        return redirect(url_for('admin.curriculum'))
+    return render_template('admin/curriculum_form.html', item=None)
+
+
+@admin.route('/admin/curriculum/<int:item_id>/edit', methods=['GET', 'POST'])
+@super_admin_required
+def curriculum_edit(item_id):
+    item = db.session.get(Curriculum, item_id)
+    if not item:
+        flash('Curriculum not found.', 'error')
+        return redirect(url_for('admin.curriculum'))
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        if not title:
+            flash('Title is required.', 'error')
+            return render_template('admin/curriculum_form.html', item=item)
+        item.title = title
+        item.description = request.form.get('description', '').strip()
+        item.status = request.form.get('status', 'in_progress')
+        item.category = request.form.get('category', '').strip()
+        item.grade_level = request.form.get('grade_level', '').strip()
+        item.file_url = _clean_website(request.form.get('file_url'))
+        item.published = 'published' in request.form
+        item.display_order = request.form.get('display_order', 0, type=int) or 0
+        db.session.commit()
+        log_audit('update', 'curriculum', item.id, item.title)
+        flash('Curriculum updated!', 'success')
+        return redirect(url_for('admin.curriculum'))
+    return render_template('admin/curriculum_form.html', item=item)
+
+
+@admin.route('/admin/curriculum/<int:item_id>/delete', methods=['POST'])
+@super_admin_required
+def curriculum_delete(item_id):
+    item = db.session.get(Curriculum, item_id)
+    if not item:
+        flash('Curriculum not found.', 'error')
+    else:
+        title = item.title
+        db.session.delete(item)
+        db.session.commit()
+        log_audit('delete', 'curriculum', item_id, title)
+        flash(f'Curriculum "{title}" deleted.', 'info')
+    return redirect(url_for('admin.curriculum'))
+
+
+# -- Board of Advisors CRUD --
+
+
+@admin.route('/admin/advisors')
+@super_admin_required
+def advisors():
+    people = Advisor.query.order_by(Advisor.display_order, Advisor.name).all()
+    return render_template('admin/advisors.html', advisors=people)
+
+
+@admin.route('/admin/advisors/create', methods=['GET', 'POST'])
+@super_admin_required
+def advisor_create():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        if not name:
+            flash('Name is required.', 'error')
+            return render_template('admin/advisor_form.html', advisor=None)
+
+        slug_base = slugify(name)
+        slug = slug_base
+        counter = 1
+        while Advisor.query.filter_by(slug=slug).first():
+            slug = f'{slug_base}-{counter}'
+            counter += 1
+
+        person = Advisor(
+            slug=slug, name=name,
+            title=request.form.get('title', '').strip(),
+            bio=request.form.get('bio', '').strip(),
+            published='published' in request.form,
+            display_order=request.form.get('display_order', 0, type=int) or 0,
+        )
+        if 'avatar' in request.files and request.files['avatar'].filename:
+            path = save_upload(request.files['avatar'], 'advisors')
+            if path:
+                person.avatar = path
+            else:
+                flash('Avatar upload was rejected (invalid image or over 4MB). Saved without a photo.', 'warning')
+        db.session.add(person)
+        db.session.commit()
+        _save_initiatives(person)
+        log_audit('create', 'advisor', person.id, person.name)
+        flash(f'Advisor "{person.name}" added!', 'success')
+        return redirect(url_for('admin.advisors'))
+    return render_template('admin/advisor_form.html', advisor=None)
+
+
+@admin.route('/admin/advisors/<int:advisor_id>/edit', methods=['GET', 'POST'])
+@super_admin_required
+def advisor_edit(advisor_id):
+    person = db.session.get(Advisor, advisor_id)
+    if not person:
+        flash('Advisor not found.', 'error')
+        return redirect(url_for('admin.advisors'))
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        if not name:
+            flash('Name is required.', 'error')
+            return render_template('admin/advisor_form.html', advisor=person)
+        person.name = name
+        person.title = request.form.get('title', '').strip()
+        person.bio = request.form.get('bio', '').strip()
+        person.published = 'published' in request.form
+        person.display_order = request.form.get('display_order', 0, type=int) or 0
+        if 'avatar' in request.files and request.files['avatar'].filename:
+            path = save_upload(request.files['avatar'], 'advisors')
+            if path:
+                if person.avatar:
+                    delete_upload(person.avatar)
+                person.avatar = path
+            else:
+                flash('New avatar was rejected (invalid image or over 4MB). Keeping the current photo.', 'warning')
+        _save_initiatives(person)
+        db.session.commit()
+        log_audit('update', 'advisor', person.id, person.name)
+        flash('Advisor updated!', 'success')
+        return redirect(url_for('admin.advisors'))
+    return render_template('admin/advisor_form.html', advisor=person)
+
+
+@admin.route('/admin/advisors/<int:advisor_id>/delete', methods=['POST'])
+@super_admin_required
+def advisor_delete(advisor_id):
+    person = db.session.get(Advisor, advisor_id)
+    if not person:
+        flash('Advisor not found.', 'error')
+    else:
+        name = person.name
+        person.delete_files()
+        db.session.delete(person)
+        db.session.commit()
+        log_audit('delete', 'advisor', advisor_id, name)
+        flash(f'Advisor "{name}" deleted.', 'info')
+    return redirect(url_for('admin.advisors'))
+
+
+def _save_initiatives(person):
+    """Replace an advisor's initiatives with the rows submitted in the form."""
+    names = request.form.getlist('initiative_name')
+    roles = request.form.getlist('initiative_role')
+    descs = request.form.getlist('initiative_desc')
+    for existing in person.initiatives.all():
+        db.session.delete(existing)
+    order = 0
+    for i, nm in enumerate(names):
+        nm = (nm or '').strip()
+        if not nm:
+            continue
+        order += 1
+        db.session.add(AdvisorInitiative(
+            advisor_id=person.id, name=nm,
+            role=(roles[i] if i < len(roles) else '').strip(),
+            description=(descs[i] if i < len(descs) else '').strip(),
+            display_order=order,
+        ))
+    db.session.commit()
+
+
+# -- Newsletter subscribers --
+
+
+@admin.route('/admin/subscribers')
+@super_admin_required
+def subscribers():
+    people = Subscriber.query.order_by(Subscriber.created_at.desc()).all()
+    return render_template('admin/subscribers.html', subscribers=people)

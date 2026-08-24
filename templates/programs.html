@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Programs | Bridge the Gap Robotics{% endblock %}
+{% block content %}
+
+<section class="hero hero-compact">
+    <p class="hero-tagline">What We Run</p>
+    <h1>Programs</h1>
+    <p class="hero-sub">Everything Bridge the Gap runs to bring hands-on STEM to communities — from preschool demos to student-led research.</p>
+</section>
+
+<section class="section band band-sun" style="border-top:none;">
+    <div class="pill-tabs" id="programTabs" role="tablist">
+        <button class="pill-tab is-on" data-panel="preschool" role="tab">Preschool Demos</button>
+        <button class="pill-tab" data-panel="launchpad" role="tab">LaunchPad</button>
+        <button class="pill-tab" data-panel="founders" role="tab">Young Founders Lab</button>
+        <button class="pill-tab" data-panel="webinars" role="tab">Homeschool STEAM Webinars</button>
+        <button class="pill-tab" data-panel="govschool" role="tab">Government School Curriculum</button>
+        <button class="pill-tab" data-panel="magazines" role="tab">STEM Magazines</button>
+        <button class="pill-tab" data-panel="podcast" role="tab">Podcast</button>
+        <button class="pill-tab" data-panel="events" role="tab">Events</button>
+    </div>
+
+    <div style="margin-top:2.5rem;">
+        <div class="program-panel is-on" id="panel-preschool">
+            <span class="sec-label">Early Learners</span>
+            <h2 class="sec-title">Preschool <span class="title-accent">Demos</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">We partner with preschools and afterschool programs to bring hands-on STEM to the youngest learners — through simple, playful builds like paper bridges and paper-craft stick structures that turn abstract ideas into something kids can hold.</p>
+        </div>
+
+        <div class="program-panel" id="panel-launchpad">
+            <span class="sec-label teal">Maker Infrastructure</span>
+            <h2 class="sec-title">Launch<span class="title-accent">Pad</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">Our 3D printer&ndash;focused initiative, pairing printers with starter kits for chapters, libraries, and Title I schools to build a sustainable, hands-on maker program that keeps producing long after we leave.</p>
+        </div>
+
+        <div class="program-panel" id="panel-founders">
+            <span class="sec-label coral">Entrepreneurship</span>
+            <h2 class="sec-title">Young <span class="title-accent">Founders Lab</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">An entrepreneurship lab for youth, taught by high school mentors, teaching students how to develop startups and pitch their ideas — the business side of building something real.</p>
+        </div>
+
+        <div class="program-panel" id="panel-webinars">
+            <span class="sec-label">Homeschool Community</span>
+            <h2 class="sec-title">Homeschool <span class="title-accent">STEAM Webinars</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">Monthly webinars, each spotlighting a letter of STEAM, connecting core concepts to real robotics applications — developed in partnership with homeschool communities.</p>
+        </div>
+
+        <div class="program-panel" id="panel-govschool">
+            <span class="sec-label teal">Curriculum Partnership</span>
+            <h2 class="sec-title">Government School <span class="title-accent">Curriculum</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">Open-source robotics curriculum built for government and public school classrooms, designed to run on affordable materials and to be taught by teachers with no prior robotics background.</p>
+            <div style="margin-top:1.5rem;">
+                <a href="/curriculum" class="btn-text">
+                    Browse the Curriculum Library
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="program-panel" id="panel-magazines">
+            <span class="sec-label coral">Publishing</span>
+            <h2 class="sec-title">STEM <span class="title-accent">Magazines</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">Free digital magazines that spotlight STEM concepts and the people behind them — written by students, for students, and distributed to every chapter.</p>
+        </div>
+
+        <div class="program-panel" id="panel-podcast">
+            <span class="sec-label">Listen</span>
+            <h2 class="sec-title">The Bridge the Gap <span class="title-accent">Podcast</span></h2>
+            <p class="program-lead" style="margin-top:1rem;">Conversations with engineers, researchers, entrepreneurs, educators, and industry leaders exploring new career paths in STEM, business, and technology.</p>
+            <div style="margin-top:1.5rem;">
+                <a href="https://instagram.com/bridge_the_gap_robotics" class="btn btn-accent" target="_blank" rel="noopener">Listen &rarr;</a>
+            </div>
+        </div>
+
+        <div class="program-panel" id="panel-events">
+            <span class="sec-label teal">Upcoming</span>
+            <h2 class="sec-title">Events &amp; <span class="title-accent">Workshops</span></h2>
+            <p class="program-lead" style="margin-top:1rem;margin-bottom:1.75rem;">Workshops, kit drives, and community events run by our chapters.</p>
+            {% if upcoming_events %}
+            {% for event in upcoming_events %}
+            <div class="event-row">
+                <div>
+                    <h3>{{ event.title }}</h3>
+                    <p class="event-row-meta">
+                        {{ event.date.strftime('%b %d, %Y') }}
+                        {% if event.venue %} &middot; {{ event.venue }}{% endif %}
+                        {% if event.chapter %} &middot; {{ event.chapter.name }}{% endif %}
+                    </p>
+                </div>
+                <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="btn btn-accent btn-sm">Details</a>
+            </div>
+            {% endfor %}
+            <div style="margin-top:1.5rem;">
+                <a href="{{ url_for('public.events') }}" class="btn-text">
+                    View All Events
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+                </a>
+            </div>
+            {% else %}
+            <p class="sec-desc">No upcoming events scheduled right now — check back soon, or <a href="{{ url_for('public.events') }}" style="color:var(--accent);font-weight:600;">browse past events</a>.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="cta-banner">
+    <div class="cta-banner-inner">
+        <h2>Want to help run a program?</h2>
+        <p>Our programs are run by student volunteers. If you want to teach, mentor, or start something new in your community — we'll help you launch it.</p>
+        <a href="/chapters" class="lp-btn lp-btn-primary">
+            Sign Up to Volunteer
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.getElementById('programTabs');
+    if (!tabs) return;
+    tabs.addEventListener('click', e => {
+        const tab = e.target.closest('.pill-tab');
+        if (!tab) return;
+        tabs.querySelectorAll('.pill-tab').forEach(t => t.classList.toggle('is-on', t === tab));
+        document.querySelectorAll('.program-panel').forEach(p => {
+            p.classList.toggle('is-on', p.id === 'panel-' + tab.dataset.panel);
+        });
+    });
+});
+</script>
+{% endblock %}

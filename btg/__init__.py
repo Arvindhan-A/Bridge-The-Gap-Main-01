@@ -145,6 +145,7 @@ def _seed_data():
                 'mission': 'Make STEM accessible to every child in Chennai.',
                 'status': 'active',
                 'latitude': 13.0827, 'longitude': 80.2707,
+                'timezone': 'IST', 'tags': 'Kits, Events',
             },
             {
                 'slug': 'bangalore', 'name': 'Bangalore Chapter',
@@ -154,6 +155,7 @@ def _seed_data():
                 'mission': 'Build the next generation of innovators.',
                 'status': 'active',
                 'latitude': 12.9716, 'longitude': 77.5946,
+                'timezone': 'IST', 'tags': 'Curriculum, Research',
             },
         ]
         for s in samples:

@@ -10,11 +10,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fun.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/polish.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {% block head %}{% endblock %}
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <header class="site-header">
         <nav class="nav-inner">
             <a href="/" class="nav-brand">
@@ -28,17 +32,20 @@
 
             <div class="nav-links">
                 <a href="/" class="nav-link{% if request.path == '/' %} active{% endif %}">Home</a>
-                <a href="/kits" class="nav-link{% if request.path == '/kits' %} active{% endif %}">Our Kits</a>
+                <a href="/programs" class="nav-link{% if request.path.startswith('/programs') %} active{% endif %}">Programs</a>
                 <a href="/chapters" class="nav-link{% if request.path.startswith('/chapters') %} active{% endif %}">Chapters</a>
-                <a href="/partners" class="nav-link{% if request.path == '/partners' %} active{% endif %}">Partners</a>
-                <a href="/events" class="nav-link{% if request.path.startswith('/events') %} active{% endif %}">Events</a>
+                <a href="/kits" class="nav-link{% if request.path == '/kits' %} active{% endif %}">Our Kits</a>
+                <a href="/curriculum" class="nav-link{% if request.path.startswith('/curriculum') %} active{% endif %}">Curriculum</a>
+                <a href="/gallery" class="nav-link{% if request.path.startswith('/gallery') %} active{% endif %}">Gallery</a>
                 <a href="/blog" class="nav-link{% if request.path.startswith('/blog') %} active{% endif %}">Blog</a>
+                <a href="/board" class="nav-link{% if request.path.startswith('/board') %} active{% endif %}">Board</a>
                 {% if current_user %}
                 <a href="/dashboard" class="nav-link" style="color:var(--accent);font-weight:600;">Dashboard</a>
                 {% endif %}
             </div>
 
             <div class="nav-controls">
+                <a href="https://forms.gle/dE12xJAFhw1fswNU9" class="btn-outline btn-sm" target="_blank" rel="noopener">Request a Kit</a>
                 <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="btn btn-accent btn-sm" target="_blank">Donate</a>
                 {% if current_user %}
                 <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm" data-logout>Logout</a>
@@ -68,7 +75,7 @@
         {% endwith %}
     </div>
 
-    <main class="main">
+    <main class="main" id="main-content">
         {% block content %}{% endblock %}
     </main>
 
@@ -86,25 +93,31 @@
                 </span>
             </div>
             <div class="foot-col">
-                <h3 class="foot-heading">Navigate</h3>
+                <h3 class="foot-heading">Quick Links</h3>
                 <a href="/" class="foot-link">Home</a>
-                <a href="/kits" class="foot-link">Our Kits</a>
+                <a href="/programs" class="foot-link">Programs</a>
                 <a href="/chapters" class="foot-link">Chapters</a>
-                <a href="/partners" class="foot-link">Partners</a>
-                <a href="/events" class="foot-link">Events</a>
+                <a href="/kits" class="foot-link">Our Kits</a>
+                <a href="/curriculum" class="foot-link">Curriculum Library</a>
+                <a href="/gallery" class="foot-link">Gallery</a>
                 <a href="/blog" class="foot-link">Blog</a>
+                <a href="/board" class="foot-link">Board of Advisors</a>
             </div>
             <div class="foot-col">
-                <h3 class="foot-heading">Get Involved</h3>
+                <h3 class="foot-heading">Contact</h3>
+                <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">bridgethegap.robotics@gmail.com</a>
+                <a href="https://instagram.com/bridge_the_gap_robotics" target="_blank" rel="noopener" class="foot-link">@bridge_the_gap_robotics</a>
+                <a href="/chapters" class="foot-link">Global Chapters</a>
                 <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="foot-link" target="_blank">Donate</a>
-                <a href="/chapters" class="foot-link">Start a Chapter</a>
-                <a href="/partners" class="foot-link">Become a Partner</a>
-                <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">Contact Us</a>
             </div>
             <div class="foot-col">
-                <h3 class="foot-heading">Connect</h3>
-                <a href="https://instagram.com/bridge_the_gap_robotics" target="_blank" rel="noopener" class="foot-link">Instagram</a>
-                <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">Email</a>
+                <h3 class="foot-heading">Stay Updated</h3>
+                <p style="font-size:0.8125rem;line-height:1.6;color:var(--text-3);margin-bottom:0.75rem;">Get updates on new kits, chapters, and events.</p>
+                <form class="newsletter-form" method="POST" action="{{ url_for('public.subscribe') }}">
+                    <input type="email" name="email" placeholder="you@example.com" aria-label="Email address" required>
+                    <button type="submit">Join</button>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                </form>
             </div>
         </div>
         <div class="foot-bottom">

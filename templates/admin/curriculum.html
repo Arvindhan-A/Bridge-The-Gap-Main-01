@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Manage Curriculum | BTG{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+    <div class="admin-header">
+        <h1>Curriculum Library</h1>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.curriculum_create') }}" class="btn btn-sm">New Module</a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline btn-sm">Back</a>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>All Modules</h2>
+        {% for item in items %}
+        <div class="admin-item">
+            <div class="admin-item-info">
+                <div class="admin-item-title">{{ item.title }}</div>
+                <div class="admin-item-date">
+                    {{ 'Complete' if item.status == 'complete' else 'In Progress' }} &middot;
+                    {{ 'Published' if item.published else 'Unpublished' }} &middot;
+                    Order {{ item.display_order }}
+                    {% if item.category %} &middot; {{ item.category }}{% endif %}
+                    {% if item.grade_level %} &middot; {{ item.grade_level }}{% endif %}
+                </div>
+            </div>
+            <div class="admin-actions">
+                <a href="{{ url_for('admin.curriculum_edit', item_id=item.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.curriculum_delete', item_id=item.id) }}" style="display:inline;" onsubmit="return confirm('Delete this curriculum module?')">
+                    <button type="submit" class="btn-delete">Delete</button>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="admin-empty">No curriculum modules yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

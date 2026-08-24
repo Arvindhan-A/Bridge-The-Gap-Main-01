@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Gallery | Bridge the Gap Robotics{% endblock %}
+{% block content %}
+
+<section class="hero hero-compact">
+    <p class="hero-tagline">In The Field</p>
+    <h1>Gallery</h1>
+    <p class="hero-sub">Moments from workshops, donations, and events across the Bridge the Gap chapters worldwide.</p>
+</section>
+
+<section class="section band band-pink" style="border-top:none;">
+    {% if images %}
+    <div class="pill-tabs" id="galleryFilters">
+        <button class="pill-tab is-on" data-filter="all">All</button>
+        {% for ev in events %}
+        <button class="pill-tab" data-filter="ev-{{ ev.id }}">{{ ev.title }}</button>
+        {% endfor %}
+    </div>
+
+    <div class="masonry" id="galleryGrid" style="margin-top:2rem;">
+        {% for img in images %}
+        <div class="masonry-item" data-event="ev-{{ img.event.id }}" data-src="{{ url_for('static', filename=img.image) }}">
+            <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or img.event.title }}" loading="lazy">
+            <div class="masonry-cap">
+                {{ img.caption or img.event.title }}
+                <span>{{ img.event.title }}{% if img.event.date %} &middot; {{ img.event.date.strftime('%b %Y') }}{% endif %}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+        </div>
+        <h3>No photos yet.</h3>
+        <p>Once our chapters upload workshop photos, they'll show up here.</p>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const bar  = document.getElementById('galleryFilters');
+    const grid = document.getElementById('galleryGrid');
+    if (!grid) return;
+
+    if (bar) {
+        bar.addEventListener('click', e => {
+            const pill = e.target.closest('.pill-tab');
+            if (!pill) return;
+            const want = pill.dataset.filter;
+            bar.querySelectorAll('.pill-tab').forEach(p => p.classList.toggle('is-on', p === pill));
+            grid.querySelectorAll('.masonry-item').forEach(item => {
+                item.classList.toggle('is-hidden', want !== 'all' && item.dataset.event !== want);
+            });
+        });
+    }
+
+    // lightbox on visible images
+    grid.addEventListener('click', e => {
+        const item = e.target.closest('.masonry-item');
+        if (!item || !window.openLightbox) return;
+        const visible = [...grid.querySelectorAll('.masonry-item:not(.is-hidden)')];
+        const srcs = visible.map(i => i.dataset.src);
+        window.openLightbox(srcs, visible.indexOf(item));
+    });
+});
+</script>
+{% endblock %}

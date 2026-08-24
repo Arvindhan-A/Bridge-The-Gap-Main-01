@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Board of Advisors | Bridge the Gap Robotics{% endblock %}
+{% block content %}
+
+<section class="hero hero-compact">
+    <p class="hero-tagline">Meet The Board</p>
+    <h1>Board of Advisors</h1>
+    <p class="hero-sub">Experienced professionals guiding Bridge the Gap's growth across curriculum, outreach, and technology.</p>
+</section>
+
+<section class="section band band-sky" style="border-top:none;">
+    {% if advisors %}
+    <div class="advisor-grid">
+        {% for a in advisors %}
+        <a href="{{ url_for('public.advisor_detail', slug=a.slug) }}" class="advisor-card">
+            <div class="advisor-avatar">
+                {% if a.avatar %}
+                <img src="{{ url_for('static', filename=a.avatar) }}" alt="{{ a.name }}">
+                {% else %}
+                {{ a.name[:1]|upper }}
+                {% endif %}
+            </div>
+            <h3>{{ a.name }}</h3>
+            <p class="advisor-role">{{ a.title }}</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>Board members coming soon.</h3>
+        <p>We're finalizing our advisory board. Check back shortly.</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="cta-banner">
+    <div class="cta-banner-inner">
+        <h2>Interested in advising us?</h2>
+        <p>We're always looking for professionals in engineering, education, and nonprofit leadership to help guide where we go next.</p>
+        <a href="mailto:bridgethegap.robotics@gmail.com" class="lp-btn">
+            Reach Out
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
+    </div>
+</section>
+
+{% endblock %}

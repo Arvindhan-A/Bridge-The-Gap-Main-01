@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Manage Board of Advisors | BTG{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+    <div class="admin-header">
+        <h1>Board of Advisors</h1>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.advisor_create') }}" class="btn btn-sm">New Advisor</a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline btn-sm">Back</a>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>All Advisors</h2>
+        {% for a in advisors %}
+        <div class="admin-item">
+            {% if a.avatar %}
+            <img src="{{ url_for('static', filename=a.avatar) }}" alt="" style="width:44px;height:44px;object-fit:cover;border-radius:50%;margin-right:0.75rem;">
+            {% endif %}
+            <div class="admin-item-info">
+                <div class="admin-item-title">{{ a.name }}</div>
+                <div class="admin-item-date">
+                    {{ a.title or 'No title' }} &middot;
+                    {{ 'Published' if a.published else 'Unpublished' }} &middot;
+                    Order {{ a.display_order }} &middot;
+                    {{ a.initiatives.count() }} initiative(s)
+                </div>
+            </div>
+            <div class="admin-actions">
+                <a href="{{ url_for('public.advisor_detail', slug=a.slug) }}" target="_blank">View</a>
+                <a href="{{ url_for('admin.advisor_edit', advisor_id=a.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.advisor_delete', advisor_id=a.id) }}" style="display:inline;" onsubmit="return confirm('Delete this advisor?')">
+                    <button type="submit" class="btn-delete">Delete</button>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="admin-empty">No advisors added yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

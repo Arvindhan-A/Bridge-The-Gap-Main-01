@@ -64,10 +64,124 @@
 .chapter-pin { cursor: pointer; }
 .pin-core {
   fill: var(--accent);
+  stroke: #fff;
+  stroke-width: 1.5;
   transition: fill .2s, r .2s;
 }
-.chapter-pin:hover .pin-core { fill: var(--accent-hover); r: 6; }
-.chapter-pin.active .pin-core { fill: var(--accent-hover); r: 6; }
+.chapter-pin:hover .pin-core { r: 6.5; }
+.chapter-pin.active .pin-core { r: 6.5; }
+.pin-status-active .pin-core { fill: var(--accent); }
+.pin-status-inactive .pin-core { fill: #9a94a6; }
+.pin-status-onboarding .pin-core { fill: #e0912f; }
+.pin-leader { stroke: rgba(120,110,140,.55); stroke-width: .8; }
+
+/* ===== MAP LEGEND ===== */
+.map-legend {
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 12;
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.09);
+}
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+  white-space: nowrap;
+}
+.legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot.active { background: var(--accent); }
+.legend-dot.inactive { background: #9a94a6; }
+.legend-dot.onboarding { background: #e0912f; }
+:root.dark-mode .map-legend {
+  background: rgba(30,30,30,.92);
+  border-color: rgba(255,255,255,.12);
+}
+:root.dark-mode .legend-item { color: var(--text-2); }
+
+/* ===== FILTER PILLS ===== */
+.chapter-filters {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 1.75rem;
+}
+.filter-pill {
+  font-family: inherit;
+  font-size: 0.8125rem; font-weight: 600;
+  padding: 8px 20px; border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-2);
+  cursor: pointer;
+  transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+}
+.filter-pill:hover { border-color: var(--border-accent); transform: translateY(-1px); }
+.filter-pill.is-on {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+}
+.chapter-card-item.is-hidden { display: none; }
+
+/* ===== CHAPTER CARDS (status/tags layout) ===== */
+.ch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 1.35rem 1.4rem 1.5rem;
+  box-shadow: var(--sh-card);
+  height: 100%;
+  transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+.chapter-card-item:hover .ch-card {
+  border-color: var(--border-accent);
+  box-shadow: var(--sh-card-hover);
+}
+.ch-card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; margin-bottom: 0.7rem;
+}
+.ch-card-name {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.0625rem; font-weight: 700; color: var(--text-1);
+  line-height: 1.3;
+}
+.ch-flag { font-size: 1.125rem; line-height: 1; flex-shrink: 0; }
+.ch-badge {
+  font-size: 0.625rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+}
+.ch-badge.active { background: var(--accent-soft); color: var(--accent); }
+.ch-badge.inactive { background: rgba(154,148,166,.16); color: #6f6a7a; }
+.ch-badge.onboarding { background: rgba(224,145,47,.16); color: #a8641a; }
+:root.dark-mode .ch-badge.inactive { color: #b8b2c4; }
+:root.dark-mode .ch-badge.onboarding { color: #f0b46a; }
+.ch-card-city { font-size: 0.8125rem; color: var(--text-2); line-height: 1.5; }
+.ch-card-tz {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; font-weight: 600; color: var(--text-4);
+  letter-spacing: .05em; margin-top: 2px;
+}
+.ch-card-pres-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--text-3);
+  margin-top: 1.05rem;
+}
+.ch-card-pres-name {
+  font-size: 0.875rem; font-weight: 600; color: var(--accent);
+  margin-top: 3px;
+}
+.ch-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
+.ch-tag {
+  font-size: 0.6875rem; font-weight: 500;
+  padding: 4px 10px; border-radius: 6px;
+  background: var(--bg-warm); color: var(--text-2);
+  border: 1px solid var(--border);
+}
 .pins-remove .chapter-pin { cursor: not-allowed; }
 .pins-remove .chapter-pin:hover .pin-core { fill: #c23b3b; }
 .pin-label {
@@ -84,19 +198,39 @@
   pointer-events: none;
   opacity: 0;
   z-index: 15;
-  background: var(--text-1);
-  color: #fff;
+  background: #fff;
+  color: var(--text-1);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .05em;
-  white-space: nowrap;
+  border-radius: 10px;
+  padding: 10px 13px;
+  min-width: 180px;
+  box-shadow: 0 8px 26px rgba(0,0,0,.18);
   transform: translate(-50%, calc(-100% - 20px));
   transition: opacity .14s;
 }
 #bdg-tip.show { opacity: 1; }
+.tip-head {
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 5px;
+}
+.tip-name {
+  font-size: 12.5px; font-weight: 700; color: var(--text-1);
+  white-space: nowrap;
+}
+.tip-city { font-size: 11px; color: var(--text-2); white-space: nowrap; }
+.tip-tz {
+  font-family: var(--font-mono);
+  font-size: 9.5px; font-weight: 600; color: var(--text-4);
+  letter-spacing: .05em; margin-top: 1px;
+}
+.tip-pres { font-size: 11px; color: var(--text-2); margin-top: 5px; white-space: nowrap; }
+.tip-pres b { color: var(--accent); font-weight: 600; }
+:root.dark-mode #bdg-tip {
+  background: var(--surface);
+  color: var(--text-1);
+  border-color: var(--border);
+}
+:root.dark-mode .tip-name { color: var(--text-1); }
 #bdg-popup {
   position: absolute;
   z-index: 20;
@@ -394,6 +528,11 @@
     <div class="container">
         <div id="bdg-map">
             <svg id="world-svg" viewBox="0 0 960 480" aria-label="BDG Chapter locations world map"></svg>
+            <div class="map-legend">
+                <span class="legend-item"><span class="legend-dot active"></span>Active</span>
+                <span class="legend-item"><span class="legend-dot inactive"></span>Inactive</span>
+                <span class="legend-item"><span class="legend-dot onboarding"></span>Coming Soon</span>
+            </div>
             <div id="bdg-tip" role="tooltip"></div>
             <div id="bdg-popup" role="dialog" aria-modal="true" aria-label="Chapter details">
                 <div class="pu-card">
@@ -429,27 +568,35 @@
             <span class="sec-label">Chapters</span>
             <h2 class="sec-title">All Chapters</h2>
         </div>
+        <div class="chapter-filters" id="chapterFilters">
+            <button class="filter-pill is-on" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="active">Active</button>
+            <button class="filter-pill" data-filter="inactive">Inactive</button>
+            <button class="filter-pill" data-filter="onboarding">Coming Soon</button>
+        </div>
         <div class="chapter-cards" id="chapterCards">
             {% for ch in chapters %}
-            <a href="{{ url_for('public.chapter_detail', slug=ch.slug) }}" class="chapter-card-link chapter-card-item" data-chapter-id="{{ ch.slug }}">
-                <div class="chapter-preview">
-                    {% if ch.cover_image %}
-                    <div class="chapter-preview-img">
-                        <img src="{{ url_for('static', filename=ch.cover_image) }}" alt="{{ ch.name }}" loading="lazy">
+            {% set st = ch.status or 'active' %}
+            <a href="{{ url_for('public.chapter_detail', slug=ch.slug) }}" class="chapter-card-link chapter-card-item" data-chapter-id="{{ ch.slug }}" data-status="{{ st }}">
+                <div class="ch-card">
+                    <div class="ch-card-top">
+                        <span class="ch-card-name">
+                            <span class="ch-flag" data-flag-for="{{ ch.slug }}"></span>
+                            {{ ch.name }}
+                        </span>
+                        <span class="ch-badge {{ st }}">{{ 'Coming Soon' if st == 'onboarding' else st }}</span>
                     </div>
-                    {% else %}
-                    <div class="chapter-preview-img chapter-preview-img-placeholder"></div>
+                    <p class="ch-card-city">{{ ch.city }}</p>
+                    {% if ch.timezone %}<p class="ch-card-tz">{{ ch.timezone }}</p>{% endif %}
+                    <p class="ch-card-pres-label">Chapter President</p>
+                    <p class="ch-card-pres-name">{{ president_map.get(ch.id, 'TBD') }}</p>
+                    {% if ch.tags %}
+                    <div class="ch-card-tags">
+                        {% for tag in ch.tags.split(',') %}
+                        {% if tag.strip() %}<span class="ch-tag">{{ tag.strip() }}</span>{% endif %}
+                        {% endfor %}
+                    </div>
                     {% endif %}
-                    <div class="chapter-preview-body">
-                        {% if ch.logo %}
-                        <img src="{{ url_for('static', filename=ch.logo) }}" alt="" class="chapter-preview-logo">
-                        {% endif %}
-                        <h3>{{ ch.name }}</h3>
-                        <p class="chapter-preview-city">{{ ch.city }}</p>
-                        <p class="chapter-preview-desc">{{ ch.description[:120] }}{% if ch.description|length > 120 %}...{% endif %}</p>
-                        <p class="chapter-preview-president">President: {{ president_map.get(ch.id, 'TBD') }}</p>
-                        <span class="btn btn-sm btn-accent">View Chapter</span>
-                    </div>
                 </div>
             </a>
             {% endfor %}
@@ -542,10 +689,55 @@ gGrat.append("path")
 
 const tipEl = document.getElementById("bdg-tip");
 
-function showTip(text, svgX, svgY) {
+const STATUS_LABEL = { active: "Active", inactive: "Inactive", onboarding: "Coming Soon" };
+
+/* world-atlas country ids are ISO 3166-1 numeric; map to alpha-2 to build a flag emoji */
+const ISO_NUM_TO_A2 = {
+  "004":"AF","008":"AL","012":"DZ","024":"AO","032":"AR","036":"AU","040":"AT","050":"BD","056":"BE",
+  "068":"BO","070":"BA","072":"BW","076":"BR","100":"BG","104":"MM","108":"BI","112":"BY","116":"KH",
+  "120":"CM","124":"CA","140":"CF","144":"LK","148":"TD","152":"CL","156":"CN","170":"CO","178":"CG",
+  "180":"CD","188":"CR","191":"HR","192":"CU","196":"CY","203":"CZ","204":"BJ","208":"DK","214":"DO",
+  "218":"EC","222":"SV","226":"GQ","231":"ET","232":"ER","233":"EE","242":"FJ","246":"FI","250":"FR",
+  "260":"TF","266":"GA","268":"GE","270":"GM","275":"PS","276":"DE","288":"GH","300":"GR","304":"GL",
+  "320":"GT","324":"GN","328":"GY","332":"HT","340":"HN","348":"HU","352":"IS","356":"IN","360":"ID",
+  "364":"IR","368":"IQ","372":"IE","376":"IL","380":"IT","384":"CI","388":"JM","392":"JP","398":"KZ",
+  "400":"JO","404":"KE","408":"KP","410":"KR","414":"KW","417":"KG","418":"LA","422":"LB","426":"LS",
+  "428":"LV","430":"LR","434":"LY","440":"LT","442":"LU","450":"MG","454":"MW","458":"MY","466":"ML",
+  "478":"MR","484":"MX","496":"MN","498":"MD","499":"ME","504":"MA","508":"MZ","512":"OM","516":"NA",
+  "524":"NP","528":"NL","540":"NC","548":"VU","554":"NZ","558":"NI","562":"NE","566":"NG","578":"NO",
+  "586":"PK","591":"PA","598":"PG","600":"PY","604":"PE","608":"PH","616":"PL","620":"PT","624":"GW",
+  "626":"TL","630":"PR","634":"QA","642":"RO","643":"RU","646":"RW","682":"SA","686":"SN","688":"RS",
+  "694":"SL","703":"SK","705":"SI","706":"SO","710":"ZA","716":"ZW","724":"ES","728":"SS","729":"SD",
+  "740":"SR","748":"SZ","752":"SE","756":"CH","760":"SY","762":"TJ","764":"TH","768":"TG","780":"TT",
+  "784":"AE","788":"TN","792":"TR","795":"TM","800":"UG","804":"UA","807":"MK","818":"EG","826":"GB",
+  "834":"TZ","840":"US","854":"BF","858":"UY","860":"UZ","862":"VE","704":"VN","887":"YE","894":"ZM"
+};
+
+function flagFromNumericId(id) {
+  const a2 = ISO_NUM_TO_A2[String(id).padStart(3, "0")];
+  if (!a2) return "";
+  return String.fromCodePoint(...[...a2].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
+}
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+}
+
+function showTip(ch, svgX, svgY) {
   const map   = document.getElementById("bdg-map");
   const scale = map.clientWidth / W;
-  tipEl.textContent  = text;
+  const st    = ch.status || "active";
+  tipEl.innerHTML =
+    '<div class="tip-head">' +
+      '<span class="ch-flag">' + escapeHtml(ch.flag || "") + '</span>' +
+      '<span class="tip-name">' + escapeHtml(ch.name) + '</span>' +
+      '<span class="ch-badge ' + st + '">' + escapeHtml(STATUS_LABEL[st] || st) + '</span>' +
+    '</div>' +
+    (ch.city ? '<div class="tip-city">' + escapeHtml(ch.city) + '</div>' : '') +
+    (ch.timezone ? '<div class="tip-tz">' + escapeHtml(ch.timezone) + '</div>' : '') +
+    '<div class="tip-pres">President: <b>' + escapeHtml(ch.president || "TBD") + '</b></div>';
   tipEl.style.left   = (svgX * scale) + "px";
   tipEl.style.top    = (svgY * scale) + "px";
   tipEl.classList.add("show");
@@ -606,17 +798,58 @@ window.addEventListener("resize", () => {
   if (coords) showPopup(ch, coords[0], coords[1]);
 });
 
+const PIN_MIN_GAP = 15;
+
+/* Nudge overlapping pins apart so no two dots collide. Keeps the true
+   geographic anchor so a leader line can point back to the real location. */
+function resolvePinCollisions(placed) {
+  for (let iter = 0; iter < 60; iter++) {
+    let moved = false;
+    for (let i = 0; i < placed.length; i++) {
+      for (let j = i + 1; j < placed.length; j++) {
+        const a = placed[i], b = placed[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy);
+        if (dist >= PIN_MIN_GAP) continue;
+        if (dist === 0) { dx = (i % 2 ? 1 : -1) * 0.6; dy = 0.6; dist = Math.hypot(dx, dy); }
+        const push = (PIN_MIN_GAP - dist) / 2;
+        const ux = dx / dist, uy = dy / dist;
+        a.x -= ux * push; a.y -= uy * push;
+        b.x += ux * push; b.y += uy * push;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return placed;
+}
+
 function drawPins() {
   gPins.selectAll(".chapter-pin").remove();
+  gPins.selectAll(".pin-leader").remove();
+
+  const placed = [];
   chapters.forEach(ch => {
     const pt = projection([ch.lng, ch.lat]);
     if (!pt) return;
-    const [cx, cy] = pt;
+    placed.push({ ch, x: pt[0], y: pt[1], ax: pt[0], ay: pt[1] });
+  });
+  resolvePinCollisions(placed);
+
+  placed.forEach(p => {
+    const ch = p.ch;
+    // leader line back to the true location when the pin got nudged
+    if (Math.hypot(p.x - p.ax, p.y - p.ay) > 2) {
+      gPins.append("line")
+        .attr("class", "pin-leader")
+        .attr("x1", p.ax).attr("y1", p.ay)
+        .attr("x2", p.x).attr("y2", p.y);
+    }
     const g = gPins.append("g")
-      .attr("class", "chapter-pin")
-      .attr("transform", `translate(${cx},${cy})`);
+      .attr("class", "chapter-pin pin-status-" + (ch.status || "active"))
+      .attr("transform", `translate(${p.x},${p.y})`);
     g.append("circle").attr("class", "pin-core").attr("r", 5);
-    g.on("mouseenter", () => { if (!removing) showTip(ch.name, cx, cy - 12); });
+    g.on("mouseenter", () => { if (!removing) showTip(ch, p.x, p.y - 12); });
     g.on("mouseleave", hideTip);
     g.on("click", e => {
       e.stopPropagation();
@@ -627,7 +860,7 @@ function drawPins() {
       if (activePinEl) activePinEl.classed("active", false);
       activePinEl = d3.select(g.node());
       activePinEl.classed("active", true);
-      showPopup(ch, cx, cy);
+      showPopup(ch, p.x, p.y);
     });
   });
 }
@@ -747,7 +980,7 @@ d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
       .attr("class", "country")
       .attr("d", geoPath);
 
-    // Build chapter-to-country map
+    // Build chapter-to-country map, and derive a flag emoji from the country
     const chapterCountryMap = {};
     const allChs = chapters;
     allChs.forEach(ch => {
@@ -755,9 +988,15 @@ d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
       for (let i = 0; i < countries.features.length; i++) {
         if (d3.geoContains(countries.features[i], pt)) {
           chapterCountryMap[ch.id] = i;
+          ch.flag = flagFromNumericId(countries.features[i].id);
           break;
         }
       }
+    });
+    // paint derived flags onto the cards
+    document.querySelectorAll("[data-flag-for]").forEach(el => {
+      const ch = allChs.find(c => c.id === el.dataset.flagFor);
+      if (ch && ch.flag) el.textContent = ch.flag;
     });
 
     gBorders.append("path")
@@ -769,6 +1008,20 @@ d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
       .attr("class", "map-outline")
       .attr("d", geoPath);
     drawPins();
+
+    // Filter pills
+    const filterBar = document.getElementById("chapterFilters");
+    if (filterBar) {
+      filterBar.addEventListener("click", e => {
+        const pill = e.target.closest(".filter-pill");
+        if (!pill) return;
+        const want = pill.dataset.filter;
+        filterBar.querySelectorAll(".filter-pill").forEach(p => p.classList.toggle("is-on", p === pill));
+        document.querySelectorAll(".chapter-card-item").forEach(card => {
+          card.classList.toggle("is-hidden", want !== "all" && card.dataset.status !== want);
+        });
+      });
+    }
 
     // Card country hover
     const cardContainer = document.getElementById("chapterCards");

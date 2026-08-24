@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if item else 'New' }} Curriculum | BTG{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>{{ 'Edit' if item else 'New' }} Curriculum Module</h1>
+    <form method="POST">
+        <div class="form-group">
+            <label>Title *</label>
+            <input type="text" name="title" value="{{ item.title if item else '' }}" required>
+        </div>
+        <div class="form-group" style="grid-column:span 2;">
+            <label>Description</label>
+            <textarea name="description" rows="3">{{ item.description if item else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>Status</label>
+            <select name="status">
+                <option value="in_progress" {% if item and item.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                <option value="complete" {% if item and item.status == 'complete' %}selected{% endif %}>Complete</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Category (e.g. Robotics, Electronics)</label>
+            <input type="text" name="category" value="{{ item.category if item else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Grade Level (e.g. Grades 3-5)</label>
+            <input type="text" name="grade_level" value="{{ item.grade_level if item else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Display Order</label>
+            <input type="number" name="display_order" value="{{ item.display_order if item else 0 }}">
+        </div>
+        <div class="form-group" style="grid-column:span 2;">
+            <label>Resource URL (PDF / Google Doc the card links to)</label>
+            <input type="url" name="file_url" value="{{ item.file_url if item else '' }}">
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="published" {% if not item or item.published %}checked{% endif %}>
+                Published (visible on public site)
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">{{ 'Save Changes' if item else 'Create Module' }}</button>
+            <a href="{{ url_for('admin.curriculum') }}" class="btn-outline">Cancel</a>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+{% endblock %}

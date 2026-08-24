@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Newsletter Subscribers | BTG{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+    <div class="admin-header">
+        <h1>Newsletter Subscribers</h1>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline btn-sm">Back</a>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>{{ subscribers|length }} Subscriber{{ '' if subscribers|length == 1 else 's' }}</h2>
+        {% for s in subscribers %}
+        <div class="admin-item">
+            <div class="admin-item-info">
+                <div class="admin-item-title">{{ s.email }}</div>
+                <div class="admin-item-date">
+                    {% if s.source %}From {{ s.source }} &middot; {% endif %}
+                    {{ s.created_at.strftime('%b %d, %Y') if s.created_at else '' }}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="admin-empty">No subscribers yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

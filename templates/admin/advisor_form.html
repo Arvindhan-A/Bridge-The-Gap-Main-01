@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if advisor else 'New' }} Advisor | BTG{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>{{ 'Edit' if advisor else 'New' }} Advisor</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Name *</label>
+            <input type="text" name="name" value="{{ advisor.name if advisor else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Title / Role</label>
+            <input type="text" name="title" value="{{ advisor.title if advisor else '' }}" placeholder="e.g. Co-founder &amp; Head of Curriculum">
+        </div>
+        <div class="form-group">
+            <label>Photo</label>
+            <input type="file" name="avatar" accept="image/*">
+            {% if advisor and advisor.avatar %}<p style="font-size:0.75rem;color:var(--text-3);margin-top:4px;">Current: {{ advisor.avatar }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+            <label>Display Order</label>
+            <input type="number" name="display_order" value="{{ advisor.display_order if advisor else 0 }}">
+        </div>
+        <div class="form-group" style="grid-column:span 2;">
+            <label>Bio (one paragraph per line)</label>
+            <textarea name="bio" rows="7">{{ advisor.bio if advisor else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="published" {% if not advisor or advisor.published %}checked{% endif %}>
+                Published (visible on public site)
+            </label>
+        </div>
+
+        <h2 style="font-family:'Google Sans',sans-serif;font-size:1.25rem;font-weight:500;margin:2rem 0 0.5rem;">Initiatives</h2>
+        <p style="font-size:0.8125rem;color:var(--text-3);margin-bottom:1rem;grid-column:span 2;">
+            Leave a name blank to remove that row. Saving replaces the full list.
+        </p>
+        <div id="initiativeRows" style="grid-column:span 2;">
+            {% set inits = (advisor.initiatives.all()|sort(attribute='display_order')) if advisor else [] %}
+            {% for ini in inits %}
+            <div class="initiative-row" style="border:1px solid var(--border);border-radius:var(--r-md);padding:1rem;margin-bottom:0.75rem;">
+                <div class="form-group">
+                    <label>Initiative Name</label>
+                    <input type="text" name="initiative_name" value="{{ ini.name }}">
+                </div>
+                <div class="form-group">
+                    <label>Role (e.g. CO-FOUNDER)</label>
+                    <input type="text" name="initiative_role" value="{{ ini.role }}">
+                </div>
+                <div class="form-group" style="grid-column:span 2;">
+                    <label>Description</label>
+                    <textarea name="initiative_desc" rows="2">{{ ini.description }}</textarea>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="initiative-row" style="border:1px solid var(--border);border-radius:var(--r-md);padding:1rem;margin-bottom:0.75rem;">
+                <div class="form-group">
+                    <label>Initiative Name</label>
+                    <input type="text" name="initiative_name" value="">
+                </div>
+                <div class="form-group">
+                    <label>Role (e.g. CO-FOUNDER)</label>
+                    <input type="text" name="initiative_role" value="">
+                </div>
+                <div class="form-group" style="grid-column:span 2;">
+                    <label>Description</label>
+                    <textarea name="initiative_desc" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+        <div style="grid-column:span 2;margin-bottom:1rem;">
+            <button type="button" class="btn-outline btn-sm" id="addInitiative">+ Add another initiative</button>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">{{ 'Save Changes' if advisor else 'Create Advisor' }}</button>
+            <a href="{{ url_for('admin.advisors') }}" class="btn-outline">Cancel</a>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('addInitiative').addEventListener('click', function() {
+    var rows = document.getElementById('initiativeRows');
+    var last = rows.querySelector('.initiative-row');
+    var copy = last.cloneNode(true);
+    copy.querySelectorAll('input, textarea').forEach(function(f) { f.value = ''; });
+    rows.appendChild(copy);
+});
+</script>
+{% endblock %}

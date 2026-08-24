@@ -42,9 +42,17 @@
             <label>Status</label>
             <select name="status">
                 <option value="active" {% if chapter and chapter.status == 'active' %}selected{% endif %}>Active</option>
-                <option value="onboarding" {% if chapter and chapter.status == 'onboarding' %}selected{% endif %}>Onboarding</option>
+                <option value="onboarding" {% if chapter and chapter.status == 'onboarding' %}selected{% endif %}>Coming Soon</option>
                 <option value="inactive" {% if chapter and chapter.status == 'inactive' %}selected{% endif %}>Inactive</option>
             </select>
+        </div>
+        <div class="form-group">
+            <label>Timezone (short label, e.g. EST, CST, IST)</label>
+            <input type="text" name="timezone" maxlength="20" value="{{ chapter.timezone if chapter else '' }}">
+        </div>
+        <div class="form-group" style="grid-column:span 2;">
+            <label>Tags / Focus Areas (comma-separated, e.g. Curriculum, Kits, Fundraising)</label>
+            <input type="text" name="tags" value="{{ chapter.tags if chapter else '' }}">
         </div>
         <div class="form-group">
             <label>

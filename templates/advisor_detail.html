@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ advisor.name }} | Board of Advisors | Bridge the Gap Robotics{% endblock %}
+{% block content %}
+
+<section class="section" style="border-top:none;padding-top:3rem;">
+    <div style="max-width:820px;">
+        <div class="advisor-detail-head">
+            <div class="advisor-avatar">
+                {% if advisor.avatar %}
+                <img src="{{ url_for('static', filename=advisor.avatar) }}" alt="{{ advisor.name }}">
+                {% else %}
+                {{ advisor.name[:1]|upper }}
+                {% endif %}
+            </div>
+            <div>
+                <h1 class="advisor-detail-name">{{ advisor.name }}</h1>
+                {% if advisor.title %}<p class="advisor-detail-role">{{ advisor.title }}</p>{% endif %}
+            </div>
+        </div>
+
+        {% if advisor.bio %}
+        <div class="advisor-bio">
+            {% for para in advisor.bio.split('\n') %}
+            {% if para.strip() %}<p>{{ para.strip() }}</p>{% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if initiatives %}
+        <div style="margin-top:2.5rem;">
+            <span class="sec-label">Initiatives</span>
+            <div style="margin-top:1rem;">
+                {% for ini in initiatives %}
+                <div class="initiative-card">
+                    <div class="initiative-top">
+                        <span class="initiative-name">{{ ini.name }}</span>
+                        {% if ini.role %}<span class="initiative-role">{{ ini.role }}</span>{% endif %}
+                    </div>
+                    {% if ini.description %}<p>{{ ini.description }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="margin-top:2.5rem;">
+            <a href="{{ url_for('public.board') }}" class="btn-text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(180deg);"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+                Back to Board of Advisors
+            </a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

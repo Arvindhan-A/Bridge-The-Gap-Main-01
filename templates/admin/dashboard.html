@@ -101,6 +101,33 @@
                 <span class="dash-nav-desc">Add / edit sponsors shown on the Partners page</span>
             </div>
         </a>
+        <a href="{{ url_for('admin.curriculum') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Curriculum Library</span>
+                <span class="dash-nav-desc">Add / edit modules shown on the Curriculum page</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.advisors') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Board of Advisors</span>
+                <span class="dash-nav-desc">Add / edit advisors and their initiatives</span>
+            </div>
+        </a>
+        <a href="{{ url_for('admin.subscribers') }}" class="dash-nav-item">
+            <div class="dash-nav-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="dash-nav-text">
+                <span class="dash-nav-label">Subscribers</span>
+                <span class="dash-nav-desc">Newsletter signups from the site</span>
+            </div>
+        </a>
         <a href="{{ url_for('admin.analytics') }}" class="dash-nav-item">
             <div class="dash-nav-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
