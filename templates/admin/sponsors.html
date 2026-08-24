@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Manage Sponsors | BTG{% endblock %}
+{% block content %}
+<div class="admin-wrap">
+    <div class="admin-header">
+        <h1>Sponsors</h1>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin.sponsor_create') }}" class="btn btn-sm">New Sponsor</a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline btn-sm">Back</a>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>All Sponsors</h2>
+        {% for sponsor in sponsors %}
+        <div class="admin-item">
+            {% if sponsor.logo %}
+            <img src="{{ url_for('static', filename=sponsor.logo) }}" alt="" style="width:44px;height:44px;object-fit:contain;border-radius:var(--r-sm);background:#fff;border:1px solid var(--border);padding:3px;margin-right:0.75rem;">
+            {% endif %}
+            <div class="admin-item-info">
+                <div class="admin-item-title">{{ sponsor.name }}</div>
+                <div class="admin-item-date">
+                    {{ 'Published' if sponsor.published else 'Unpublished' }} &middot;
+                    Order {{ sponsor.display_order }}
+                    {% if sponsor.website %} &middot; <a href="{{ sponsor.website }}" target="_blank" rel="noopener">{{ sponsor.website }}</a>{% endif %}
+                </div>
+            </div>
+            <div class="admin-actions">
+                <form method="POST" action="{{ url_for('admin.sponsor_toggle', sponsor_id=sponsor.id) }}" style="display:inline;">
+                    <button type="submit">{{ 'Unpublish' if sponsor.published else 'Publish' }}</button>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                </form>
+                <a href="{{ url_for('admin.sponsor_edit', sponsor_id=sponsor.id) }}">Edit</a>
+                <form method="POST" action="{{ url_for('admin.sponsor_delete', sponsor_id=sponsor.id) }}" style="display:inline;" onsubmit="return confirm('Delete this sponsor?')">
+                    <button type="submit" class="btn-delete">Delete</button>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="admin-empty">No sponsors added yet.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

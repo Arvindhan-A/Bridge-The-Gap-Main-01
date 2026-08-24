@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Homepage Stats | BTG{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>Homepage Stats</h1>
+    <p style="color:var(--text-3);margin-top:-0.5rem;margin-bottom:1.5rem;">
+        Controls the numbers shown in the hero section on the homepage. Leave a field blank to show &ldquo;--&rdquo; instead of a number.
+    </p>
+    <form method="POST">
+        <div class="form-group">
+            <label>Kits Delivered</label>
+            <input type="number" name="kits_delivered" min="0" value="{{ stat.kits_delivered if stat.kits_delivered is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Student Chapters</label>
+            <input type="number" name="student_chapters" min="0" value="{{ stat.student_chapters if stat.student_chapters is not none else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Students Reached</label>
+            <input type="number" name="students_reached" min="0" value="{{ stat.students_reached if stat.students_reached is not none else '' }}">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Save Changes</button>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn-outline">Cancel</a>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+{% endblock %}

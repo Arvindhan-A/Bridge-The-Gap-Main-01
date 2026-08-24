@@ -1,15 +1,17 @@
-import json
+import re
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 
 from btg.extensions import db
 from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcement, Application, Role, PERMISSIONS
 from btg.auth import super_admin_required
-from btg.services.upload import save_upload, delete_upload
-from btg.config import Config
+from btg.services.upload import save_upload
+from btg.blueprints._shared import (
+    create_user_from_form, update_user_from_form, delete_user_by_id,
+    delete_chapter_by_id, toggle_chapter_published,
+    create_role_from_form, update_role_from_form, delete_role_by_id,
+)
 
 secret = Blueprint('secret', __name__)
-
-import re
 
 
 def slugify(text):
@@ -63,32 +65,9 @@ def users():
 @secret.route('/gokul007/users/create', methods=['POST'])
 @super_admin_required
 def user_create():
-    name = request.form.get('name', '').strip()
-    email = request.form.get('email', '').strip().lower()
-    username = request.form.get('username', '').strip().lower()
-    password = request.form.get('password', '')
-    role = request.form.get('role', 'chapter_president')
-    chapter_id = request.form.get('chapter_id', type=int)
-    role_id = request.form.get('role_id', type=int)
-
-    if not name or not email or not password or not username:
-        flash('Name, email, username, and password are required.', 'error')
-        return redirect(url_for('secret.users'))
-
-    if User.query.filter_by(email=email).first():
-        flash('Email already in use.', 'error')
-        return redirect(url_for('secret.users'))
-
-    if User.query.filter_by(username=username).first():
-        flash('Username already taken.', 'error')
-        return redirect(url_for('secret.users'))
-
-    user = User(name=name, email=email, username=username, role=role, chapter_id=chapter_id, role_id=role_id)
-    user.set_password(password)
-    user.must_change_password = True
-    db.session.add(user)
-    db.session.commit()
-    flash(f'User "{user.name}" ({role.replace("_", " ")}) created!', 'success')
+    user = create_user_from_form()
+    if user:
+        flash(f'User "{user.name}" created!', 'success')
     return redirect(url_for('secret.users'))
 
 
@@ -99,36 +78,15 @@ def user_edit(user_id):
     if not user:
         flash('User not found.', 'error')
         return redirect(url_for('secret.users'))
-    user.name = request.form.get('name', user.name)
-    user.email = request.form.get('email', user.email).strip().lower()
-    username = request.form.get('username', '').strip().lower()
-    if username and username != user.username:
-        if User.query.filter_by(username=username).first():
-            flash('Username already taken.', 'error')
-            return redirect(url_for('secret.users'))
-        user.username = username
-    user.role = request.form.get('role', user.role)
-    user.chapter_id = request.form.get('chapter_id', type=int)
-    user.role_id = request.form.get('role_id', type=int) or None
-    password = request.form.get('password', '')
-    if password:
-        user.set_password(password)
-        user.must_change_password = True
-    db.session.commit()
-    flash('User updated!', 'success')
+    if update_user_from_form(user):
+        flash('User updated!', 'success')
     return redirect(url_for('secret.users'))
 
 
 @secret.route('/gokul007/users/<int:user_id>/delete', methods=['POST'])
 @super_admin_required
 def user_delete(user_id):
-    user = db.session.get(User, user_id)
-    if user and user.role != 'super_admin':
-        db.session.delete(user)
-        db.session.commit()
-        flash('User deleted.', 'info')
-    else:
-        flash('Cannot delete super admin.', 'error')
+    delete_user_by_id(user_id)
     return redirect(url_for('secret.users'))
 
 
@@ -176,25 +134,14 @@ def chapter_create():
 @secret.route('/gokul007/chapters/<int:chapter_id>/delete', methods=['POST'])
 @super_admin_required
 def chapter_delete(chapter_id):
-    chapter = db.session.get(Chapter, chapter_id)
-    if not chapter:
-        flash('Chapter not found.', 'error')
-    else:
-        chapter.delete_files()
-        db.session.delete(chapter)
-        db.session.commit()
-        flash(f'Chapter "{chapter.name}" deleted.', 'info')
+    delete_chapter_by_id(chapter_id)
     return redirect(url_for('secret.chapters'))
 
 
 @secret.route('/gokul007/chapters/<int:chapter_id>/toggle', methods=['POST'])
 @super_admin_required
 def chapter_toggle(chapter_id):
-    chapter = db.session.get(Chapter, chapter_id)
-    if chapter:
-        chapter.published = not chapter.published
-        db.session.commit()
-        flash(f'Chapter "{chapter.name}" {"published" if chapter.published else "unpublished"}.', 'success')
+    toggle_chapter_published(chapter_id)
     return redirect(url_for('secret.chapters'))
 
 
@@ -265,21 +212,7 @@ def roles():
 @secret.route('/gokul007/roles/create', methods=['POST'])
 @super_admin_required
 def role_create():
-    name = request.form.get('name', '').strip()
-    description = request.form.get('description', '').strip()
-    if not name:
-        flash('Role name is required.', 'error')
-        return redirect(url_for('secret.roles'))
-    if Role.query.filter_by(name=name).first():
-        flash('Role already exists.', 'error')
-        return redirect(url_for('secret.roles'))
-
-    selected = request.form.getlist('permissions')
-    role = Role(name=name, description=description)
-    role.set_permissions(selected)
-    db.session.add(role)
-    db.session.commit()
-    flash(f'Role "{name}" created!', 'success')
+    create_role_from_form()
     return redirect(url_for('secret.roles'))
 
 
@@ -290,28 +223,12 @@ def role_edit(role_id):
     if not role:
         flash('Role not found.', 'error')
         return redirect(url_for('secret.roles'))
-    role.name = request.form.get('name', role.name)
-    role.description = request.form.get('description', '').strip()
-    selected = request.form.getlist('permissions')
-    role.set_permissions(selected)
-    db.session.commit()
-    flash(f'Role "{role.name}" updated!', 'success')
+    update_role_from_form(role)
     return redirect(url_for('secret.roles'))
 
 
 @secret.route('/gokul007/roles/<int:role_id>/delete', methods=['POST'])
 @super_admin_required
 def role_delete(role_id):
-    role = db.session.get(Role, role_id)
-    if not role:
-        flash('Role not found.', 'error')
-        return redirect(url_for('secret.roles'))
-    if role.is_system:
-        flash('System roles cannot be deleted.', 'error')
-        return redirect(url_for('secret.roles'))
-    # Reassign users with this role to None
-    User.query.filter_by(role_id=role.id).update({User.role_id: None})
-    db.session.delete(role)
-    db.session.commit()
-    flash(f'Role "{role.name}" deleted.', 'info')
+    delete_role_by_id(role_id)
     return redirect(url_for('secret.roles'))

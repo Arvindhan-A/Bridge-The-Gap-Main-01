@@ -5,9 +5,9 @@
     <div class="admin-header">
         <h1>Admin Panel</h1>
         <div class="admin-header-actions">
-            <a href="/admin/post/new" class="btn btn-sm">New Event</a>
-            <a href="/admin/event/new" class="btn-outline btn-sm">New Chapter Event</a>
-            <a href="/logout" class="btn-outline btn-sm">Logout</a>
+            <a href="/admin/event/new" class="btn btn-sm">New Event</a>
+            <a href="/admin/post/new" class="btn-outline btn-sm">New Blog Post</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm" data-logout>Logout</a>
         </div>
     </div>
 
@@ -25,8 +25,13 @@
                     </div>
                 </div>
                 <div class="admin-actions">
-                    <a href="/admin/post/{{ event.id }}/edit">Edit</a>
-                    <form action="/admin/post/{{ event.id }}/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete this event?')">
+                    {% if event.chapter_id %}
+                    <a href="{{ url_for('admin.edit_event', event_id=event.id) }}">Edit</a>
+                    <form action="{{ url_for('admin.delete_event', event_id=event.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this event?')">
+                    {% else %}
+                    <a href="{{ url_for('admin.edit_post', event_id=event.id) }}">Edit</a>
+                    <form action="{{ url_for('admin.delete_post', event_id=event.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this event?')">
+                    {% endif %}
                         <button type="submit" class="btn-delete">Delete</button>
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     </form>

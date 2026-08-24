@@ -200,6 +200,9 @@ def team_reorder():
 # -- Events --
 
 
+EVENT_STATUSES = {'upcoming', 'ongoing', 'completed', 'published'}
+
+
 @dashboard.route('/dashboard/events')
 @chapter_president_required
 def events():
@@ -224,7 +227,65 @@ def events():
             edit_event = None
 
     evts = Event.query.filter_by(chapter_id=c.id).order_by(Event.date.desc()).all()
-    return render_template('dashboard/events.html', chapter=c, events=evts, edit_event=edit_event, existing_images=existing_images)
+    event_images = {}
+    for ev in evts:
+        event_images[ev.id] = ev.images.order_by(EventImage.display_order).all()
+    return render_template('dashboard/events.html', chapter=c, events=evts, edit_event=edit_event,
+                           existing_images=existing_images, event_images=event_images)
+
+
+def parse_event_form():
+    """Validate and normalise event form fields. Returns a dict with an 'errors' list."""
+    errors = []
+    title = request.form.get('title', '').strip()
+    date_str = request.form.get('date', '').strip()
+    status = request.form.get('status', 'upcoming').strip()
+    registration_link = request.form.get('registration_link', '').strip()
+
+    if not title:
+        errors.append('Title is required.')
+    try:
+        event_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        event_date = None
+        errors.append('A valid event date is required.')
+    if status not in EVENT_STATUSES:
+        status = 'upcoming'
+    if registration_link and not registration_link.startswith(('http://', 'https://')):
+        errors.append('Registration link must start with http:// or https://')
+
+    max_participants = None
+    mp = request.form.get('max_participants', '').strip()
+    if mp:
+        try:
+            max_participants = int(mp)
+            if max_participants < 1:
+                errors.append('Max participants must be a positive number.')
+        except ValueError:
+            errors.append('Max participants must be a whole number.')
+
+    return {
+        'title': title,
+        'event_date': event_date,
+        'status': status,
+        'registration_link': registration_link,
+        'max_participants': max_participants,
+        'errors': errors,
+    }
+
+
+def apply_event_fields(event, data):
+    event.title = data['title']
+    event.date = data['event_date']
+    event.status = data['status']
+    event.registration_link = data['registration_link']
+    event.description = request.form.get('description', '')
+    event.content = request.form.get('content', '')
+    event.venue = request.form.get('venue', '')
+    event.address = request.form.get('address', '')
+    event.time = request.form.get('time', '')
+    event.contact_email = request.form.get('contact_email', '').strip()
+    event.max_participants = data['max_participants']
 
 
 @dashboard.route('/dashboard/events/create', methods=['POST'])
@@ -236,29 +297,25 @@ def event_create():
         flash('Access denied.', 'error')
         return redirect(url_for('dashboard.overview'))
 
-    try:
-        event_date = datetime.strptime(request.form.get('date', ''), '%Y-%m-%d').date()
-    except (ValueError, TypeError):
-        flash('Invalid date.', 'error')
+    user = db.session.get(User, session['user_id'])
+    data = parse_event_form()
+    if data['errors']:
+        for err in data['errors']:
+            flash(err, 'error')
         return redirect(url_for('dashboard.events', chapter_id=c.id))
 
     event = Event(
         chapter_id=c.id,
-        title=request.form.get('title', ''),
-        description=request.form.get('description', ''),
-        venue=request.form.get('venue', ''),
-        date=event_date,
-        time=request.form.get('time', ''),
-        status=request.form.get('status', 'upcoming'),
-        registration_link=request.form.get('registration_link', ''),
+        author=request.form.get('author', '').strip() or (user.name if user else 'Admin'),
     )
+    apply_event_fields(event, data)
     if 'banner' in request.files and request.files['banner'].filename:
         event.banner = save_upload(request.files['banner'], 'events')
     db.session.add(event)
     db.session.commit()
 
-    # Save gallery images
     save_event_gallery(event)
+    db.session.commit()
 
     flash('Event created!', 'success')
     return redirect(url_for('dashboard.events', chapter_id=c.id))
@@ -277,42 +334,75 @@ def event_update():
         flash('Access denied.', 'error')
         return redirect(url_for('dashboard.overview'))
 
-    try:
-        event.date = datetime.strptime(request.form.get('date', ''), '%Y-%m-%d').date()
-    except (ValueError, TypeError):
-        pass
-    event.title = request.form.get('title', event.title)
-    event.description = request.form.get('description', '')
-    event.venue = request.form.get('venue', '')
-    event.time = request.form.get('time', '')
-    event.status = request.form.get('status', 'upcoming')
-    event.registration_link = request.form.get('registration_link', '')
+    data = parse_event_form()
+    if data['errors']:
+        for err in data['errors']:
+            flash(err, 'error')
+        return redirect(url_for('dashboard.events', chapter_id=c.id, edit=event.id))
+
+    apply_event_fields(event, data)
+    author = request.form.get('author', '').strip()
+    if author:
+        event.author = author
     if 'banner' in request.files and request.files['banner'].filename:
         event.banner = save_upload(request.files['banner'], 'events')
 
-    # Save gallery images
     save_event_gallery(event)
-
     db.session.commit()
     flash('Event updated!', 'success')
     return redirect(url_for('dashboard.events', chapter_id=event.chapter_id))
 
 
 def save_event_gallery(event):
+    """Handle event photo management: uploads with captions, existing picks,
+    caption edits, and removal."""
     import os
-    existing = request.form.getlist('existing_gallery')
-    for img_name in existing:
-        path = os.path.join('images', 'events', img_name)
-        if os.path.exists(os.path.join('static', path)):
-            img = EventImage(event_id=event.id, image=path, display_order=event.images.count())
-            db.session.add(img)
+
+    # Newly uploaded photos (order matches the JS caption rows)
     files = request.files.getlist('gallery_images')
-    for file in files:
+    captions = request.form.getlist('gallery_captions')
+    for i, file in enumerate(files):
         if file and file.filename:
             path = save_upload(file, 'events/gallery')
             if path:
-                img = EventImage(event_id=event.id, image=path, display_order=event.images.count())
+                caption = captions[i] if i < len(captions) else ''
+                img = EventImage(event_id=event.id, image=path, caption=caption,
+                                 display_order=event.images.count())
                 db.session.add(img)
+
+    # Pre-existing images picked from static/images/events/ (no duplicates)
+    from werkzeug.utils import secure_filename
+    for img_name in request.form.getlist('existing_gallery'):
+        safe_name = secure_filename(img_name)
+        if not safe_name or safe_name != img_name:
+            continue
+        path = os.path.join('images', 'events', safe_name)
+        exists = EventImage.query.filter_by(event_id=event.id, image=path).first()
+        if not exists and os.path.exists(os.path.join('static', path)):
+            img = EventImage(event_id=event.id, image=path,
+                             display_order=event.images.count())
+            db.session.add(img)
+
+    # Update captions of existing images (caption_<id>)
+    for key, value in request.form.items():
+        if key.startswith('caption_'):
+            try:
+                img_id = int(key.split('_', 1)[1])
+            except (ValueError, IndexError):
+                continue
+            img = db.session.get(EventImage, img_id)
+            if img and img.event_id == event.id:
+                img.caption = value
+
+    # Remove images marked for deletion
+    for img_id in request.form.getlist('remove_image'):
+        try:
+            img = db.session.get(EventImage, int(img_id))
+        except (ValueError, TypeError):
+            continue
+        if img and img.event_id == event.id:
+            img.delete_files()
+            db.session.delete(img)
 
 
 @dashboard.route('/dashboard/events/<int:event_id>/delete', methods=['POST'])

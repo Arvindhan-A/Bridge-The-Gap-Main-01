@@ -3,7 +3,7 @@
 {% block content %}
 <div class="admin-wrap">
     <div class="admin-header">
-        <h1>New Event</h1>
+        <h1>New Chapter Event</h1>
         <div class="admin-header-actions">
             <a href="{{ url_for('admin.legacy') }}" class="btn-outline btn-sm">Back</a>
         </div>
@@ -11,37 +11,76 @@
 
     <div class="admin-section">
         <form method="POST" enctype="multipart/form-data" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);">
-            <div class="form-group" style="margin:0;">
+            <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Event Title *</label>
                 <input type="text" name="title" placeholder="Event title" required>
             </div>
             <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Date *</label>
                 <input type="date" name="date" required>
             </div>
             <div class="form-group" style="margin:0;">
-                <input type="text" name="venue" placeholder="Venue / Location">
-            </div>
-            <div class="form-group" style="margin:0;">
-                <select name="status">
-                    <option value="published">Published</option>
-                    <option value="upcoming">Upcoming</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Time</label>
                 <input type="text" name="time" placeholder="Time (e.g. 10:00 AM)">
             </div>
             <div class="form-group" style="margin:0;">
-                <input type="url" name="registration_link" placeholder="Registration link (optional)">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Chapter</label>
+                <select name="chapter_id">
+                    <option value="">No chapter (standalone event)</option>
+                    {% for c in chapters %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Status</label>
+                <select name="status">
+                    <option value="upcoming">Upcoming</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                    <option value="published">Published</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Venue</label>
+                <input type="text" name="venue" placeholder="Venue / Location">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Address</label>
+                <input type="text" name="address" placeholder="Street / area / city">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Author</label>
+                <input type="text" name="author" placeholder="Author / organizer">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Registration Link</label>
+                <input type="url" name="registration_link" placeholder="https://example.com/register">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Contact Email</label>
+                <input type="email" name="contact_email" placeholder="organizer@chapter.org">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Max Participants</label>
+                <input type="number" name="max_participants" min="1" placeholder="e.g. 50">
             </div>
             <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Short Description</label>
                 <textarea name="description" rows="3" placeholder="Event description"></textarea>
             </div>
             <div class="form-group" style="margin:0;grid-column:1/-1;">
-                <textarea name="content" rows="6" placeholder="Event content (HTML)"></textarea>
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Full Content (HTML supported)</label>
+                <textarea name="content" rows="6" placeholder="Event content"></textarea>
             </div>
             <div class="form-group" style="margin:0;grid-column:1/-1;">
                 <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Banner Image</label>
                 <input type="file" name="banner" accept="image/*">
+            </div>
+            <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Event Photos (select multiple, add a caption to each)</label>
+                <input type="file" name="gallery_images" id="galleryInput" accept="image/*" multiple>
+                <div id="galleryPreview"></div>
             </div>
             <div style="grid-column:1/-1;">
                 <button type="submit" class="btn btn-sm">Create Event</button>
@@ -51,4 +90,52 @@
         </form>
     </div>
 </div>
+
+<style>
+.gallery-upload-row {
+    display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem;
+    padding:0.5rem;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);
+}
+.gallery-upload-row .gallery-upload-thumb { width:64px;height:44px;object-fit:cover;border-radius:var(--r-sm);flex-shrink:0; }
+.gallery-upload-row input[type="text"] { flex:1;min-width:0; }
+.gallery-upload-row .btn-delete { white-space:nowrap; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const galleryInput = document.getElementById('galleryInput');
+    const galleryPreview = document.getElementById('galleryPreview');
+    let captions = [];
+    function renderGallery() {
+        if (!galleryPreview) return;
+        galleryPreview.innerHTML = '';
+        Array.from(galleryInput.files).forEach((file, i) => {
+            const row = document.createElement('div');
+            row.className = 'gallery-upload-row';
+            const img = document.createElement('img');
+            img.className = 'gallery-upload-thumb';
+            img.src = URL.createObjectURL(file);
+            const caption = document.createElement('input');
+            caption.type = 'text';
+            caption.name = 'gallery_captions';
+            caption.placeholder = 'Caption for this photo (optional)';
+            caption.value = captions[i] || '';
+            caption.addEventListener('input', () => { captions[i] = caption.value; });
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn-delete';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', () => {
+                const dt = new DataTransfer();
+                captions.splice(i, 1);
+                Array.from(galleryInput.files).forEach((f, idx) => { if (idx !== i) dt.items.add(f); });
+                galleryInput.files = dt.files;
+                renderGallery();
+            });
+            row.append(img, caption, removeBtn);
+            galleryPreview.appendChild(row);
+        });
+    }
+    if (galleryInput) galleryInput.addEventListener('change', renderGallery);
+});
+</script>
 {% endblock %}

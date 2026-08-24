@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if sponsor else 'New' }} Sponsor | BTG{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>{{ 'Edit' if sponsor else 'New' }} Sponsor</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Sponsor Name *</label>
+            <input type="text" name="name" value="{{ sponsor.name if sponsor else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label>Website URL</label>
+            <input type="url" name="website" value="{{ sponsor.website if sponsor else '' }}" placeholder="https://">
+        </div>
+        <div class="form-group" style="grid-column:span 2;">
+            <label>Description</label>
+            <textarea name="description" rows="3">{{ sponsor.description if sponsor else '' }}</textarea>
+        </div>
+        <div class="form-group">
+            <label>Logo</label>
+            <input type="file" name="logo" accept="image/*">
+            {% if sponsor and sponsor.logo %}<p style="font-size:0.75rem;color:var(--text-3);margin-top:4px;">Current: {{ sponsor.logo }}</p>{% endif %}
+        </div>
+        <div class="form-group">
+            <label>Display Order</label>
+            <input type="number" name="display_order" value="{{ sponsor.display_order if sponsor else 0 }}">
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="published" {% if not sponsor or sponsor.published %}checked{% endif %}>
+                Published (visible on the Partners page)
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">{{ 'Save Changes' if sponsor else 'Add Sponsor' }}</button>
+            <a href="{{ url_for('admin.sponsors') }}" class="btn-outline">Cancel</a>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    </form>
+</div>
+{% endblock %}

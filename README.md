@@ -21,16 +21,16 @@ cp .env.example .env
 # Edit .env with your own SECRET_KEY and passwords
 
 # Run the application
-python run.py
+python app.py
 ```
 
-Opens at `http://localhost:5020`. The database and upload directories are auto-created on first run.
+Opens at `http://localhost:2266`. The database and upload directories are auto-created on first run.
 
 ## Project Structure
 
 ```
 .
-├── run.py                    # Application entry point
+├── app.py                    # Application entry point
 ├── btg/                      # Application package
 │   ├── __init__.py           # create_app factory
 │   ├── config.py             # Configuration (env vars, secrets)
@@ -117,18 +117,25 @@ Integration tests cover:
 
 ## Deployment
 
+See [`deploy/README.md`](deploy/README.md) for a full walkthrough of running
+this behind systemd + waitress on a Raspberry Pi, exposed via a Cloudflare
+Tunnel.
+
+Quick reference:
+
 ```bash
-# Install production server
+# Install production server (already in requirements.txt)
 pip install waitress
 
 # Run with waitress
-python -m waitress --port=5020 btg:create_app
+FLASK_ENV=production waitress-serve --port=8000 --call btg:create_app
 ```
 
 For production:
-- Set `debug=False` 
-- Use a strong `SECRET_KEY` via environment variable
+- Set `FLASK_ENV=production` — the app refuses to start in this mode with
+  the default `SECRET_KEY` or without `BTG_ADMIN_PASSWORD` set
+- Use a strong, unique `SECRET_KEY` via environment variable
 - Set `BTG_ADMIN_PASSWORD` and `BTG_PRESIDENT_PASSWORD` via environment
-- Use Redis/DB-backed sessions for multi-instance
-- Set up nginx/caddy reverse proxy for static files
-- Run database migrations: `flask db upgrade`
+- On a fresh database, the app creates all tables and seeds the admin user
+  automatically on first run; run `flask db stamp head` once afterwards so
+  later `flask db upgrade` calls apply cleanly (see `deploy/README.md`)

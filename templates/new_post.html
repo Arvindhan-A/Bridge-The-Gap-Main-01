@@ -3,7 +3,7 @@
 {% block content %}
 <div class="form-page">
     <h1>New Blog Post</h1>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Title</label>
             <input type="text" id="title" name="title" required>
@@ -16,12 +16,63 @@
             <label for="content">Content (HTML supported)</label>
             <textarea id="content" name="content" required></textarea>
         </div>
+        <div class="form-group">
+            <label for="postGalleryInput">Post Photos (select multiple, add a caption to each)</label>
+            <input type="file" id="postGalleryInput" name="gallery_images" accept="image/*" multiple>
+            <div id="galleryPreview"></div>
+        </div>
         <div class="form-actions">
             <button type="submit" class="btn btn-accent">Publish</button>
-            <a href="/blog" class="btn-outline">Cancel</a>
+            <a href="{{ url_for('public.blog') }}" class="btn-outline">Cancel</a>
         </div>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
     </form>
 </div>
+<style>
+.gallery-upload-row {
+    display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem;
+    padding:0.5rem;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);
+}
+.gallery-upload-row .gallery-upload-thumb { width:64px;height:44px;object-fit:cover;border-radius:var(--r-sm);flex-shrink:0; }
+.gallery-upload-row input[type="text"] { flex:1;min-width:0; }
+.gallery-upload-row .btn-delete { white-space:nowrap; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const galleryInput = document.getElementById('postGalleryInput');
+    const galleryPreview = document.getElementById('galleryPreview');
+    let captions = [];
+    function renderGallery() {
+        if (!galleryPreview) return;
+        galleryPreview.innerHTML = '';
+        Array.from(galleryInput.files).forEach((file, i) => {
+            const row = document.createElement('div');
+            row.className = 'gallery-upload-row';
+            const img = document.createElement('img');
+            img.className = 'gallery-upload-thumb';
+            img.src = URL.createObjectURL(file);
+            const caption = document.createElement('input');
+            caption.type = 'text';
+            caption.name = 'gallery_captions';
+            caption.placeholder = 'Caption for this photo (optional)';
+            caption.value = captions[i] || '';
+            caption.addEventListener('input', () => { captions[i] = caption.value; });
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn-delete';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', () => {
+                const dt = new DataTransfer();
+                captions.splice(i, 1);
+                Array.from(galleryInput.files).forEach((f, idx) => { if (idx !== i) dt.items.add(f); });
+                galleryInput.files = dt.files;
+                renderGallery();
+            });
+            row.append(img, caption, removeBtn);
+            galleryPreview.appendChild(row);
+        });
+    }
+    if (galleryInput) galleryInput.addEventListener('change', renderGallery);
+});
+</script>
 {% endblock %}

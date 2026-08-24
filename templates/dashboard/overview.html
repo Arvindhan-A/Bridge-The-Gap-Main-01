@@ -9,7 +9,7 @@
         </div>
         <div class="admin-header-actions">
             <a href="{{ url_for('public.chapter_detail', slug=chapter.slug) }}" class="btn-outline btn-sm" target="_blank">View Public Page</a>
-            <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm">Logout</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm" data-logout>Logout</a>
         </div>
     </div>
 

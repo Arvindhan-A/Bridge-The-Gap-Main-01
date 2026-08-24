@@ -37,11 +37,6 @@ static/uploads/
 .DS_Store
 Thumbs.db
 
-# Deployment
-.vercel/
-.netlify/
-.netlify/functions/
-
 # Build artifacts
 *.egg-info/
 dist/
@@ -49,4 +44,3 @@ build/
 
 # Backup folders
 btg-pre-tailwind-backup/
-legacy/

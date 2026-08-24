@@ -7,6 +7,32 @@
     <p class="hero-sub">Together, we can make a bigger impact. Partner with us to bring robotics education to those who need it most.</p>
 </section>
 
+{% if sponsors %}
+<section class="section">
+    <div class="sec-header">
+        <span class="sec-label">Our Sponsors</span>
+        <h2 class="sec-title">Made possible by <span class="title-accent">their support</span></h2>
+        <p class="sec-desc">The organizations helping us put robotics kits into more hands.</p>
+    </div>
+    <div class="scroll-row">
+        {% for sponsor in sponsors %}
+        <div class="scroll-card">
+            <div class="scroll-card-logo">
+                {% if sponsor.logo %}
+                <img src="{{ url_for('static', filename=sponsor.logo) }}" alt="{{ sponsor.name }}">
+                {% else %}
+                <span class="scroll-card-name">{{ sponsor.name }}</span>
+                {% endif %}
+            </div>
+            {% if sponsor.logo %}<span class="scroll-card-name">{{ sponsor.name }}</span>{% endif %}
+            {% if sponsor.description %}<p class="scroll-card-desc">{{ sponsor.description }}</p>{% endif %}
+            {% if sponsor.website %}<a href="{{ sponsor.website }}" class="scroll-card-link" target="_blank" rel="noopener">Visit Site</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
 <section class="section">
     <div class="sec-header">
         <span class="sec-label">Opportunities</span>

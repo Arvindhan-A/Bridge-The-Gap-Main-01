@@ -1,9 +1,12 @@
 import os
 import uuid
-from PIL import Image
+from PIL import Image, ImageOps
 from io import BytesIO
 
 from btg.config import Config
+
+MAX_IMAGE_DIM = 1600
+JPEG_QUALITY = 82
 
 MAGIC_BYTES = {
     b'\xff\xd8\xff': 'jpg',
@@ -55,11 +58,17 @@ def validate_upload(file):
 def strip_exif(raw, ext):
     try:
         img = Image.open(BytesIO(raw))
+        img = ImageOps.exif_transpose(img)  # bake in rotation before EXIF is dropped
         if img.mode in ('RGBA', 'LA', 'P'):
             img = img.convert('RGB')
+        w, h = img.size
+        if max(w, h) > MAX_IMAGE_DIM:
+            scale = MAX_IMAGE_DIM / max(w, h)
+            img = img.resize((round(w * scale), round(h * scale)), Image.LANCZOS)
         out = BytesIO()
         save_fmt = 'JPEG' if ext == 'jpg' else ext.upper()
-        img.save(out, format=save_fmt)
+        save_kwargs = {'quality': JPEG_QUALITY, 'optimize': True} if save_fmt == 'JPEG' else {'optimize': True}
+        img.save(out, format=save_fmt, **save_kwargs)
         out.seek(0)
         return out.read()
     except Exception:

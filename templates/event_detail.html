@@ -24,20 +24,16 @@
     <div class="chapter-main">
         <!-- About -->
         <section class="section" style="padding-top:0;border-top:none;">
-            <div class="chapter-mission-box">
-                <span class="sec-label">Event Details</span>
-                <div class="chapter-content">
-                    {% if event.description %}
-                    <p>{{ event.description }}</p>
-                    {% endif %}
-                    {% if event.content %}
-                    {{ event.content|safe }}
-                    {% endif %}
-                    {% if not event.description and not event.content %}
-                    <p>No details available for this event.</p>
-                    {% endif %}
-                </div>
-            </div>
+            <span class="sec-label">Event Details</span>
+            {% if event.description %}
+            <p class="chapter-lead-desc">{{ event.description }}</p>
+            {% endif %}
+            {% if event.content %}
+            <div class="chapter-content">{{ event.content|safe }}</div>
+            {% endif %}
+            {% if not event.description and not event.content %}
+            <p class="chapter-content">No details available for this event.</p>
+            {% endif %}
         </section>
 
         <!-- Gallery -->
@@ -69,13 +65,25 @@
                 {% if event.venue %}
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    {{ event.venue }}
+                    {{ event.venue }}{% if event.address %}, {{ event.address }}{% endif %}
                 </span>
                 {% endif %}
                 {% if event.chapter %}
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                     {{ event.chapter.name }}
+                </span>
+                {% endif %}
+                {% if event.max_participants %}
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    Limited to {{ event.max_participants }} participants
+                </span>
+                {% endif %}
+                {% if event.contact_email %}
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <a href="mailto:{{ event.contact_email }}" style="color:inherit;">{{ event.contact_email }}</a>
                 </span>
                 {% endif %}
             </div>

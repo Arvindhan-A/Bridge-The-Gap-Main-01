@@ -1,34 +1,18 @@
-import json
-import os
-import uuid
+import re
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 
 from btg.extensions import db
-from btg.models import User, Chapter, TeamMember, Event, GalleryImage, Announcement, Application, Role, AuditLog, UserSession
-from btg.auth import login_required, super_admin_required
-from btg.services.upload import save_upload
+from btg.models import User, Chapter, TeamMember, Event, EventImage, GalleryImage, Announcement, Application, Role, AuditLog, UserSession, Sponsor, SiteStat
+from btg.auth import super_admin_required
+from btg.services.upload import save_upload, delete_upload
+from btg.blueprints._shared import (
+    log_audit, create_user_from_form, update_user_from_form, delete_user_by_id,
+    delete_chapter_by_id, toggle_chapter_published,
+    create_role_from_form, update_role_from_form, delete_role_by_id,
+)
 
 admin = Blueprint('admin', __name__)
-
-ARVIND_USERNAME = 'arvind'
-
-
-def log_audit(action, entity_type, entity_id=None, entity_name='', details=''):
-    user_id = session.get('user_id')
-    user = db.session.get(User, user_id) if user_id else None
-    entry = AuditLog(
-        user_id=user_id,
-        user_name=user.name if user else 'System',
-        action=action,
-        entity_type=entity_type,
-        entity_id=entity_id,
-        entity_name=entity_name,
-        details=details,
-        ip_address=request.remote_addr or '',
-    )
-    db.session.add(entry)
-    db.session.commit()
 
 
 def try_float(val):
@@ -38,29 +22,15 @@ def try_float(val):
         return None
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-POSTS_FILE = os.path.join(DATA_DIR, 'posts.json')
-EVENTS_FILE = os.path.join(DATA_DIR, 'events.json')
+def try_int(val):
+    try:
+        return int(val) if val not in (None, '') else None
+    except (ValueError, TypeError):
+        return None
 
 
-def load_json(filepath, default=None):
-    if default is None:
-        default = []
-    if not os.path.exists(filepath):
-        with open(filepath, 'w') as f:
-            json.dump(default, f)
-    with open(filepath) as f:
-        return json.load(f)
-
-
-def save_json(filepath, data):
-    with open(filepath, 'w') as f:
-        json.dump(data, f, indent=2, default=str)
-
-
-# Utility copied from old app (for slug generation)
-import re
+def strip_tags(html):
+    return re.sub(r'<[^>]+>', ' ', html or '').strip()
 
 
 def slugify(text):
@@ -201,26 +171,127 @@ def chapter_edit(chapter_id):
 @admin.route('/admin/chapters/<int:chapter_id>/delete', methods=['POST'])
 @super_admin_required
 def chapter_delete(chapter_id):
-    chapter = db.session.get(Chapter, chapter_id)
-    if not chapter:
-        flash('Chapter not found.', 'error')
-    else:
-        chapter.delete_files()
-        db.session.delete(chapter)
-        db.session.commit()
-        flash(f'Chapter "{chapter.name}" deleted.', 'info')
+    delete_chapter_by_id(chapter_id)
     return redirect(url_for('admin.chapters'))
 
 
 @admin.route('/admin/chapters/<int:chapter_id>/toggle', methods=['POST'])
 @super_admin_required
 def chapter_toggle(chapter_id):
-    chapter = db.session.get(Chapter, chapter_id)
-    if chapter:
-        chapter.published = not chapter.published
-        db.session.commit()
-        flash(f'Chapter "{chapter.name}" {"published" if chapter.published else "unpublished"}.', 'success')
+    toggle_chapter_published(chapter_id)
     return redirect(url_for('admin.chapters'))
+
+
+# -- Sponsor CRUD --
+
+
+def _clean_website(url):
+    url = (url or '').strip()
+    if url and not url.startswith(('http://', 'https://')):
+        url = 'https://' + url
+    return url
+
+
+@admin.route('/admin/sponsors')
+@super_admin_required
+def sponsors():
+    sponsors = Sponsor.query.order_by(Sponsor.display_order, Sponsor.name).all()
+    return render_template('admin/sponsors.html', sponsors=sponsors)
+
+
+@admin.route('/admin/sponsors/create', methods=['GET', 'POST'])
+@super_admin_required
+def sponsor_create():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        if not name:
+            flash('Sponsor name is required.', 'error')
+            return render_template('admin/sponsor_form.html', sponsor=None)
+
+        sponsor = Sponsor(
+            name=name,
+            website=_clean_website(request.form.get('website')),
+            description=request.form.get('description', '').strip(),
+            published='published' in request.form,
+            display_order=request.form.get('display_order', 0, type=int) or 0,
+        )
+        if 'logo' in request.files and request.files['logo'].filename:
+            logo_path = save_upload(request.files['logo'], 'sponsors')
+            if logo_path:
+                sponsor.logo = logo_path
+            else:
+                flash('Logo upload was rejected (invalid image or over 4MB). Sponsor saved without a logo.', 'warning')
+
+        db.session.add(sponsor)
+        db.session.commit()
+        log_audit('create', 'sponsor', sponsor.id, sponsor.name)
+        flash(f'Sponsor "{sponsor.name}" added!', 'success')
+        return redirect(url_for('admin.sponsors'))
+
+    return render_template('admin/sponsor_form.html', sponsor=None)
+
+
+@admin.route('/admin/sponsors/<int:sponsor_id>/edit', methods=['GET', 'POST'])
+@super_admin_required
+def sponsor_edit(sponsor_id):
+    sponsor = db.session.get(Sponsor, sponsor_id)
+    if not sponsor:
+        flash('Sponsor not found.', 'error')
+        return redirect(url_for('admin.sponsors'))
+
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        if not name:
+            flash('Sponsor name is required.', 'error')
+            return render_template('admin/sponsor_form.html', sponsor=sponsor)
+
+        sponsor.name = name
+        sponsor.website = _clean_website(request.form.get('website'))
+        sponsor.description = request.form.get('description', '').strip()
+        sponsor.published = 'published' in request.form
+        sponsor.display_order = request.form.get('display_order', 0, type=int) or 0
+
+        if 'logo' in request.files and request.files['logo'].filename:
+            logo_path = save_upload(request.files['logo'], 'sponsors')
+            if logo_path:
+                if sponsor.logo:
+                    delete_upload(sponsor.logo)
+                sponsor.logo = logo_path
+            else:
+                flash('New logo was rejected (invalid image or over 4MB). Keeping the current logo.', 'warning')
+
+        db.session.commit()
+        log_audit('update', 'sponsor', sponsor.id, sponsor.name)
+        flash('Sponsor updated!', 'success')
+        return redirect(url_for('admin.sponsors'))
+
+    return render_template('admin/sponsor_form.html', sponsor=sponsor)
+
+
+@admin.route('/admin/sponsors/<int:sponsor_id>/delete', methods=['POST'])
+@super_admin_required
+def sponsor_delete(sponsor_id):
+    sponsor = db.session.get(Sponsor, sponsor_id)
+    if not sponsor:
+        flash('Sponsor not found.', 'error')
+    else:
+        sponsor.delete_files()
+        db.session.delete(sponsor)
+        db.session.commit()
+        log_audit('delete', 'sponsor', sponsor_id, sponsor.name)
+        flash(f'Sponsor "{sponsor.name}" deleted.', 'info')
+    return redirect(url_for('admin.sponsors'))
+
+
+@admin.route('/admin/sponsors/<int:sponsor_id>/toggle', methods=['POST'])
+@super_admin_required
+def sponsor_toggle(sponsor_id):
+    sponsor = db.session.get(Sponsor, sponsor_id)
+    if sponsor:
+        sponsor.published = not sponsor.published
+        db.session.commit()
+        flash(f'Sponsor "{sponsor.name}" {"published" if sponsor.published else "unpublished"}.', 'success')
+    return redirect(url_for('admin.sponsors'))
 
 
 # -- User management --
@@ -239,32 +310,9 @@ def users():
 @admin.route('/admin/users/create', methods=['POST'])
 @super_admin_required
 def user_create():
-    name = request.form.get('name', '').strip()
-    email = request.form.get('email', '').strip().lower()
-    username = request.form.get('username', '').strip().lower()
-    password = request.form.get('password', '')
-    role_id = request.form.get('role_id', type=int)
-    chapter_id = request.form.get('chapter_id', type=int)
-
-    if not name or not email or not password or not username:
-        flash('Name, email, username, and password are required.', 'error')
-        return redirect(url_for('admin.users'))
-
-    if User.query.filter_by(email=email).first():
-        flash('Email already in use.', 'error')
-        return redirect(url_for('admin.users'))
-
-    if User.query.filter_by(username=username).first():
-        flash('Username already taken.', 'error')
-        return redirect(url_for('admin.users'))
-
-    user = User(name=name, email=email, username=username, role_id=role_id, chapter_id=chapter_id)
-    user.sync_role_string()
-    user.set_password(password)
-    user.must_change_password = True
-    db.session.add(user)
-    db.session.commit()
-    flash(f'User "{user.name}" created!', 'success')
+    user = create_user_from_form()
+    if user:
+        flash(f'User "{user.name}" created!', 'success')
     return redirect(url_for('admin.users'))
 
 
@@ -287,22 +335,8 @@ def user_edit(user_id):
     if not user:
         flash('User not found.', 'error')
         return redirect(url_for('admin.users'))
-    user.name = request.form.get('name', user.name)
-    user.email = request.form.get('email', user.email).strip().lower()
-    username = request.form.get('username', '').strip().lower()
-    if username and username != user.username:
-        if User.query.filter_by(username=username).first():
-            flash('Username already taken.', 'error')
-            return redirect(url_for('admin.user_edit_page', user_id=user_id))
-        user.username = username
-    user.role_id = request.form.get('role_id', type=int) or None
-    user.sync_role_string()
-    user.chapter_id = request.form.get('chapter_id', type=int)
-    password = request.form.get('password', '')
-    if password:
-        user.set_password(password)
-        user.must_change_password = True
-    db.session.commit()
+    if not update_user_from_form(user):
+        return redirect(url_for('admin.user_edit_page', user_id=user_id))
     flash('User updated!', 'success')
     return redirect(url_for('admin.users'))
 
@@ -310,13 +344,7 @@ def user_edit(user_id):
 @admin.route('/admin/users/<int:user_id>/delete', methods=['POST'])
 @super_admin_required
 def user_delete(user_id):
-    user = db.session.get(User, user_id)
-    if user and not user.is_super_admin:
-        db.session.delete(user)
-        db.session.commit()
-        flash('User deleted.', 'info')
-    else:
-        flash('Cannot delete super admin.', 'error')
+    delete_user_by_id(user_id)
     return redirect(url_for('admin.users'))
 
 
@@ -330,62 +358,98 @@ def legacy():
     return render_template('admin.html', events=events)
 
 
+def _save_gallery(event):
+    """Attach uploaded gallery photos (and captions) to an event."""
+    files = request.files.getlist('gallery_images')
+    captions = request.form.getlist('gallery_captions')
+    for i, file in enumerate(files):
+        if file and file.filename:
+            path = save_upload(file, 'events/gallery')
+            if path:
+                caption = captions[i] if i < len(captions) else ''
+                img = EventImage(event_id=event.id, image=path, caption=caption,
+                                 display_order=event.images.count())
+                db.session.add(img)
+
+
 @admin.route('/admin/post/new', methods=['GET', 'POST'])
 @super_admin_required
 def new_post():
     if request.method == 'POST':
-        event = Event(
+        title = request.form.get('title', '').strip()
+        if not title:
+            flash('Title is required.', 'error')
+            return render_template('new_post.html')
+        post = Event(
             chapter_id=None,
-            title=request.form['title'],
-            content=request.form['content'],
-            author=request.form.get('author', 'Admin'),
-            description=request.form.get('content', '')[:300],
+            title=title,
+            content=request.form.get('content', ''),
+            author=request.form.get('author', '').strip() or 'Admin',
+            description=strip_tags(request.form.get('content', ''))[:300],
             date=datetime.utcnow().date(),
             status='published',
         )
-        db.session.add(event)
+        db.session.add(post)
         db.session.commit()
-        flash('Event created successfully!', 'success')
-        return redirect(url_for('admin.legacy'))
-    return render_template('new_event.html')
+        _save_gallery(post)
+        db.session.commit()
+        flash('Post published!', 'success')
+        return redirect(url_for('public.blog'))
+    return render_template('new_post.html')
 
 
 @admin.route('/admin/post/<int:event_id>/edit', methods=['GET', 'POST'])
 @super_admin_required
 def edit_post(event_id):
-    event = db.session.get(Event, event_id)
-    if not event:
-        flash('Event not found.', 'error')
+    post = db.session.get(Event, event_id)
+    if not post:
+        flash('Post not found.', 'error')
         return redirect(url_for('admin.legacy'))
     if request.method == 'POST':
-        event.title = request.form['title']
-        event.content = request.form.get('content', '')
-        event.author = request.form.get('author', 'Admin')
-        event.description = request.form.get('description', request.form.get('content', '')[:300])
-        event.venue = request.form.get('venue', '')
-        try:
-            event.date = datetime.strptime(request.form.get('date', ''), '%Y-%m-%d').date()
-        except (ValueError, KeyError):
-            pass
-        event.time = request.form.get('time', '')
-        event.status = request.form.get('status', event.status)
-        event.registration_link = request.form.get('registration_link', '')
-        if 'banner' in request.files and request.files['banner'].filename:
-            event.banner = save_upload(request.files['banner'], 'events')
+        title = request.form.get('title', '').strip()
+        if not title:
+            flash('Title is required.', 'error')
+            return render_template('edit_post.html', post=post)
+        post.title = title
+        post.content = request.form.get('content', '')
+        author = request.form.get('author', '').strip()
+        if author:
+            post.author = author
+        if not post.description:
+            post.description = strip_tags(post.content)[:300]
+        _save_gallery(post)
+        for key, value in request.form.items():
+            if key.startswith('caption_'):
+                try:
+                    img_id = int(key.split('_', 1)[1])
+                except (ValueError, IndexError):
+                    continue
+                img = db.session.get(EventImage, img_id)
+                if img and img.event_id == post.id:
+                    img.caption = value
+        for img_id in request.form.getlist('remove_image'):
+            try:
+                img = db.session.get(EventImage, int(img_id))
+            except (ValueError, TypeError):
+                continue
+            if img and img.event_id == post.id:
+                img.delete_files()
+                db.session.delete(img)
         db.session.commit()
-        flash('Event updated successfully!', 'success')
-        return redirect(url_for('admin.legacy'))
-    return render_template('edit_event.html', event=event)
+        flash('Post updated!', 'success')
+        return redirect(url_for('public.blog'))
+    return render_template('edit_post.html', post=post)
 
 
 @admin.route('/admin/post/<int:event_id>/delete', methods=['POST'])
 @super_admin_required
 def delete_post(event_id):
-    event = db.session.get(Event, event_id)
-    if event:
-        db.session.delete(event)
+    post = db.session.get(Event, event_id)
+    if post:
+        post.delete_files()
+        db.session.delete(post)
         db.session.commit()
-        flash('Event deleted successfully!', 'success')
+        flash('Post deleted!', 'success')
     return redirect(url_for('admin.legacy'))
 
 
@@ -394,23 +458,38 @@ def delete_post(event_id):
 def new_event():
     if request.method == 'POST':
         try:
-            event_date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-        except (ValueError, KeyError):
+            event_date = datetime.strptime(request.form.get('date', ''), '%Y-%m-%d').date()
+        except (ValueError, TypeError):
             event_date = datetime.utcnow().date()
+        chapter_id = request.form.get('chapter_id', type=int) or None
         event = Event(
-            chapter_id=None,
-            title=request.form['title'],
+            chapter_id=chapter_id,
+            title=request.form.get('title', '').strip() or 'Untitled Event',
             content=request.form.get('content', ''),
-            author=request.form.get('author', 'Admin'),
-            description=request.form.get('description', request.form.get('content', '')[:300]),
+            author=request.form.get('author', '').strip() or 'Admin',
+            description=request.form.get('description', '') or request.form.get('content', '')[:300],
+            venue=request.form.get('venue', ''),
+            address=request.form.get('address', ''),
+            time=request.form.get('time', ''),
             date=event_date,
             status=request.form.get('status', 'published'),
+            registration_link=request.form.get('registration_link', ''),
+            contact_email=request.form.get('contact_email', ''),
         )
+        try:
+            event.max_participants = int(request.form['max_participants']) if request.form.get('max_participants') else None
+        except (ValueError, TypeError):
+            event.max_participants = None
+        if 'banner' in request.files and request.files['banner'].filename:
+            event.banner = save_upload(request.files['banner'], 'events')
         db.session.add(event)
+        db.session.commit()
+        _save_gallery(event)
         db.session.commit()
         flash('Event created successfully!', 'success')
         return redirect(url_for('admin.legacy'))
-    return render_template('new_event.html', event=None)
+    chapters = Chapter.query.order_by(Chapter.name).all()
+    return render_template('new_event.html', event=None, chapters=chapters)
 
 
 @admin.route('/admin/event/<int:event_id>/edit', methods=['GET', 'POST'])
@@ -421,19 +500,52 @@ def edit_event(event_id):
         flash('Event not found.', 'error')
         return redirect(url_for('admin.legacy'))
     if request.method == 'POST':
-        event.title = request.form['title']
+        event.title = request.form.get('title', '').strip() or event.title
         event.content = request.form.get('content', '')
-        event.author = request.form.get('author', 'Admin')
-        event.description = request.form.get('description', request.form.get('content', '')[:300])
+        event.chapter_id = request.form.get('chapter_id', type=int) or None
+        author = request.form.get('author', '').strip()
+        if author:
+            event.author = author
+        event.description = request.form.get('description', '') or request.form.get('content', '')[:300]
+        event.venue = request.form.get('venue', '')
+        event.address = request.form.get('address', '')
+        event.time = request.form.get('time', '')
+        event.registration_link = request.form.get('registration_link', '')
+        event.contact_email = request.form.get('contact_email', '')
+        try:
+            event.max_participants = int(request.form['max_participants']) if request.form.get('max_participants') else None
+        except (ValueError, TypeError):
+            event.max_participants = None
         try:
             event.date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-        except (ValueError, KeyError):
+        except (ValueError, KeyError, TypeError):
             pass
         event.status = request.form.get('status', event.status)
+        if 'banner' in request.files and request.files['banner'].filename:
+            event.banner = save_upload(request.files['banner'], 'events')
+        _save_gallery(event)
+        for key, value in request.form.items():
+            if key.startswith('caption_'):
+                try:
+                    img_id = int(key.split('_', 1)[1])
+                except (ValueError, IndexError):
+                    continue
+                img = db.session.get(EventImage, img_id)
+                if img and img.event_id == event.id:
+                    img.caption = value
+        for img_id in request.form.getlist('remove_image'):
+            try:
+                img = db.session.get(EventImage, int(img_id))
+            except (ValueError, TypeError):
+                continue
+            if img and img.event_id == event.id:
+                img.delete_files()
+                db.session.delete(img)
         db.session.commit()
         flash('Event updated successfully!', 'success')
         return redirect(url_for('admin.legacy'))
-    return render_template('edit_event.html', event=event)
+    chapters = Chapter.query.order_by(Chapter.name).all()
+    return render_template('edit_event.html', event=event, chapters=chapters)
 
 
 @admin.route('/admin/event/<int:event_id>/delete', methods=['POST'])
@@ -441,6 +553,7 @@ def edit_event(event_id):
 def delete_event(event_id):
     event = db.session.get(Event, event_id)
     if event:
+        event.delete_files()
         db.session.delete(event)
         db.session.commit()
         flash('Event deleted successfully!', 'success')
@@ -490,22 +603,7 @@ def roles():
 @admin.route('/admin/roles/create', methods=['POST'])
 @super_admin_required
 def role_create():
-    from btg.models import PERMISSIONS
-    name = request.form.get('name', '').strip()
-    description = request.form.get('description', '').strip()
-    if not name:
-        flash('Role name is required.', 'error')
-        return redirect(url_for('admin.roles'))
-    if Role.query.filter_by(name=name).first():
-        flash('Role already exists.', 'error')
-        return redirect(url_for('admin.roles'))
-    selected = request.form.getlist('permissions')
-    role = Role(name=name, description=description)
-    role.set_permissions(selected)
-    db.session.add(role)
-    db.session.commit()
-    log_audit('create', 'role', role.id, role.name)
-    flash(f'Role "{name}" created!', 'success')
+    create_role_from_form()
     return redirect(url_for('admin.roles'))
 
 
@@ -516,30 +614,14 @@ def role_edit(role_id):
     if not role:
         flash('Role not found.', 'error')
         return redirect(url_for('admin.roles'))
-    role.name = request.form.get('name', role.name)
-    role.description = request.form.get('description', '').strip()
-    selected = request.form.getlist('permissions')
-    role.set_permissions(selected)
-    db.session.commit()
-    log_audit('update', 'role', role.id, role.name)
-    flash(f'Role "{role.name}" updated!', 'success')
+    update_role_from_form(role)
     return redirect(url_for('admin.roles'))
 
 
 @admin.route('/admin/roles/<int:role_id>/delete', methods=['POST'])
 @super_admin_required
 def role_delete(role_id):
-    role = db.session.get(Role, role_id)
-    if not role:
-        flash('Role not found.', 'error')
-        return redirect(url_for('admin.roles'))
-    if role.is_system:
-        flash('System roles cannot be deleted.', 'error')
-        return redirect(url_for('admin.roles'))
-    log_audit('delete', 'role', role.id, role.name)
-    db.session.delete(role)
-    db.session.commit()
-    flash(f'Role "{role.name}" deleted.', 'info')
+    delete_role_by_id(role_id)
     return redirect(url_for('admin.roles'))
 
 
@@ -593,6 +675,24 @@ def analytics():
         'apps_by_status': apps_by_status,
     }
     return render_template('admin/analytics.html', stats=stats)
+
+
+# -- Homepage Stats --
+
+
+@admin.route('/admin/site-stats', methods=['GET', 'POST'])
+@super_admin_required
+def site_stats():
+    stat = SiteStat.get()
+    if request.method == 'POST':
+        stat.kits_delivered = try_int(request.form.get('kits_delivered'))
+        stat.student_chapters = try_int(request.form.get('student_chapters'))
+        stat.students_reached = try_int(request.form.get('students_reached'))
+        db.session.commit()
+        log_audit('update', 'site_stats', stat.id, 'Homepage Stats')
+        flash('Homepage stats updated!', 'success')
+        return redirect(url_for('admin.site_stats'))
+    return render_template('admin/site_stats.html', stat=stat)
 
 
 # -- Audit Logs --

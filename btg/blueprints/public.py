@@ -4,7 +4,7 @@ from datetime import date
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 
 from btg.extensions import db
-from btg.models import User, Chapter, TeamMember, Event, EventImage, GalleryImage, Announcement, Application
+from btg.models import User, Chapter, TeamMember, Event, EventImage, GalleryImage, Announcement, Application, Sponsor, SiteStat
 
 public = Blueprint('public', __name__)
 
@@ -159,8 +159,13 @@ def home():
     world_atlas = _get_world_atlas()
     map_svg = _render_world_map_svg(world_atlas, chapter_points)
     highlights = Event.query.order_by(Event.created_at.desc()).limit(3).all()
+    stat = SiteStat.get()
+    gallery = (EventImage.query.join(Event)
+               .order_by(Event.created_at.desc(), EventImage.display_order)
+               .limit(8).all())
     return render_template('home.html', chapters=chapters,
-                           world_map_svg=map_svg, highlights=highlights)
+                           world_map_svg=map_svg, highlights=highlights, stat=stat,
+                           gallery=gallery)
 
 
 # -- Static informational pages --
@@ -173,7 +178,8 @@ def kits():
 
 @public.route('/partners')
 def partners():
-    return render_template('partners.html')
+    sponsors = Sponsor.query.filter_by(published=True).order_by(Sponsor.display_order, Sponsor.name).all()
+    return render_template('partners.html', sponsors=sponsors)
 
 
 @public.route('/contact')
@@ -189,6 +195,22 @@ def contact():
 def events():
     all_events = Event.query.order_by(Event.created_at.desc()).all()
     return render_template('events.html', events=all_events)
+
+
+# -- Blog (posts = events not tied to a chapter) --
+
+
+@public.route('/blog')
+def blog():
+    posts = Event.query.filter(Event.chapter_id.is_(None)).order_by(Event.created_at.desc()).all()
+    return render_template('blog.html', posts=posts)
+
+
+@public.route('/blog/<int:event_id>')
+def blog_post(event_id):
+    post = Event.query.filter_by(id=event_id, chapter_id=None).first_or_404()
+    images = post.images.order_by(EventImage.display_order).all()
+    return render_template('blog_post.html', post=post, images=images)
 
 
 @public.route('/events/<int:event_id>')

@@ -50,6 +50,12 @@ def _seed_test_data():
         _db.session.commit()
 
 
+@pytest.fixture(scope='function', autouse=True)
+def _clear_rate_limit():
+    from btg.auth import _login_attempts
+    _login_attempts.clear()
+
+
 @pytest.fixture(scope='function')
 def client(app, db):
     return app.test_client()

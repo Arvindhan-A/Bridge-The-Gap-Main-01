@@ -134,6 +134,21 @@ class TeamMember(db.Model):
         delete_upload(self.photo)
 
 
+class Sponsor(db.Model):
+    __tablename__ = 'sponsors'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    logo = db.Column(db.String(500), default='')
+    website = db.Column(db.String(500), default='')
+    description = db.Column(db.Text, default='')
+    published = db.Column(db.Boolean, default=True)
+    display_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def delete_files(self):
+        delete_upload(self.logo)
+
+
 class Event(db.Model):
     __tablename__ = 'events'
     id = db.Column(db.Integer, primary_key=True)
@@ -143,10 +158,13 @@ class Event(db.Model):
     content = db.Column(db.Text, default='')
     author = db.Column(db.String(120), default='Admin')
     venue = db.Column(db.String(300), default='')
+    address = db.Column(db.String(500), default='')
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.String(20), default='')
     status = db.Column(db.String(20), default='upcoming')
     registration_link = db.Column(db.String(500), default='')
+    contact_email = db.Column(db.String(120), default='')
+    max_participants = db.Column(db.Integer, nullable=True)
     banner = db.Column(db.String(500), default='')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -234,3 +252,21 @@ class UserSession(db.Model):
     is_active = db.Column(db.Boolean, default=True)
 
     user = db.relationship('User', backref='sessions', lazy=True)
+
+
+class SiteStat(db.Model):
+    __tablename__ = 'site_stats'
+    id = db.Column(db.Integer, primary_key=True)
+    kits_delivered = db.Column(db.Integer, nullable=True)
+    student_chapters = db.Column(db.Integer, nullable=True)
+    students_reached = db.Column(db.Integer, nullable=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @staticmethod
+    def get():
+        stat = SiteStat.query.first()
+        if not stat:
+            stat = SiteStat()
+            db.session.add(stat)
+            db.session.commit()
+        return stat

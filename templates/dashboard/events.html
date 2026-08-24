@@ -3,7 +3,10 @@
 {% block content %}
 <div class="admin-wrap">
     <div class="admin-header">
-        <h1>Events</h1>
+        <div>
+            <h1>Events</h1>
+            <p style="color:var(--text-3);font-size:0.875rem;">Create rich events with photos, captions and full content</p>
+        </div>
         <div class="admin-header-actions">
             <a href="{{ url_for('dashboard.overview') }}" class="btn-outline btn-sm">Back</a>
         </div>
@@ -12,60 +15,118 @@
     <!-- Create / Edit Event -->
     <div class="admin-section">
         <h2>{{ 'Edit Event' if edit_event else 'Create Event' }}</h2>
-        <form method="POST" action="{{ url_for('dashboard.event_update' if edit_event else 'dashboard.event_create') }}" enctype="multipart/form-data" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);">
+        <form method="POST" action="{{ url_for('dashboard.event_update' if edit_event else 'dashboard.event_create') }}" enctype="multipart/form-data" id="eventForm" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);">
             <input type="hidden" name="chapter_id" value="{{ chapter.id }}">
             {% if edit_event %}<input type="hidden" name="event_id" value="{{ edit_event.id }}">{% endif %}
-            <div class="form-group" style="margin:0;">
-                <input type="text" name="title" placeholder="Event title" required value="{{ edit_event.title if edit_event else '' }}">
+
+            <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Event Title *</label>
+                <input type="text" name="title" placeholder="e.g. Chennai Robotics Workshop" required value="{{ edit_event.title if edit_event else '' }}">
             </div>
+
             <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Date *</label>
                 <input type="date" name="date" required value="{{ edit_event.date.strftime('%Y-%m-%d') if edit_event else '' }}">
             </div>
             <div class="form-group" style="margin:0;">
-                <input type="text" name="time" placeholder="Time (e.g. 10:00 AM)" value="{{ edit_event.time if edit_event else '' }}">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Time</label>
+                <input type="text" name="time" placeholder="e.g. 10:00 AM - 4:00 PM" value="{{ edit_event.time if edit_event else '' }}">
             </div>
             <div class="form-group" style="margin:0;">
-                <input type="text" name="venue" placeholder="Venue / Location" value="{{ edit_event.venue if edit_event else '' }}">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Venue</label>
+                <input type="text" name="venue" placeholder="e.g. Chennai Community Center" value="{{ edit_event.venue if edit_event else '' }}">
             </div>
             <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Address</label>
+                <input type="text" name="address" placeholder="Street / area / city" value="{{ edit_event.address if edit_event else '' }}">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Status</label>
                 <select name="status">
                     <option value="upcoming" {{ 'selected' if edit_event and edit_event.status == 'upcoming' else '' }}>Upcoming</option>
                     <option value="ongoing" {{ 'selected' if edit_event and edit_event.status == 'ongoing' else '' }}>Ongoing</option>
                     <option value="completed" {{ 'selected' if edit_event and edit_event.status == 'completed' else '' }}>Completed</option>
+                    <option value="published" {{ 'selected' if edit_event and edit_event.status == 'published' else '' }}>Published</option>
                 </select>
             </div>
             <div class="form-group" style="margin:0;">
-                <input type="url" name="registration_link" placeholder="Registration link (optional)" value="{{ edit_event.registration_link if edit_event else '' }}">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Registration Link</label>
+                <input type="url" name="registration_link" placeholder="https://example.com/register" value="{{ edit_event.registration_link if edit_event else '' }}">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Contact Email</label>
+                <input type="email" name="contact_email" placeholder="organizer@chapter.org" value="{{ edit_event.contact_email if edit_event else '' }}">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Max Participants</label>
+                <input type="number" name="max_participants" min="1" placeholder="e.g. 50" value="{{ edit_event.max_participants if edit_event and edit_event.max_participants else '' }}">
+            </div>
+            <div class="form-group" style="margin:0;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Author</label>
+                <input type="text" name="author" placeholder="Organizer name" value="{{ edit_event.author if edit_event and edit_event.author else current_user.name }}">
+            </div>
+
+            <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Short Description</label>
+                <textarea name="description" rows="2" placeholder="One or two sentence summary shown on cards">{{ edit_event.description if edit_event else '' }}</textarea>
             </div>
             <div class="form-group" style="margin:0;grid-column:1/-1;">
-                <textarea name="description" rows="3" placeholder="Event description">{{ edit_event.description if edit_event else '' }}</textarea>
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Full Content (HTML supported)</label>
+                <textarea name="content" rows="8" placeholder="Agenda, speakers, schedule... you can use basic HTML tags (p, ul, li, strong, h3)">{{ edit_event.content if edit_event else '' }}</textarea>
+                <p style="font-size:0.75rem;color:var(--text-3);margin-top:0.25rem;">You can write plain text or use simple HTML for headings, lists and emphasis.</p>
             </div>
+
             <div class="form-group" style="margin:0;grid-column:1/-1;">
                 <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Banner Image</label>
                 <input type="file" name="banner" accept="image/*">
                 {% if edit_event and edit_event.banner %}
-                <div style="margin-top:0.5rem;"><img src="{{ url_for('static', filename=edit_event.banner) }}" style="max-height:80px;border-radius:var(--r-sm);"></div>
+                <div style="margin-top:0.5rem;">
+                    <img src="{{ url_for('static', filename=edit_event.banner) }}" style="max-height:100px;border-radius:var(--r-sm);">
+                </div>
                 {% endif %}
             </div>
+
             <div class="form-group" style="margin:0;grid-column:1/-1;">
-                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Gallery Images (select multiple)</label>
-                <input type="file" name="gallery_images" accept="image/*" multiple>
-                {% if existing_images %}
-                <div style="margin-top:0.75rem;">
-                    <label style="font-size:0.8125rem;font-weight:500;color:var(--text-2);display:block;margin-bottom:0.5rem;">Or select from existing images in <code>static/images/events/</code>:</label>
-                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-height:200px;overflow-y:auto;padding:8px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);">
-                        {% for img in existing_images %}
-                        <label style="cursor:pointer;display:block;position:relative;">
-                            <input type="checkbox" name="existing_gallery" value="{{ img }}" style="position:absolute;opacity:0;pointer-events:none;">
-                            <img src="{{ url_for('static', filename='images/events/' + img) }}" alt="{{ img }}" style="width:100%;height:60px;object-fit:cover;border-radius:var(--r-sm);border:2px solid transparent;transition:border-color 0.2s;padding:2px;">
-                        </label>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Event Photos (select multiple, add a caption to each)</label>
+                <input type="file" name="gallery_images" id="galleryInput" accept="image/*" multiple>
+                <div id="galleryPreview"></div>
             </div>
+
+            {% if edit_event and edit_event.images %}
+            <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.875rem;font-weight:600;display:block;margin-bottom:0.3rem;">Current Photos</label>
+                <div class="event-photo-manager">
+                    {% for img in edit_event.images %}
+                    <div class="event-photo-item">
+                        <img src="{{ url_for('static', filename=img.image) }}" alt="">
+                        <input type="text" name="caption_{{ img.id }}" value="{{ img.caption }}" placeholder="Caption">
+                        <label class="event-photo-remove">
+                            <input type="checkbox" name="remove_image" value="{{ img.id }}">
+                            Remove
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if existing_images %}
+            <div class="form-group" style="margin:0;grid-column:1/-1;">
+                <label style="font-size:0.8125rem;font-weight:500;color:var(--text-2);display:block;margin-bottom:0.5rem;">Or select from existing images in <code>static/images/events/</code>:</label>
+                <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-height:200px;overflow-y:auto;padding:8px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);">
+                    {% for img in existing_images %}
+                    <label style="cursor:pointer;display:block;position:relative;">
+                        <input type="checkbox" name="existing_gallery" value="{{ img }}" style="position:absolute;opacity:0;pointer-events:none;">
+                        <img src="{{ url_for('static', filename='images/events/' + img) }}" alt="{{ img }}" style="width:100%;height:60px;object-fit:cover;border-radius:var(--r-sm);border:2px solid transparent;transition:border-color 0.2s;padding:2px;">
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <div style="grid-column:1/-1;">
                 <button type="submit" class="btn btn-sm">{{ 'Update Event' if edit_event else 'Create Event' }}</button>
-                {% if edit_event %}<a href="{{ url_for('dashboard.events', chapter_id=chapter.id) }}" class="btn-outline btn-sm" style="margin-left:0.5rem;">Cancel</a>{% endif %}
+                {% if edit_event %}<a href="{{ url_for('dashboard.events', chapter_id=chapter.id) }}" class="btn-outline btn-sm" style="margin-left:0.5rem;">Cancel Edit</a>{% endif %}
             </div>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         </form>
@@ -75,30 +136,110 @@
         <h2>All Events ({{ events|length }})</h2>
         {% for event in events %}
         <div class="admin-item">
+            {% set thumbs = event_images.get(event.id, []) %}
+            {% if thumbs %}
+            <div class="admin-item-thumb">
+                <img src="{{ url_for('static', filename=thumbs[0].image) }}" alt="" style="width:72px;height:48px;object-fit:cover;border-radius:var(--r-sm);">
+            </div>
+            {% endif %}
             <div class="admin-item-info">
                 <div class="admin-item-title">
                     <a href="{{ url_for('public.event_detail', event_id=event.id) }}" target="_blank">{{ event.title }}</a>
                 </div>
-                <div class="admin-item-date">{{ event.date.strftime('%b %d, %Y') }} &middot; {{ event.status }} &middot; {{ event.images.count() }} images</div>
+                <div class="admin-item-date">
+                    {{ event.date.strftime('%b %d, %Y') }} &middot; {{ event.status }}
+                    &middot; {{ thumbs|length }} photos
+                    {% if event.author %}&middot; by {{ event.author }}{% endif %}
+                </div>
             </div>
             <div class="admin-actions">
                 <a href="{{ url_for('dashboard.events', chapter_id=chapter.id, edit=event.id) }}" class="btn-outline btn-sm">Edit</a>
-                <form method="POST" action="{{ url_for('dashboard.event_delete', event_id=event.id) }}" style="display:inline;" onsubmit="return confirm('Delete this event?')">
+                <form method="POST" action="{{ url_for('dashboard.event_delete', event_id=event.id) }}" style="display:inline;" onsubmit="return confirm('Delete this event and all its photos?')">
                     <button type="submit" class="btn-delete">Delete</button>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 </form>
             </div>
         </div>
         {% else %}
-        <div class="admin-empty">No events yet.</div>
+        <div class="admin-empty">No events yet. Create your first event above.</div>
         {% endfor %}
     </div>
 </div>
 
+<style>
+.gallery-upload-row {
+    display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem;
+    padding:0.5rem;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);
+}
+.gallery-upload-row .gallery-upload-thumb {
+    width:64px;height:44px;object-fit:cover;border-radius:var(--r-sm);flex-shrink:0;
+}
+.gallery-upload-row input[type="text"] {
+    flex:1;min-width:0;
+}
+.gallery-upload-row .btn-delete { white-space:nowrap; }
+.event-photo-manager {
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;
+    max-height:320px;overflow-y:auto;padding:0.5rem;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);
+}
+.event-photo-item {
+    display:flex;flex-direction:column;gap:0.4rem;padding:0.5rem;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);
+}
+.event-photo-item img { width:100%;height:96px;object-fit:cover;border-radius:var(--r-sm); }
+.event-photo-item input[type="text"] { font-size:0.75rem;padding:6px 8px; }
+.event-photo-remove {
+    display:flex;align-items:center;gap:6px;font-size:0.75rem;color:#dc2626;cursor:pointer;font-weight:600;
+}
+.admin-item-thumb { margin-right:1rem; }
+@media(max-width:900px){ .gallery-upload-row{flex-wrap:wrap;} }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const existingImgs = document.querySelectorAll('input[name="existing_gallery"]');
-    existingImgs.forEach(cb => {
+    const galleryInput = document.getElementById('galleryInput');
+    const galleryPreview = document.getElementById('galleryPreview');
+    let captions = [];
+
+    function renderGallery() {
+        if (!galleryPreview) return;
+        galleryPreview.innerHTML = '';
+        const files = Array.from(galleryInput.files);
+        files.forEach((file, i) => {
+            const row = document.createElement('div');
+            row.className = 'gallery-upload-row';
+
+            const img = document.createElement('img');
+            img.className = 'gallery-upload-thumb';
+            img.src = URL.createObjectURL(file);
+
+            const caption = document.createElement('input');
+            caption.type = 'text';
+            caption.name = 'gallery_captions';
+            caption.placeholder = 'Caption for this photo (optional)';
+            caption.value = captions[i] || '';
+            caption.addEventListener('input', () => { captions[i] = caption.value; });
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn-delete';
+            removeBtn.textContent = 'Remove';
+            removeBtn.addEventListener('click', () => {
+                const dt = new DataTransfer();
+                captions.splice(i, 1);
+                Array.from(galleryInput.files).forEach((f, idx) => { if (idx !== i) dt.items.add(f); });
+                galleryInput.files = dt.files;
+                renderGallery();
+            });
+
+            row.append(img, caption, removeBtn);
+            galleryPreview.appendChild(row);
+        });
+    }
+
+    if (galleryInput) galleryInput.addEventListener('change', renderGallery);
+
+    // Highlight selected existing images
+    document.querySelectorAll('input[name="existing_gallery"]').forEach(cb => {
         const img = cb.nextElementSibling;
         img.style.borderColor = cb.checked ? 'var(--accent)' : 'transparent';
         cb.addEventListener('change', () => {

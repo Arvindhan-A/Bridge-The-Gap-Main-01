@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bridge the Gap Robotics Foundation{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Bridge the Gap Robotics Foundation is a 100% teen-led nonprofit building and donating robotics kits, running hands-on workshops, and bringing STEM education to underserved communities worldwide.{% endblock %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -29,6 +32,7 @@
                 <a href="/chapters" class="nav-link{% if request.path.startswith('/chapters') %} active{% endif %}">Chapters</a>
                 <a href="/partners" class="nav-link{% if request.path == '/partners' %} active{% endif %}">Partners</a>
                 <a href="/events" class="nav-link{% if request.path.startswith('/events') %} active{% endif %}">Events</a>
+                <a href="/blog" class="nav-link{% if request.path.startswith('/blog') %} active{% endif %}">Blog</a>
                 {% if current_user %}
                 <a href="/dashboard" class="nav-link" style="color:var(--accent);font-weight:600;">Dashboard</a>
                 {% endif %}
@@ -37,7 +41,7 @@
             <div class="nav-controls">
                 <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="btn btn-accent btn-sm" target="_blank">Donate</a>
                 {% if current_user %}
-                <a href="/logout" class="btn-outline btn-sm">Logout</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn-outline btn-sm" data-logout>Logout</a>
                 {% endif %}
                 <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode" style="background:none;border:none;cursor:pointer;color:var(--text-2);padding:6px;border-radius:var(--r-sm);display:flex;align-items:center;transition:color .2s;" title="Toggle dark mode">
                     <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -75,26 +79,31 @@
                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BTG" class="foot-logo-img">
                     <span class="foot-logo-text">Bridge the Gap<br><span>Robotics Foundation</span></span>
                 </a>
-                <p class="foot-desc">Building pathways to STEM education through robotics kits, workshops, and mentorship for underserved communities.</p>
+                <p class="foot-desc">A 100% teen-led foundation building pathways to STEM education through robotics kits, workshops, and mentorship for underserved communities.</p>
+                <span class="teen-badge" style="margin-top:0.75rem;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+                    By Teens, For Kids
+                </span>
             </div>
             <div class="foot-col">
-                <h4 class="foot-heading">Navigate</h4>
+                <h3 class="foot-heading">Navigate</h3>
                 <a href="/" class="foot-link">Home</a>
                 <a href="/kits" class="foot-link">Our Kits</a>
                 <a href="/chapters" class="foot-link">Chapters</a>
                 <a href="/partners" class="foot-link">Partners</a>
                 <a href="/events" class="foot-link">Events</a>
+                <a href="/blog" class="foot-link">Blog</a>
             </div>
             <div class="foot-col">
-                <h4 class="foot-heading">Get Involved</h4>
+                <h3 class="foot-heading">Get Involved</h3>
                 <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="foot-link" target="_blank">Donate</a>
-                <a href="/chapters/apply" class="foot-link">Start a Chapter</a>
+                <a href="/chapters" class="foot-link">Start a Chapter</a>
                 <a href="/partners" class="foot-link">Become a Partner</a>
                 <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">Contact Us</a>
             </div>
             <div class="foot-col">
-                <h4 class="foot-heading">Connect</h4>
-                <a href="https://instagram.com/" target="_blank" class="foot-link">Instagram</a>
+                <h3 class="foot-heading">Connect</h3>
+                <a href="https://instagram.com/bridge_the_gap_robotics" target="_blank" rel="noopener" class="foot-link">Instagram</a>
                 <a href="mailto:bridgethegap.robotics@gmail.com" class="foot-link">Email</a>
             </div>
         </div>
@@ -126,6 +135,30 @@
     })();
     </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var logoutLinks = document.querySelectorAll('a[data-logout]');
+        var meta = document.querySelector('meta[name="csrf-token"]');
+        var token = meta ? meta.getAttribute('content') : '';
+        for (var i = 0; i < logoutLinks.length; i++) {
+            logoutLinks[i].addEventListener('click', function(e) {
+                e.preventDefault();
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = this.href;
+                if (token) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'csrf_token';
+                    input.value = token;
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
+    });
+    </script>
     {% block scripts %}{% endblock %}
 
     <div class="lightbox" id="lightbox">

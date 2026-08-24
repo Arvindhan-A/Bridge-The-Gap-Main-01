@@ -5,7 +5,7 @@ import glob
 from flask import Flask, session, render_template
 from datetime import datetime
 
-from btg.config import Config, BASE_DIR
+from btg.config import Config, BASE_DIR, get_config
 from btg.extensions import db, csrf, migrate
 from btg.models import User, Chapter, Event, EventImage, TeamMember, GalleryImage, Announcement, Application, Role, PERMISSIONS
 from btg.blueprints.public import public
@@ -15,27 +15,23 @@ from btg.blueprints.dashboard import dashboard
 from btg.blueprints.secret import secret
 
 
-def create_app(config_class=Config):
+def create_app(config_class=None):
     app = Flask(__name__,
                 template_folder=os.path.join(BASE_DIR, 'templates'),
                 static_folder=os.path.join(BASE_DIR, 'static'))
-    app.config.from_object(config_class)
+    app.config.from_object(config_class or get_config())
 
     # Initialize extensions
     db.init_app(app)
     csrf.init_app(app)
     migrate.init_app(app, db)
 
-    # Skip directory creation in serverless environments (read-only filesystem)
-    is_serverless = os.environ.get('VERCEL') or os.environ.get('NETLIFY') or os.environ.get('AWS_LAMBDA_FUNCTION_NAME')
-    
-    if not is_serverless:
-        # Ensure upload directories exist (only in non-serverless environments)
-        for sub in ['logos', 'covers', 'team', 'events', 'events/gallery', 'gallery']:
-            os.makedirs(os.path.join(Config.UPLOAD_FOLDER, sub), exist_ok=True)
+    # Ensure upload directories exist
+    for sub in ['logos', 'covers', 'team', 'events', 'events/gallery', 'gallery', 'sponsors']:
+        os.makedirs(os.path.join(Config.UPLOAD_FOLDER, sub), exist_ok=True)
 
-        # Ensure data directory exists
-        os.makedirs(os.path.join(BASE_DIR, 'data'), exist_ok=True)
+    # Ensure data directory exists
+    os.makedirs(os.path.join(BASE_DIR, 'data'), exist_ok=True)
 
     # Register blueprints
     app.register_blueprint(public)
@@ -69,6 +65,10 @@ def create_app(config_class=Config):
     def forbidden(e):
         return render_template('errors/403.html'), 403
 
+    @app.errorhandler(413)
+    def too_large(e):
+        return render_template('errors/413.html'), 413
+
     # Healthcheck
     @app.route('/health')
     def health():
@@ -85,9 +85,7 @@ def create_app(config_class=Config):
     # Initialize database
     with app.app_context():
         db.create_all()
-        # Only seed data in non-serverless environments or on first deploy
-        if not is_serverless:
-            _seed_data()
+        _seed_data()
 
     return app
 
@@ -122,20 +120,18 @@ def _seed_data():
         db.session.add(viewer_role)
         db.session.commit()
 
-    # Seed master admin
+    # Seed master admin from configured credentials
     admin = User.query.filter_by(role='super_admin').first()
-    if not admin:
-        admin = User.query.filter_by(username='arvind').first()
-    if not admin:
+    if not admin and Config.SEED_ADMIN_PASSWORD:
         admin = User(
-            name='Arvind',
-            email='arvindtrial@gmail.com',
-            username='arvind',
+            name='Admin',
+            email=Config.SEED_ADMIN_EMAIL,
+            username='admin',
             role='super_admin',
             role_id=Role.query.filter_by(name='Super Admin').first().id,
             must_change_password=False,
         )
-        admin.set_password('trial@123')
+        admin.set_password(Config.SEED_ADMIN_PASSWORD)
         db.session.add(admin)
         db.session.commit()
 
@@ -167,7 +163,7 @@ def _seed_data():
 
         pres_role_id = Role.query.filter_by(name='Chapter President').first().id
         pres_pw = Config.SEED_PRESIDENT_PASSWORD or 'btg-chennai-2026'
-        pres = User.query.filter_by(role='chapter_president').first()
+        pres = User.query.filter_by(username='chennai_president').first()
         if not pres:
             pres = User(
                 name='Chennai President',
@@ -182,7 +178,7 @@ def _seed_data():
             db.session.add(pres)
 
         pres_pw2 = Config.SEED_PRESIDENT_PASSWORD or 'btg-bangalore-2026'
-        pres2 = User.query.filter_by(role='chapter_president').first()
+        pres2 = User.query.filter_by(username='bangalore_president').first()
         if not pres2:
             pres2 = User(
                 name='Bangalore President',

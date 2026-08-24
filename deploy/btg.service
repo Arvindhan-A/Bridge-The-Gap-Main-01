@@ -1,0 +1,17 @@
+[Unit]
+Description=BTG Robotics Foundation website
+After=network.target
+
+[Service]
+Type=simple
+# Adjust these two paths for where you clone the repo and which user runs it.
+User=btg
+WorkingDirectory=/home/btg/Bridge-The-Gap-Main-01
+EnvironmentFile=/home/btg/Bridge-The-Gap-Main-01/.env
+Environment=FLASK_ENV=production
+ExecStart=/home/btg/Bridge-The-Gap-Main-01/.venv/bin/waitress-serve --host=127.0.0.1 --port=8000 --call btg:create_app
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

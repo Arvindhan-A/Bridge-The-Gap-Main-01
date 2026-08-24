@@ -32,9 +32,9 @@
             {% if event.images.count() > 0 %}
             <div class="event-card-carousel">
                 <div class="event-card-track">
-                    {% for img in event.images %}
+                    {% for img in event.images[:8] %}
                     <div class="event-card-slide" data-src="{{ url_for('static', filename=img.image) }}">
-                        <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}">
+                        <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
                     </div>
                     {% endfor %}
                 </div>

@@ -10,17 +10,24 @@
     </div>
 
     <div class="hero-image-full anim-hero-img" style="--d:0.2s" aria-hidden="true">
-        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&q=80&auto=format&fit=crop" alt="" loading="eager">
+        <img src="{{ url_for('static', filename='images/events/rpz-2.jpg') }}" alt="" width="1400" height="788" loading="eager">
         <div class="hero-photo-badge">
             <span class="hero-badge-dot"></span>
-            Live Workshop
+            Teen-Led Workshop
         </div>
     </div>
 
+    <svg class="doodle doodle-spin" style="top:14%;left:46%;width:26px;height:26px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+    <svg class="doodle doodle-float doodle-teal" style="bottom:20%;left:38%;width:18px;height:18px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+
     <div class="hero-new-inner">
         <div class="hero-new-right">
+            <span class="teen-badge anim-hero" style="--d:0.05s;margin-bottom:1.1rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+                100% Teen-Led &middot; Student-Powered
+            </span>
             <h1 class="hero-new-title anim-hero" style="--d:0.1s">Bridge the Gap<br><span class="hero-title-accent">Robotics Foundation</span></h1>
-            <p class="hero-new-sub anim-hero" style="--d:0.15s">Every child deserves the opportunity to build, create, and innovate through robotics education. We make that possible.</p>
+            <p class="hero-new-sub anim-hero" style="--d:0.15s">We're a team of teenagers who believe every child deserves the chance to build, create, and innovate through robotics — so we make it happen ourselves.</p>
             <p class="hero-mission anim-hero" style="--d:0.2s">Every donation helps place robotics kits into classrooms that otherwise couldn't afford them.</p>
             <div class="hero-new-ctas anim-hero" style="--d:0.25s">
                 <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="hero-btn hero-btn-primary" target="_blank">
@@ -37,21 +44,21 @@
                     <div class="hero-stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                     </div>
-                    <span class="hero-stat-val">--</span>
+                    <span class="hero-stat-val">{{ stat.kits_delivered if stat.kits_delivered is not none else '--' }}</span>
                     <span class="hero-stat-lbl">Kits Delivered</span>
                 </div>
                 <div class="hero-stat-card">
                     <div class="hero-stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
                     </div>
-                    <span class="hero-stat-val">--</span>
+                    <span class="hero-stat-val">{{ stat.student_chapters if stat.student_chapters is not none else '--' }}</span>
                     <span class="hero-stat-lbl">Student Chapters</span>
                 </div>
                 <div class="hero-stat-card">
                     <div class="hero-stat-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                     </div>
-                    <span class="hero-stat-val">--</span>
+                    <span class="hero-stat-val">{{ stat.students_reached if stat.students_reached is not none else '--' }}</span>
                     <span class="hero-stat-lbl">Students Reached</span>
                 </div>
             </div>
@@ -59,10 +66,28 @@
     </div>
 </section>
 
+<div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+        <span>Built by teens</span><span class="tick-star">&#10038;</span>
+        <span>Powered by curiosity</span><span class="tick-star">&#10038;</span>
+        <span>Robots for everyone</span><span class="tick-star">&#10038;</span>
+        <span>Student-led &amp; proud</span><span class="tick-star">&#10038;</span>
+        <span>Build &middot; Teach &middot; Inspire</span><span class="tick-star">&#10038;</span>
+        <span>STEM without barriers</span><span class="tick-star">&#10038;</span>
+        <span>Built by teens</span><span class="tick-star">&#10038;</span>
+        <span>Powered by curiosity</span><span class="tick-star">&#10038;</span>
+        <span>Robots for everyone</span><span class="tick-star">&#10038;</span>
+        <span>Student-led &amp; proud</span><span class="tick-star">&#10038;</span>
+        <span>Build &middot; Teach &middot; Inspire</span><span class="tick-star">&#10038;</span>
+        <span>STEM without barriers</span><span class="tick-star">&#10038;</span>
+    </div>
+</div>
+<div class="color-bar" aria-hidden="true"></div>
+
 <section class="section">
     <div class="sec-header">
         <span class="sec-label">Our Mission</span>
-        <h2 class="sec-title">We believe every child deserves access to STEM education</h2>
+        <h2 class="sec-title">We believe <span class="title-accent">every child</span> deserves access to STEM education</h2>
         <p class="sec-desc">Through robotics kits and hands-on learning, we're bridging the gap between opportunity and potential.</p>
     </div>
     <div class="home-grid-3" style="margin-top:1.5rem;">
@@ -90,14 +115,113 @@
     </div>
 </section>
 
+<section class="section">
+    <div class="sec-header">
+        <svg class="doodle doodle-float" style="top:-6px;right:8%;width:34px;height:34px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 17c4-8 8-8 10-4s6 4 8-2"/><path d="M19 8l2 3-3.5.5z" fill="currentColor" stroke="none"/></svg>
+        <span class="sec-label teal">How It Works</span>
+        <h2 class="sec-title">From our workbench <span class="title-accent">to their hands</span></h2>
+        <p class="sec-desc">No middlemen, no mystery — teens run every step of the pipeline.</p>
+    </div>
+    <div class="steps-grid">
+        <div class="step-card">
+            <span class="step-num">01</span>
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                We Build
+            </h3>
+            <p>Student volunteers design and assemble affordable robotics kits, testing every part so they work right out of the box.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-num">02</span>
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                We Teach
+            </h3>
+            <p>Chapters run hands-on workshops in schools, hospitals, and community centers — teens teaching kids, peer to peer.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-num">03</span>
+            <h3>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+                They Inspire
+            </h3>
+            <p>Kids keep their kits, keep building, and some go on to start chapters of their own. That's the gap closing.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="sec-header">
+        <span class="sec-label">Inside Every Kit</span>
+        <h2 class="sec-title">Real parts, <span class="title-accent">real engineering</span></h2>
+        <p class="sec-desc">These aren't toys. Every kit ships with real components and a build guide written by teens, for kids.</p>
+    </div>
+
+    <div class="kit-feature">
+        <div class="kit-feature-img">
+            <img src="{{ url_for('static', filename='images/events/ch-3.jpg') }}" alt="A batch of assembled Bridge the Gap kits, boxed and labeled, ready for delivery" width="1050" height="1400" loading="lazy">
+        </div>
+        <div class="kit-feature-body">
+            <h3>What's in the box</h3>
+            <div class="tag-row">
+                <span class="tag tag-purple">DC Motors</span>
+                <span class="tag tag-coral">Microcontroller</span>
+                <span class="tag tag-teal">Sensors</span>
+                <span class="tag tag-coral">Chassis</span>
+                <span class="tag tag-purple">Wheels &amp; Gears</span>
+                <span class="tag tag-teal">Battery Pack</span>
+                <span class="tag tag-purple">Jumper Wires</span>
+                <span class="tag tag-coral">Build Guide</span>
+            </div>
+            <ul class="kit-check-list">
+                <li>Sourced and quality-checked by student volunteers, part by part</li>
+                <li>Ships with an illustrated build guide — written by teens, for kids</li>
+                <li>Tested to work right out of the box, from first screw to first drive</li>
+            </ul>
+            <a href="/kits" class="btn-text">
+                Explore Our Kits
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="kit-grid" style="margin-top:2rem;">
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">All Levels</span>
+            <h3>Commercial Kits</h3>
+            <p>Elegoo starter kits, Snap Circuit project kits, and more sourced on request for budding STEM programs.</p>
+        </a>
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">Beginner</span>
+            <h3>Rubber-band Helicopter Kit</h3>
+            <p>A fun, easy build for young kids that flies up to 8 feet — and never fails to captivate a room.</p>
+        </a>
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">Intermediate</span>
+            <h3>Mechanical Grabber Arm Kit</h3>
+            <p>A grabber arm with a trigger mechanism, built to encourage kids to enhance and iterate on the design.</p>
+        </a>
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">Advanced</span>
+            <h3>Hydraulic Arm Kit</h3>
+            <p>A hydraulic arm with 4+ moveable joints — real mechanisms of movement used in industry-level projects.</p>
+        </a>
+    </div>
+    <div style="text-align:center;margin-top:1.5rem;">
+        <a href="/kits" class="btn-text">
+            Explore All Our Kits
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
+    </div>
+</section>
+
 <section class="section founder-section">
     <div class="founder-card">
-        <span class="sec-label">From Our Founder</span>
+        <span class="sec-label coral">From Our Teen Founder</span>
         <h2 class="founder-title">A Note from Aahana</h2>
         <div class="founder-text">
-            <p>I started Bridge the Gap Robotics Foundation with a simple but powerful belief: that the zip code a child grows up in should never determine how far they can go.</p>
-            <p>Our mission is to democratize access to STEM education by building kits, running workshops, and bringing hands-on learning experiences to underserved communities. We believe that when a child holds a robotics kit, assembles a mechanical arm, or writes their first line of code, something shifts. They stop seeing science as something that happens elsewhere and start seeing it as something they can do.</p>
-            <p>To every leader reading this: you are not just running a chapter or filling a role on a board. You are a steward of this mission. You are the reason a child in your community will one day pick up a kit, feel the spark of curiosity, and believe they belong in STEM.</p>
+            <p>I started Bridge the Gap on one belief: the zip code a child grows up in should never decide how far they can go.</p>
+            <p>Hand a kid a robotics kit and something shifts — science stops being something that happens elsewhere, and becomes something they can do.</p>
         </div>
         <div class="founder-sig">
             <span class="founder-name">Aahana Basappa</span>
@@ -108,8 +232,9 @@
 
 <section class="section">
     <div class="sec-header">
+        <svg class="doodle doodle-spin doodle-teal" style="top:2px;right:5%;width:24px;height:24px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
         <span class="sec-label">Who We Serve</span>
-        <h2 class="sec-title">Making a difference across communities</h2>
+        <h2 class="sec-title">Making a difference <span class="title-accent">across communities</span></h2>
     </div>
     <div class="home-grid-5">
         <div class="home-card">
@@ -150,31 +275,29 @@
     </div>
 </section>
 
-<section class="section">
+{% if gallery %}
+<section class="section section-tint gallery-section">
     <div class="sec-header">
-        <span class="sec-label">Our Impact</span>
-        <h2 class="sec-title">Making a difference, one robotics kit at a time</h2>
+        <svg class="doodle doodle-float doodle-teal" style="top:-4px;right:8%;width:28px;height:28px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+        <span class="sec-label coral">Behind The Build</span>
+        <h2 class="sec-title">Real kids, <span class="title-accent">real workshops</span></h2>
+        <p class="sec-desc">Unfiltered moments from our chapters — soldering irons, first drives, and a lot of proud faces.</p>
     </div>
-    <div class="home-grid-3">
-        <div class="impact-card">
-            <span class="impact-val">--</span>
-            <span class="impact-lbl">Dollars Raised</span>
+    <div class="gallery-grid">
+        {% for img in gallery %}
+        <div class="chapter-slide" data-src="{{ url_for('static', filename=img.image) }}">
+            <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or img.event.title }}" loading="lazy">
+            {% if img.caption %}<div class="gallery-caption">{{ img.caption }}</div>{% endif %}
         </div>
-        <div class="impact-card">
-            <span class="impact-val">--</span>
-            <span class="impact-lbl">Kits Donated</span>
-        </div>
-        <div class="impact-card">
-            <span class="impact-val">--</span>
-            <span class="impact-lbl">Students Reached</span>
-        </div>
+        {% endfor %}
     </div>
 </section>
+{% endif %}
 
 {% if highlights %}
 <section class="section">
     <div class="sec-header">
-        <span class="sec-label">Highlights</span>
+        <span class="sec-label teal">Highlights</span>
         <h2 class="sec-title">Recent Events</h2>
         <p class="sec-desc">A glimpse into what our chapters have been up to.</p>
     </div>
@@ -197,9 +320,9 @@
             {% if event.images.count() > 0 %}
             <div class="event-card-carousel">
                 <div class="event-card-track">
-                    {% for img in event.images %}
+                    {% for img in event.images[:8] %}
                     <div class="event-card-slide" data-src="{{ url_for('static', filename=img.image) }}">
-                        <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}">
+                        <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
                     </div>
                     {% endfor %}
                 </div>
@@ -209,7 +332,10 @@
         {% endfor %}
     </div>
     <div style="text-align:center;margin-top:1.5rem;">
-        <a href="{{ url_for('public.events') }}" class="btn-outline">View All Events</a>
+        <a href="{{ url_for('public.events') }}" class="btn-text">
+            View All Events
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
     </div>
 </section>
 {% endif %}
@@ -237,65 +363,126 @@
     </div>
     {% if chapters|length > 4 %}
     <div style="text-align:center;margin-top:1.5rem;">
-        <a href="{{ url_for('public.chapters_list') }}" class="btn-outline">View All Chapters</a>
+        <a href="{{ url_for('public.chapters_list') }}" class="btn-text">
+            View All Chapters
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+        </a>
     </div>
     {% endif %}
 </section>
 {% endif %}
 
+<section class="section">
+    <div class="sec-header">
+        <svg class="doodle doodle-float" style="top:-4px;right:10%;width:30px;height:30px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><circle cx="9.5" cy="13" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13" r="1" fill="currentColor" stroke="none"/><path d="M9.5 16.5h5"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1.2" fill="currentColor" stroke="none"/></svg>
+        <span class="sec-label coral">Join The Movement</span>
+        <h2 class="sec-title">Teens like you make this <span class="title-accent">actually work</span></h2>
+        <p class="sec-desc">Whether you're a student, a parent, or a company — there's a spot for you here.</p>
+    </div>
+    <div class="home-grid-3">
+        <a href="/chapters" class="home-card" style="text-decoration:none;color:inherit;display:block;">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+            </div>
+            <h3>Start a Chapter</h3>
+            <p>Rally your friends and bring BTG to your school or city. We'll set you up with everything you need to launch.</p>
+        </a>
+        <a href="/partners" class="home-card" style="text-decoration:none;color:inherit;display:block;">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+            <h3>Sponsor a Kit</h3>
+            <p>Companies and organizations can fund kits and workshops — and watch exactly where the impact lands.</p>
+        </a>
+        <a href="/events" class="home-card" style="text-decoration:none;color:inherit;display:block;">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <h3>Show Up</h3>
+            <p>Come to a workshop, volunteer at an event, or just spread the word. Every bit moves the mission forward.</p>
+        </a>
+    </div>
+</section>
+
+<section class="section">
+    <div class="sec-header">
+        <span class="sec-label">Questions</span>
+        <h2 class="sec-title">Things people <span class="title-accent">actually ask us</span></h2>
+    </div>
+    <div class="faq-list">
+        <details class="faq-item">
+            <summary><span class="faq-num">Q1</span>Is this really run entirely by teenagers?</summary>
+            <div class="faq-body">Yes — every chapter, workshop, and kit build is led by student volunteers. Adults advise where legally required, but the decisions, the teaching, and the soldering are all ours.</div>
+        </details>
+        <details class="faq-item">
+            <summary><span class="faq-num">Q2</span>Who receives the robotics kits?</summary>
+            <div class="faq-body">We work with charities, hospitals, low-income families, juvenile centers, and community organizations. Kits always go directly to kids who wouldn't otherwise have access — never resold, never warehoused.</div>
+        </details>
+        <details class="faq-item">
+            <summary><span class="faq-num">Q3</span>How do donations get used?</summary>
+            <div class="faq-body">Donations fund kit components, workshop materials, and shipping. Our fiscal sponsorship through Hack Club means contributions are tax-deductible and our finances are publicly transparent.</div>
+        </details>
+        <details class="faq-item">
+            <summary><span class="faq-num">Q4</span>Can I start a chapter at my school?</summary>
+            <div class="faq-body">Absolutely — that's how we grow. Head to the Chapters page and apply. We'll pair you with an existing chapter president who'll walk you through your first semester.</div>
+        </details>
+        <details class="faq-item">
+            <summary><span class="faq-num">Q5</span>Can my company sponsor a kit?</summary>
+            <div class="faq-body">Yes — businesses and organizations can fund kit builds or a full workshop and see exactly which chapter and community it supported. Visit the Partners page to get started.</div>
+        </details>
+        <details class="faq-item">
+            <summary><span class="faq-num">Q6</span>Where are your chapters located?</summary>
+            <div class="faq-body">Our chapters are student-run teams based wherever a teen decides to start one. Check the Chapters page for the current map and each chapter's city and president.</div>
+        </details>
+    </div>
+</section>
+
 <section class="section cta-section">
-    <h2>Help Us Bridge the Gap</h2>
-    <p>Your support helps us bring robotics education to communities that need it most. Together, we can inspire the next generation of innovators.</p>
+    <h2>Help Us <span class="wavy">Bridge the Gap</span></h2>
+    <p>We're teens with soldering irons and a mission. Your support puts robotics kits into the hands of kids who'd never otherwise get one.</p>
     <div class="cta-links">
         <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="btn btn-accent" target="_blank">Make a Donation</a>
         <a href="/partners" class="btn-outline">Partner With Us</a>
     </div>
 </section>
 
-<section class="contact-section">
-    <div class="sec-header">
-        <span class="sec-label">Get In Touch</span>
-        <h2 class="sec-title">Contact Us</h2>
-        <p class="sec-desc">Have questions or want to get involved? Reach out to us!</p>
+<section class="contact-section section-tint">
+    <div class="contact-inner">
+        <div>
+            <div class="sec-header" style="margin-bottom:0;">
+                <span class="sec-label teal">Get In Touch</span>
+                <h2 class="sec-title">Contact Us</h2>
+                <p class="sec-desc">Have questions, want to volunteer, or ready to start a chapter? We're teens too — we check these every day.</p>
+            </div>
+            <p class="contact-note">Prefer to talk it through first? Head to the <a href="/chapters" style="color:var(--accent);font-weight:600;">Chapters page</a> to find the team closest to you, or jump straight to <a href="/partners" style="color:var(--accent);font-weight:600;">partnering with us</a>.</p>
+        </div>
+        <div class="contact-links">
+            <a href="mailto:bridgethegap.robotics@gmail.com" class="contact-link">
+                <span class="contact-link-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </span>
+                <span>
+                    <span class="contact-link-lbl">Email</span><br>
+                    bridgethegap.robotics@gmail.com
+                </span>
+            </a>
+            <a href="https://instagram.com/bridge_the_gap_robotics" class="contact-link" target="_blank" rel="noopener">
+                <span class="contact-link-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </span>
+                <span>
+                    <span class="contact-link-lbl">Instagram</span><br>
+                    @bridge_the_gap_robotics
+                </span>
+            </a>
+        </div>
     </div>
-    <div class="contact-links">
-        <a href="mailto:bridgethegap.robotics@gmail.com" class="contact-link">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            bridgethegap.robotics@gmail.com
-        </a>
-        <a href="https://instagram.com/" class="contact-link" target="_blank">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            @bridgethegap.robotics
-        </a>
-    </div>
-</section>
-
-<section class="hue-section">
-    <span class="hue-label">Customize Accent Color</span>
-    <div class="hue-track">
-        <input type="range" class="hue-input" min="0" max="360" value="262" id="hueSlider">
-    </div>
-    <span class="hue-value" id="hueValue">262</span>
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('hueSlider');
-    const hueVal = document.getElementById('hueValue');
-    if (slider) {
-        slider.addEventListener('input', (e) => {
-            const h = e.target.value;
-            const root = document.documentElement;
-            root.style.setProperty('--hue', h);
-            root.style.setProperty('--bg', `hsl(${h}, 30%, 97%)`);
-            root.style.setProperty('--bg-warm', `hsl(${h}, 30%, 94%)`);
-            root.style.setProperty('--surface', `#fff`);
-            root.style.setProperty('--glass', `hsla(${h}, 30%, 97%, 0.92)`);
-            hueVal.textContent = h;
-        });
-    }
     document.querySelectorAll('.event-card').forEach(card => {
         const slides = card.querySelectorAll('.event-card-slide');
         const images = Array.from(slides).map(s => s.dataset.src);
@@ -307,6 +494,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    const galleryGrid = document.querySelector('.gallery-grid');
+    if (galleryGrid) {
+        const slides = galleryGrid.querySelectorAll('.chapter-slide');
+        const images = Array.from(slides).map(s => s.dataset.src);
+        slides.forEach((slide, i) => {
+            slide.addEventListener('click', () => {
+                if (window.openLightbox) window.openLightbox(images, i);
+            });
+        });
+    }
 });
 </script>
 {% endblock %}

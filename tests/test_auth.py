@@ -41,8 +41,17 @@ def test_logout(client):
         'email': 'arvindtrial@gmail.com',
         'password': 'trial@123',
     })
-    resp = client.get('/logout')
+    resp = client.post('/logout')
     assert resp.status_code == 302
+
+
+def test_logout_requires_post(client):
+    client.post('/login', data={
+        'email': 'arvindtrial@gmail.com',
+        'password': 'trial@123',
+    })
+    resp = client.get('/logout')
+    assert resp.status_code == 405
 
 
 def test_login_required_redirect(client):
