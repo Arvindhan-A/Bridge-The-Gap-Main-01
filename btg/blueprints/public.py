@@ -292,7 +292,8 @@ def programs():
     today = date.today()
     upcoming = (Event.query.filter(Event.date >= today)
                 .order_by(Event.date).limit(6).all())
-    return render_template('programs.html', upcoming_events=upcoming)
+    return render_template('programs.html', upcoming_events=upcoming,
+                           stat=SiteStat.get())
 
 
 @public.route('/curriculum')

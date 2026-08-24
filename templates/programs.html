@@ -1,132 +1,248 @@
 {% extends "base.html" %}
 {% block title %}Programs | Bridge the Gap Robotics{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/programs.css') }}">
+{% endblock %}
 {% block content %}
+<div class="pg">
 
-<section class="hero hero-compact">
-    <p class="hero-tagline">What We Run</p>
-    <h1>Programs</h1>
-    <p class="hero-sub">Everything Bridge the Gap runs to bring hands-on STEM to communities — from preschool demos to student-led research.</p>
+<section class="pg-hero">
+    <div class="pg-hero-inner">
+        <span class="pg-eyebrow">What we run</span>
+        <h1>Programs</h1>
+        <p>Eight programs, all student-run, covering the full path from a four-year-old's first paper bridge to a high schooler pitching their own startup. Every one of them is free to the communities we work with.</p>
+        <div class="pg-hero-meta">
+            <div>
+                <b>8</b>
+                <span>Programs</span>
+            </div>
+            <div>
+                <b>{{ stat.student_chapters if stat and stat.student_chapters is not none else '—' }}+</b>
+                <span>Chapters running them</span>
+            </div>
+            <div>
+                <b>100%</b>
+                <span>Student-led</span>
+            </div>
+            <div>
+                <b>Free</b>
+                <span>To participants</span>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="section band band-sun" style="border-top:none;">
-    <div class="pill-tabs" id="programTabs" role="tablist">
-        <button class="pill-tab is-on" data-panel="preschool" role="tab">Preschool Demos</button>
-        <button class="pill-tab" data-panel="launchpad" role="tab">LaunchPad</button>
-        <button class="pill-tab" data-panel="founders" role="tab">Young Founders Lab</button>
-        <button class="pill-tab" data-panel="webinars" role="tab">Homeschool STEAM Webinars</button>
-        <button class="pill-tab" data-panel="govschool" role="tab">Government School Curriculum</button>
-        <button class="pill-tab" data-panel="magazines" role="tab">STEM Magazines</button>
-        <button class="pill-tab" data-panel="podcast" role="tab">Podcast</button>
-        <button class="pill-tab" data-panel="events" role="tab">Events</button>
-    </div>
-
-    <div style="margin-top:2.5rem;">
-        <div class="program-panel is-on" id="panel-preschool">
-            <span class="sec-label">Early Learners</span>
-            <h2 class="sec-title">Preschool <span class="title-accent">Demos</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">We partner with preschools and afterschool programs to bring hands-on STEM to the youngest learners — through simple, playful builds like paper bridges and paper-craft stick structures that turn abstract ideas into something kids can hold.</p>
+<section class="pg-section">
+    <div class="pg-inner">
+        <div class="pg-head">
+            <span class="pg-eyebrow">The catalogue</span>
+            <h2>Every program we run</h2>
+            <p>Filter by who a program is built for. Each one is designed so a chapter can pick it up and run it without specialist equipment or a background in robotics.</p>
         </div>
 
-        <div class="program-panel" id="panel-launchpad">
-            <span class="sec-label teal">Maker Infrastructure</span>
-            <h2 class="sec-title">Launch<span class="title-accent">Pad</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">Our 3D printer&ndash;focused initiative, pairing printers with starter kits for chapters, libraries, and Title I schools to build a sustainable, hands-on maker program that keeps producing long after we leave.</p>
+        <div class="pg-filters" id="pgFilters">
+            <button class="pg-tab is-on" data-filter="all">All programs</button>
+            <button class="pg-tab" data-filter="schools">For schools</button>
+            <button class="pg-tab" data-filter="students">For students</button>
+            <button class="pg-tab" data-filter="community">For the community</button>
         </div>
 
-        <div class="program-panel" id="panel-founders">
-            <span class="sec-label coral">Entrepreneurship</span>
-            <h2 class="sec-title">Young <span class="title-accent">Founders Lab</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">An entrepreneurship lab for youth, taught by high school mentors, teaching students how to develop startups and pitch their ideas — the business side of building something real.</p>
-        </div>
-
-        <div class="program-panel" id="panel-webinars">
-            <span class="sec-label">Homeschool Community</span>
-            <h2 class="sec-title">Homeschool <span class="title-accent">STEAM Webinars</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">Monthly webinars, each spotlighting a letter of STEAM, connecting core concepts to real robotics applications — developed in partnership with homeschool communities.</p>
-        </div>
-
-        <div class="program-panel" id="panel-govschool">
-            <span class="sec-label teal">Curriculum Partnership</span>
-            <h2 class="sec-title">Government School <span class="title-accent">Curriculum</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">Open-source robotics curriculum built for government and public school classrooms, designed to run on affordable materials and to be taught by teachers with no prior robotics background.</p>
-            <div style="margin-top:1.5rem;">
-                <a href="/curriculum" class="btn-text">
-                    Browse the Curriculum Library
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
-                </a>
-            </div>
-        </div>
-
-        <div class="program-panel" id="panel-magazines">
-            <span class="sec-label coral">Publishing</span>
-            <h2 class="sec-title">STEM <span class="title-accent">Magazines</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">Free digital magazines that spotlight STEM concepts and the people behind them — written by students, for students, and distributed to every chapter.</p>
-        </div>
-
-        <div class="program-panel" id="panel-podcast">
-            <span class="sec-label">Listen</span>
-            <h2 class="sec-title">The Bridge the Gap <span class="title-accent">Podcast</span></h2>
-            <p class="program-lead" style="margin-top:1rem;">Conversations with engineers, researchers, entrepreneurs, educators, and industry leaders exploring new career paths in STEM, business, and technology.</p>
-            <div style="margin-top:1.5rem;">
-                <a href="https://instagram.com/bridge_the_gap_robotics" class="btn btn-accent" target="_blank" rel="noopener">Listen &rarr;</a>
-            </div>
-        </div>
-
-        <div class="program-panel" id="panel-events">
-            <span class="sec-label teal">Upcoming</span>
-            <h2 class="sec-title">Events &amp; <span class="title-accent">Workshops</span></h2>
-            <p class="program-lead" style="margin-top:1rem;margin-bottom:1.75rem;">Workshops, kit drives, and community events run by our chapters.</p>
-            {% if upcoming_events %}
-            {% for event in upcoming_events %}
-            <div class="event-row">
-                <div>
-                    <h3>{{ event.title }}</h3>
-                    <p class="event-row-meta">
-                        {{ event.date.strftime('%b %d, %Y') }}
-                        {% if event.venue %} &middot; {{ event.venue }}{% endif %}
-                        {% if event.chapter %} &middot; {{ event.chapter.name }}{% endif %}
-                    </p>
+        <div class="pg-grid" id="pgGrid">
+            <div class="pg-card" data-cat="schools community">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
                 </div>
-                <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="btn btn-accent btn-sm">Details</a>
+                <h3>Preschool Demos</h3>
+                <p>Hands-on STEM for the youngest learners, built around simple, playful structures like paper bridges and craft-stick towers that turn abstract ideas into something a child can hold.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip">Ages 3&ndash;5</span>
+                    <span class="pg-chip">In person</span>
+                </div>
             </div>
-            {% endfor %}
-            <div style="margin-top:1.5rem;">
-                <a href="{{ url_for('public.events') }}" class="btn-text">
-                    View All Events
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
-                </a>
+
+            <div class="pg-card" data-cat="schools community">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 4.9v10.2L12 22l-9-4.9V6.9z"/><path d="M12 22V12"/><path d="M21 6.9L12 12 3 6.9"/></svg>
+                </div>
+                <h3>LaunchPad</h3>
+                <p>Our 3D-printing initiative. We pair printers with starter kits for chapters, libraries and Title I schools, so a site can keep producing parts and projects long after our team has left.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip accent">Flagship</span>
+                    <span class="pg-chip">Equipment</span>
+                </div>
             </div>
-            {% else %}
-            <p class="sec-desc">No upcoming events scheduled right now — check back soon, or <a href="{{ url_for('public.events') }}" style="color:var(--accent);font-weight:600;">browse past events</a>.</p>
-            {% endif %}
+
+            <div class="pg-card" data-cat="students">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+                </div>
+                <h3>Young Founders Lab</h3>
+                <p>An entrepreneurship lab taught by high school mentors, walking students through developing a startup idea and pitching it &mdash; the business half of building something people actually use.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip">Ages 13&ndash;18</span>
+                    <span class="pg-chip">Cohort</span>
+                </div>
+            </div>
+
+            <div class="pg-card" data-cat="students community">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <h3>Homeschool STEAM Webinars</h3>
+                <p>A monthly webinar series, each session spotlighting one letter of STEAM and connecting it to a real robotics application. Built in partnership with homeschool communities.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip">Monthly</span>
+                    <span class="pg-chip">Online</span>
+                </div>
+            </div>
+
+            <div class="pg-card" data-cat="schools">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+                </div>
+                <h3>Government School Curriculum</h3>
+                <p>Open-source robotics curriculum written for public and government classrooms &mdash; designed around affordable materials and teachable by staff with no prior robotics background.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip accent">Open source</span>
+                    <span class="pg-chip">Curriculum</span>
+                </div>
+            </div>
+
+            <div class="pg-card" data-cat="students community">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v13H5.5L4 19z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
+                </div>
+                <h3>STEM Magazines</h3>
+                <p>Free digital magazines spotlighting STEM concepts and the people behind them &mdash; written by students, for students, and distributed to every chapter in the network.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip">Quarterly</span>
+                    <span class="pg-chip">Digital</span>
+                </div>
+            </div>
+
+            <div class="pg-card" data-cat="students community">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+                </div>
+                <h3>The Bridge the Gap Podcast</h3>
+                <p>Conversations with engineers, researchers, entrepreneurs and educators about the paths they took &mdash; aimed at students who have never met anyone doing the job they're curious about.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip">Interviews</span>
+                    <span class="pg-chip">Audio</span>
+                </div>
+            </div>
+
+            <div class="pg-card" data-cat="community schools">
+                <div class="pg-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <h3>Workshops &amp; Kit Drives</h3>
+                <p>The in-person core of what we do: chapters run build sessions in schools, hospitals and community centres, and every participant keeps the kit they assembled.</p>
+                <div class="pg-card-meta">
+                    <span class="pg-chip accent">Year-round</span>
+                    <span class="pg-chip">In person</span>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<section class="cta-banner">
-    <div class="cta-banner-inner">
-        <h2>Want to help run a program?</h2>
-        <p>Our programs are run by student volunteers. If you want to teach, mentor, or start something new in your community — we'll help you launch it.</p>
-        <a href="/chapters" class="lp-btn lp-btn-primary">
-            Sign Up to Volunteer
+<section class="pg-section alt">
+    <div class="pg-inner">
+        <div class="pg-head">
+            <span class="pg-eyebrow">How it works</span>
+            <h2>How a program reaches a community</h2>
+            <p>The same three steps whether it's a single afternoon workshop or a printer that stays for years.</p>
+        </div>
+        <div class="pg-steps">
+            <div class="pg-step">
+                <span>Step 01</span>
+                <h3>A chapter proposes it</h3>
+                <p>A student team identifies a school, shelter or hospital in their area and tells us what that community actually needs &mdash; not what we assume it needs.</p>
+            </div>
+            <div class="pg-step">
+                <span>Step 02</span>
+                <h3>We supply and train</h3>
+                <p>We ship the kits or equipment and hand over the curriculum, then pair the chapter with a president who has already run that program elsewhere.</p>
+            </div>
+            <div class="pg-step">
+                <span>Step 03</span>
+                <h3>Students run it</h3>
+                <p>The chapter delivers the sessions themselves and reports back on what worked, which feeds straight into the next revision of the curriculum.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pg-section">
+    <div class="pg-inner">
+        <div class="pg-head">
+            <span class="pg-eyebrow">Calendar</span>
+            <h2>Upcoming sessions</h2>
+            <p>Public workshops and events currently scheduled across our chapters.</p>
+        </div>
+        {% if upcoming_events %}
+        {% for event in upcoming_events %}
+        <div class="pg-event">
+            <span class="pg-date">{{ event.date.strftime('%b %d') }}</span>
+            <div style="flex:1;min-width:220px;">
+                <h3>{{ event.title }}</h3>
+                <p class="pg-event-meta">
+                    {{ event.date.strftime('%Y') }}
+                    {% if event.venue %} &middot; {{ event.venue }}{% endif %}
+                    {% if event.chapter %} &middot; {{ event.chapter.name }}{% endif %}
+                </p>
+            </div>
+            <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="pg-btn pg-btn-ghost">Details</a>
+        </div>
+        {% endfor %}
+        <div style="margin-top:2rem;">
+            <a href="{{ url_for('public.events') }}" class="pg-btn pg-btn-solid">
+                View the full calendar
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+            </a>
+        </div>
+        {% else %}
+        <p class="pg-empty">
+            Nothing on the public calendar right now.
+            <a href="{{ url_for('public.events') }}" style="color:var(--pg-brand);font-weight:600;">Browse past events</a>
+            to see what our chapters have run.
+        </p>
+        {% endif %}
+    </div>
+</section>
+
+<section class="pg-cta">
+    <h2>Want to run one of these?</h2>
+    <p>Every program on this page is delivered by student volunteers. If you'd like to teach, mentor, or bring one of them to your school or community, we'll help you get it off the ground.</p>
+    <div class="pg-cta-actions">
+        <a href="/chapters" class="pg-btn pg-btn-light">
+            Start a chapter
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </a>
+        <a href="mailto:bridgethegap.robotics@gmail.com" class="pg-btn pg-btn-ghost">Talk to our team</a>
     </div>
 </section>
 
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const tabs = document.getElementById('programTabs');
-    if (!tabs) return;
-    tabs.addEventListener('click', e => {
-        const tab = e.target.closest('.pill-tab');
+document.addEventListener('DOMContentLoaded', function () {
+    var bar  = document.getElementById('pgFilters');
+    var grid = document.getElementById('pgGrid');
+    if (!bar || !grid) return;
+    bar.addEventListener('click', function (e) {
+        var tab = e.target.closest('.pg-tab');
         if (!tab) return;
-        tabs.querySelectorAll('.pill-tab').forEach(t => t.classList.toggle('is-on', t === tab));
-        document.querySelectorAll('.program-panel').forEach(p => {
-            p.classList.toggle('is-on', p.id === 'panel-' + tab.dataset.panel);
+        var want = tab.dataset.filter;
+        bar.querySelectorAll('.pg-tab').forEach(function (t) {
+            t.classList.toggle('is-on', t === tab);
+        });
+        grid.querySelectorAll('.pg-card').forEach(function (card) {
+            var cats = (card.dataset.cat || '').split(' ');
+            card.classList.toggle('is-hidden', want !== 'all' && cats.indexOf(want) === -1);
         });
     });
 });
