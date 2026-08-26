@@ -1,40 +1,67 @@
 {% extends "base.html" %}
 {% block title %}Bridge the Gap Robotics Foundation{% endblock %}
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home-hero.css') }}">
-{% endblock %}
 {% block content %}
-
-<section class="lp-hero">
-    <div class="lp-hero-shapes" aria-hidden="true">
-        <svg class="lp-hero-arch-1" viewBox="0 0 200 200" fill="none" stroke="#fff" stroke-width="10"><path d="M10 190 A90 90 0 0 1 190 190"/></svg>
-        <svg class="lp-hero-arch-2" viewBox="0 0 200 200" fill="none" stroke="#fff" stroke-width="8"><circle cx="100" cy="100" r="90"/></svg>
+<section class="hero-new">
+    <div class="hero-bg-effects" aria-hidden="true">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-glow hero-glow-3"></div>
+        <div class="hero-mesh"></div>
     </div>
-    <svg class="doodle doodle-spin" style="top:12%;left:47%;width:24px;height:24px;color:#fff;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
-    <div class="lp-hero-inner">
-        <div class="lp-hero-left">
-            <span class="teen-badge anim-hero" style="margin-bottom:1.1rem;">
+
+    <div class="hero-image-full anim-hero-img" style="--d:0.2s" aria-hidden="true">
+        <img src="{{ url_for('static', filename='images/events/rpz-2.jpg') }}" alt="" width="1400" height="788" loading="eager">
+        <div class="hero-photo-badge">
+            <span class="hero-badge-dot"></span>
+            Teen-Led Workshop
+        </div>
+    </div>
+
+    <svg class="doodle doodle-spin" style="top:14%;left:46%;width:26px;height:26px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+    <svg class="doodle doodle-float doodle-teal" style="bottom:20%;left:38%;width:18px;height:18px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+
+    <div class="hero-new-inner">
+        <div class="hero-new-right">
+            <span class="teen-badge anim-hero" style="--d:0.05s;margin-bottom:1.1rem;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
                 100% Teen-Led &middot; Student-Powered
             </span>
-            <h1 class="lp-hero-title">Building Bridges.<br>Creating Futures.</h1>
-            <p class="lp-hero-sub">Bridge the Gap Robotics Foundation empowers youth through robotics education, mentorship, and hands-on learning experiences that build skills, confidence, and community.</p>
-            <div class="lp-hero-ctas">
-                <a href="/kits" class="lp-btn lp-btn-primary">
-                    Our Programs
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+            <h1 class="hero-new-title anim-hero" style="--d:0.1s">Bridge the Gap<br><span class="hero-title-accent">Robotics Foundation</span></h1>
+            <p class="hero-new-sub anim-hero" style="--d:0.15s">We're a team of teenagers who believe every child deserves the chance to build, create, and innovate through robotics — so we make it happen ourselves.</p>
+            <p class="hero-mission anim-hero" style="--d:0.2s">Every donation helps place robotics kits into classrooms that otherwise couldn't afford them.</p>
+            <div class="hero-new-ctas anim-hero" style="--d:0.25s">
+                <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="hero-btn hero-btn-primary" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    Donate Now
                 </a>
-                <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="lp-btn lp-btn-outline" target="_blank">Donate Today</a>
+                <a href="/kits" class="hero-btn hero-btn-secondary">
+                    Explore Our Kits
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
+                </a>
             </div>
-        </div>
-        <div class="lp-hero-right">
-            <div class="lp-hero-img">
-                <img src="{{ url_for('static', filename='images/events/rpz-2.jpg') }}" alt="Students collaborating on a robotics build during a hands-on workshop" width="1400" height="920" loading="eager">
+            <div class="hero-stats anim-hero" style="--d:0.3s">
+                <div class="hero-stat-card">
+                    <div class="hero-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <span class="hero-stat-val">{{ stat.kits_delivered if stat.kits_delivered is not none else '--' }}</span>
+                    <span class="hero-stat-lbl">Kits Delivered</span>
+                </div>
+                <div class="hero-stat-card">
+                    <div class="hero-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    </div>
+                    <span class="hero-stat-val">{{ stat.student_chapters if stat.student_chapters is not none else '--' }}</span>
+                    <span class="hero-stat-lbl">Student Chapters</span>
+                </div>
+                <div class="hero-stat-card">
+                    <div class="hero-stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                    </div>
+                    <span class="hero-stat-val">{{ stat.students_reached if stat.students_reached is not none else '--' }}</span>
+                    <span class="hero-stat-lbl">Students Reached</span>
+                </div>
             </div>
-            <span class="hero-photo-badge lp-hero-badge">
-                <span class="hero-badge-dot"></span>
-                Teen-Led Workshop
-            </span>
         </div>
     </div>
 </section>
@@ -57,173 +84,33 @@
 </div>
 <div class="color-bar" aria-hidden="true"></div>
 
-<section class="lp-stats band band-sun" id="impact">
-    <div class="lp-stats-inner">
-        <div class="lp-stats-left">
-            <span class="sec-label">Our Impact</span>
-            <h2 class="lp-stats-title">Empowering Kids.<br>Strengthening Communities.</h2>
-            <p class="lp-stats-desc">We bridge the gap between potential and opportunity&mdash;preparing the next generation of innovators, problem-solvers, and leaders through robotics and STEM education.</p>
-            <a href="#what-we-do" class="lp-btn lp-btn-filled">
-                Learn More About Us
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
-            </a>
-        </div>
-        <div class="lp-stats-right">
-            <div class="lp-stat">
-                <div class="lp-stat-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                </div>
-                <span class="lp-stat-num">{{ stat.kits_delivered if stat.kits_delivered is not none else '--' }}{% if stat.kits_delivered is not none %}+{% endif %}</span>
-                <span class="lp-stat-lbl">Kits Delivered</span>
-                <span class="lp-stat-detail">Built and shipped by student volunteers</span>
-            </div>
-            <div class="lp-stat">
-                <div class="lp-stat-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                </div>
-                <span class="lp-stat-num">{{ stat.student_chapters if stat.student_chapters is not none else '--' }}{% if stat.student_chapters is not none %}+{% endif %}</span>
-                <span class="lp-stat-lbl">Student Chapters</span>
-                <span class="lp-stat-detail">Teen-led teams active worldwide</span>
-            </div>
-            <div class="lp-stat">
-                <div class="lp-stat-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                </div>
-                <span class="lp-stat-num">{{ stat.students_reached if stat.students_reached is not none else '--' }}{% if stat.students_reached is not none %}+{% endif %}</span>
-                <span class="lp-stat-lbl">Students Reached</span>
-                <span class="lp-stat-detail">Kids given hands-on STEM access</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="lp-wwd" id="what-we-do">
-    <div class="lp-wwd-shapes" aria-hidden="true">
-        <svg class="lp-wwd-arch" viewBox="0 0 200 200" fill="none" stroke="#fff" stroke-width="8"><circle cx="100" cy="100" r="90"/></svg>
-        <svg class="lp-wwd-grid" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="1">
-            <line x1="0" y1="20" x2="100" y2="20"/><line x1="0" y1="50" x2="100" y2="50"/><line x1="0" y1="80" x2="100" y2="80"/>
-            <line x1="20" y1="0" x2="20" y2="100"/><line x1="50" y1="0" x2="50" y2="100"/><line x1="80" y1="0" x2="80" y2="100"/>
-        </svg>
-    </div>
-    <svg class="doodle doodle-spin doodle-teal" style="top:2px;right:5%;width:24px;height:24px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
-    <div class="lp-wwd-inner">
-        <div class="lp-wwd-left">
-            <span class="lp-eyebrow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-                What We Do
-            </span>
-            <h2 class="lp-wwd-title">Hands-On Learning.<br>Real-World Impact.</h2>
-            <p class="lp-wwd-desc">We provide students with access to robotics education, mentorship, and community experiences that help them build practical skills, confidence, and meaningful connections.</p>
-        </div>
-        <div class="lp-wwd-cards">
-            <div class="lp-card">
-                <div class="lp-card-img">
-                    <img src="{{ url_for('static', filename='images/events/kn-1.jpg') }}" alt="A student proudly holding a hand-built craft project" loading="lazy">
-                </div>
-                <div class="lp-card-body">
-                    <div class="lp-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
-                    </div>
-                    <h3>Robotics Education</h3>
-                    <p>Interactive, project-based learning that builds technical and problem-solving skills.</p>
-                </div>
-            </div>
-            <div class="lp-card">
-                <div class="lp-card-img">
-                    <img src="{{ url_for('static', filename='images/events/rpz-1.jpg') }}" alt="A mentor speaking to a room of students during a workshop" loading="lazy">
-                </div>
-                <div class="lp-card-body">
-                    <div class="lp-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                    </div>
-                    <h3>Mentorship</h3>
-                    <p>Connecting students with mentors who inspire and guide their journey.</p>
-                </div>
-            </div>
-            <div class="lp-card">
-                <div class="lp-card-img">
-                    <img src="{{ url_for('static', filename='images/events/ch-1.jpg') }}" alt="Bridge the Gap kit boxes delivered to a community partner" loading="lazy">
-                </div>
-                <div class="lp-card-body">
-                    <div class="lp-card-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                    </div>
-                    <h3>Community &amp; Events</h3>
-                    <p>Building a supportive community through competitions, workshops, and events.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="cta-banner" style="padding-top:4.5rem;padding-bottom:4.5rem;">
-    <div class="cta-banner-inner" style="max-width:860px;">
-        <p style="font-size:1.1875rem;line-height:1.85;color:#fff;margin:0;">
-            We're closing the STEM access gap — building and donating hands-on robotics kits,
-            publishing open-source curriculum, and running student-led chapters that put
-            engineering in reach of every kid, regardless of the zip code they grow up in.
-        </p>
-    </div>
-</section>
-
 <section class="section">
-    <div class="sec-header" style="text-align:center;">
-        <span class="tilt-badge">&#9733; By the numbers</span>
-        <h2 class="sec-title" style="margin-top:0.9rem;">Small team. <span class="marker">Loud results.</span></h2>
-    </div>
-    <div class="big-stats" style="margin-top:2rem;">
-        <div class="big-stat">
-            <span class="big-stat-num">{{ stat.kits_delivered if stat.kits_delivered is not none else '--' }}+</span>
-            <span class="big-stat-lbl">Kits built<br>&amp; donated</span>
-        </div>
-        <div class="big-stat">
-            <span class="big-stat-num">{{ stat.students_reached if stat.students_reached is not none else '--' }}+</span>
-            <span class="big-stat-lbl">Kids reached<br>with STEM</span>
-        </div>
-        <div class="big-stat">
-            <span class="big-stat-num">{{ stat.student_chapters if stat.student_chapters is not none else '--' }}+</span>
-            <span class="big-stat-lbl">Student-run<br>chapters</span>
-        </div>
-        <div class="big-stat">
-            <span class="big-stat-num">100%</span>
-            <span class="big-stat-lbl">Teen-led,<br>start to finish</span>
-        </div>
-    </div>
-</section>
-
-<section class="section band band-teal">
     <div class="sec-header">
-        <span class="sec-label teal">What We Stand For</span>
-        <h2 class="sec-title">Major <span class="title-accent">Pillars</span></h2>
+        <span class="sec-label">Our Mission</span>
+        <h2 class="sec-title">We believe <span class="title-accent">every child</span> deserves access to STEM education</h2>
+        <p class="sec-desc">Through robotics kits and hands-on learning, we're bridging the gap between opportunity and potential.</p>
     </div>
-    <div class="pillar-grid" style="margin-top:1.75rem;">
-        <div class="pillar">
-            <div class="pillar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+    <div class="home-grid-3" style="margin-top:1.5rem;">
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             </div>
-            <h3>Hands-On Learning</h3>
-            <p>Real parts, real builds — kits kids keep, so learning doesn't stop when the workshop ends.</p>
+            <h3>Kit Distribution</h3>
+            <p>Designing, assembling, and donating robotics kits to underserved communities across the country.</p>
         </div>
-        <div class="pillar">
-            <div class="pillar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             </div>
-            <h3>Curriculum &amp; Research</h3>
-            <p>Open-source lesson plans any teacher can run, written and tested by student volunteers.</p>
+            <h3>Workshops &amp; Events</h3>
+            <p>Hands-on robotics workshops that bring STEM learning to life for students of all ages.</p>
         </div>
-        <div class="pillar">
-            <div class="pillar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             </div>
-            <h3>Chapters &amp; Community</h3>
-            <p>Student-led teams running local workshops, supported by a global network of peers.</p>
-        </div>
-        <div class="pillar">
-            <div class="pillar-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-            </div>
-            <h3>Mentorship &amp; Pathways</h3>
-            <p>Teens teaching kids, and professionals guiding teens — a ladder that keeps going up.</p>
+            <h3>Chapter Network</h3>
+            <p>Empowering student-led chapters across the country to run local robotics initiatives.</p>
         </div>
     </div>
 </section>
@@ -298,38 +185,26 @@
         </div>
     </div>
 
-    <div class="list-tiles" style="margin-top:2rem;">
-        <a href="/kits" class="list-tile">
+    <div class="kit-grid" style="margin-top:2rem;">
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">All Levels</span>
             <h3>Commercial Kits</h3>
-            <p>Ready-made kits — great STEM projects for all ages.</p>
+            <p>Elegoo starter kits, Snap Circuit project kits, and more sourced on request for budding STEM programs.</p>
         </a>
-        <a href="/kits" class="list-tile">
-            <h3>Rubber-Band Helicopter</h3>
-            <p>Easy to build, extremely portable, and flies up to 8 feet.</p>
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">Beginner</span>
+            <h3>Rubber-band Helicopter Kit</h3>
+            <p>A fun, easy build for young kids that flies up to 8 feet — and never fails to captivate a room.</p>
         </a>
-        <a href="/kits" class="list-tile">
-            <h3>Mechanical Grabber Arm</h3>
-            <p>A trigger mechanism that encourages fine motor skills and iteration.</p>
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">Intermediate</span>
+            <h3>Mechanical Grabber Arm Kit</h3>
+            <p>A grabber arm with a trigger mechanism, built to encourage kids to enhance and iterate on the design.</p>
         </a>
-        <a href="/kits" class="list-tile">
-            <h3>Hydraulic Arm</h3>
-            <p>Demonstrates the principles of pneumatics and hydraulics.</p>
-        </a>
-        <a href="/kits" class="list-tile">
-            <h3>Balloon-Powered Cars</h3>
-            <p>The physics of propulsion and stored energy, in one build.</p>
-        </a>
-        <a href="/kits" class="list-tile">
-            <h3>Arduino Starter Kits</h3>
-            <p>Entry-level electronics and the first lines of code.</p>
-        </a>
-        <a href="/kits" class="list-tile">
-            <h3>Raspberry Pi Materials</h3>
-            <p>Computing fundamentals and programming for older students.</p>
-        </a>
-        <a href="/curriculum" class="list-tile">
-            <h3>Curriculum to Match</h3>
-            <p>Every kit pairs with an open-source lesson plan from our library.</p>
+        <a href="/kits" class="kit-card">
+            <span class="kit-level">Advanced</span>
+            <h3>Hydraulic Arm Kit</h3>
+            <p>A hydraulic arm with 4+ moveable joints — real mechanisms of movement used in industry-level projects.</p>
         </a>
     </div>
     <div style="text-align:center;margin-top:1.5rem;">
@@ -337,63 +212,6 @@
             Explore All Our Kits
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </a>
-    </div>
-</section>
-
-<section class="section band band-sky">
-    <div class="sec-header" style="text-align:center;">
-        <span class="tilt-badge right teal">&#9889; Easier than you think</span>
-        <h2 class="sec-title" style="margin-top:0.9rem;">Start a chapter in <span class="marker-teal marker">four steps</span></h2>
-        <p class="sec-desc" style="margin-left:auto;margin-right:auto;">You don't need a lab, a budget, or a teacher's permission slip. You need a few friends and a free afternoon.</p>
-    </div>
-    <div class="how-strip" style="margin-top:2rem;">
-        <div class="how-step">
-            <span class="how-num">01</span>
-            <h3>Apply online</h3>
-            <p>Fill out a short form telling us who you are and where you want to build.</p>
-        </div>
-        <div class="how-step">
-            <span class="how-num">02</span>
-            <h3>Meet your mentor</h3>
-            <p>We pair you with an existing chapter president who's already done this.</p>
-        </div>
-        <div class="how-step">
-            <span class="how-num">03</span>
-            <h3>Get your kits</h3>
-            <p>We ship you starter kits and the curriculum to run your first workshop.</p>
-        </div>
-        <div class="how-step">
-            <span class="how-num">04</span>
-            <h3>Run it</h3>
-            <p>Teach your first session. We stay on call for everything after that.</p>
-        </div>
-    </div>
-    <div style="text-align:center;margin-top:1.75rem;">
-        <a href="/chapters" class="btn btn-accent">Start Your Chapter &rarr;</a>
-    </div>
-</section>
-
-<section class="section">
-    <div class="sec-header" style="text-align:center;">
-        <span class="tilt-badge pink">&#10084; What we believe</span>
-        <h2 class="sec-title" style="margin-top:0.9rem;">Three things we <span class="marker-pink marker">won't budge on</span></h2>
-    </div>
-    <div class="quote-grid" style="margin-top:2rem;">
-        <div class="quote-card">
-            <span class="quote-mark">&ldquo;</span>
-            <p>A kid's zip code should never decide whether they get to build something. If the kits cost money families don't have, we cover it — always.</p>
-            <span class="quote-who">Access over everything</span>
-        </div>
-        <div class="quote-card">
-            <span class="quote-mark">&ldquo;</span>
-            <p>Teens teaching kids works better than adults lecturing them. Every workshop we run is led by a student who was in that seat two years ago.</p>
-            <span class="quote-who">Peer to peer, always</span>
-        </div>
-        <div class="quote-card">
-            <span class="quote-mark">&ldquo;</span>
-            <p>Kids keep their kits. Not a demo, not a loan — theirs. The learning is supposed to continue long after we've packed up and left.</p>
-            <span class="quote-who">They keep what they build</span>
-        </div>
     </div>
 </section>
 
@@ -412,49 +230,50 @@
     </div>
 </section>
 
-<section class="section band band-lilac">
-    <div class="sec-header">
-        <svg class="doodle doodle-spin doodle-teal" style="top:2px;right:5%;width:24px;height:24px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
-        <span class="sec-label pink">Who We Serve</span>
-        <h2 class="sec-title">Making a difference <span class="title-accent">across communities</span></h2>
-    </div>
-    <div class="chip-row" style="margin-top:1.75rem;">
-        <span class="chip">Charities</span>
-        <span class="chip">Hospitals</span>
-        <span class="chip">Low-Income Families</span>
-        <span class="chip">Juvenile Centers</span>
-        <span class="chip">Shelter Community Groups</span>
-        <span class="chip">Rural Schools</span>
-        <span class="chip">Homeschool Communities</span>
-        <span class="chip">Foster Kids</span>
-        <span class="chip">Orphanages</span>
-        <span class="chip">Global Chapters</span>
-    </div>
-</section>
-
-{% if sponsors %}
 <section class="section">
     <div class="sec-header">
-        <span class="sec-label teal">Our Network</span>
-        <h2 class="sec-title">Organizations we've <span class="title-accent">partnered with</span></h2>
+        <svg class="doodle doodle-spin doodle-teal" style="top:2px;right:5%;width:24px;height:24px;" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0l2.4 9.6L24 12l-9.6 2.4L12 24l-2.4-9.6L0 12l9.6-2.4z"/></svg>
+        <span class="sec-label">Who We Serve</span>
+        <h2 class="sec-title">Making a difference <span class="title-accent">across communities</span></h2>
     </div>
-    <div class="card-scroller" style="margin-top:1.75rem;">
-        {% for s in sponsors %}
-        {% if s.website %}
-        <a href="{{ s.website }}" class="org-card" target="_blank" rel="noopener" title="{{ s.name }}">
-        {% else %}
-        <div class="org-card" title="{{ s.name }}">
-        {% endif %}
-            {% if s.logo %}
-            <img src="{{ url_for('static', filename=s.logo) }}" alt="{{ s.name }}" loading="lazy">
-            {% else %}
-            <span class="org-card-name">{{ s.name }}</span>
-            {% endif %}
-        {% if s.website %}</a>{% else %}</div>{% endif %}
-        {% endfor %}
+    <div class="home-grid-5">
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+            </div>
+            <h3>Charities</h3>
+            <p>Supporting organizations that serve underprivileged communities</p>
+        </div>
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <h3>Hospitals</h3>
+            <p>Providing therapeutic and educational tools for young patients</p>
+        </div>
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+            <h3>Low-Income Families</h3>
+            <p>Bringing STEM education directly to homes in need</p>
+        </div>
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </div>
+            <h3>Juvenile Centers</h3>
+            <p>Offering positive learning experiences and skills development</p>
+        </div>
+        <div class="home-card">
+            <div class="home-card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <h3>Diverse Community Groups</h3>
+            <p>Reaching cultural centers, community organizations, and underserved groups</p>
+        </div>
     </div>
 </section>
-{% endif %}
 
 {% if gallery %}
 <section class="section section-tint gallery-section">
@@ -476,26 +295,39 @@
 {% endif %}
 
 {% if highlights %}
-<section class="section band band-sky">
+<section class="section">
     <div class="sec-header">
-        <span class="sec-label sun">Recent Impact</span>
-        <h2 class="sec-title">High<span class="title-accent">lights</span></h2>
+        <span class="sec-label teal">Highlights</span>
+        <h2 class="sec-title">Recent Events</h2>
         <p class="sec-desc">A glimpse into what our chapters have been up to.</p>
     </div>
-    <div class="card-scroller" style="margin-top:1.75rem;">
+    <div class="event-card-list">
         {% for event in highlights %}
-        <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="hl-card">
-            <div class="hl-card-img">
-                {% set first_img = event.images.first() %}
-                {% if first_img %}
-                <img src="{{ url_for('static', filename=first_img.image) }}" alt="{{ event.title }}" loading="lazy">
+        <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="event-card" style="text-decoration:none;color:inherit;">
+            <div class="event-card-header">
+                <h3>{{ event.title }}</h3>
+                <span class="event-card-badge">{{ event.date.strftime('%b %d, %Y') }}</span>
+            </div>
+            <div class="event-card-body">
+                {{ event.description }}
+                {% if event.venue or event.chapter %}
+                <div class="event-card-meta">
+                    {% if event.venue %}<span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>{{ event.venue }}</span>{% endif %}
+                    {% if event.chapter %}<span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>{{ event.chapter.name }}</span>{% endif %}
+                </div>
                 {% endif %}
             </div>
-            <div class="hl-card-body">
-                <span class="hl-card-tag">{% if event.chapter %}{{ event.chapter.name }}{% else %}Foundation{% endif %}</span>
-                <span class="hl-card-title">{{ event.title }}</span>
-                <p class="hl-card-date">{{ event.date.strftime('%b %d, %Y') }}{% if event.venue %} &middot; {{ event.venue }}{% endif %}</p>
+            {% if event.images.count() > 0 %}
+            <div class="event-card-carousel">
+                <div class="event-card-track">
+                    {% for img in event.images[:8] %}
+                    <div class="event-card-slide" data-src="{{ url_for('static', filename=img.image) }}">
+                        <img src="{{ url_for('static', filename=img.image) }}" alt="{{ img.caption or event.title }}" loading="lazy">
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
+            {% endif %}
         </a>
         {% endfor %}
     </div>
@@ -504,39 +336,6 @@
             View All Events
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </a>
-    </div>
-</section>
-{% endif %}
-
-{% if map_pins %}
-<section class="section band band-lilac">
-    <div class="sec-header" style="text-align:center;">
-        <span class="tilt-badge purple">&#127758; Where we are</span>
-        <h2 class="sec-title" style="margin-top:0.9rem;">Chapters on <span class="marker">every continent we can reach</span></h2>
-        <p class="sec-desc" style="margin-left:auto;margin-right:auto;">Every dot is a student-run team. Hover one to see who's behind it.</p>
-    </div>
-    <div class="wm-wrap">
-        <div class="wm-legend">
-            <span class="wm-key"><i class="wm-dot wm-active"></i>Active</span>
-            <span class="wm-key"><i class="wm-dot wm-inactive"></i>Inactive</span>
-            <span class="wm-key"><i class="wm-dot wm-onboarding"></i>Coming Soon</span>
-        </div>
-        <svg class="wm-svg" viewBox="0 0 960 480" role="img" aria-label="Map of Bridge the Gap chapters worldwide">
-            <g class="wm-land">{{ world_map_svg|safe }}</g>
-            {% for p in map_pins %}
-            <g class="wm-pin wm-{{ p.status }}">
-                {% if (p.x - p.ax)|abs > 2 or (p.y - p.ay)|abs > 2 %}
-                <line class="wm-leader" x1="{{ '%.1f'|format(p.ax) }}" y1="{{ '%.1f'|format(p.ay) }}" x2="{{ '%.1f'|format(p.x) }}" y2="{{ '%.1f'|format(p.y) }}"/>
-                {% endif %}
-                <circle class="wm-halo" cx="{{ '%.1f'|format(p.x) }}" cy="{{ '%.1f'|format(p.y) }}" r="11"/>
-                <circle class="wm-core" cx="{{ '%.1f'|format(p.x) }}" cy="{{ '%.1f'|format(p.y) }}" r="6"/>
-                <title>{{ p.name }}{% if p.city %} — {{ p.city }}{% endif %}</title>
-            </g>
-            {% endfor %}
-        </svg>
-    </div>
-    <div style="text-align:center;margin-top:1.75rem;">
-        <a href="/chapters" class="btn btn-accent">Explore All Chapters &rarr;</a>
     </div>
 </section>
 {% endif %}
@@ -573,7 +372,7 @@
 </section>
 {% endif %}
 
-<section class="section section-purple">
+<section class="section">
     <div class="sec-header">
         <svg class="doodle doodle-float" style="top:-4px;right:10%;width:30px;height:30px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="3"/><circle cx="9.5" cy="13" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="13" r="1" fill="currentColor" stroke="none"/><path d="M9.5 16.5h5"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1.2" fill="currentColor" stroke="none"/></svg>
         <span class="sec-label coral">Join The Movement</span>
@@ -605,9 +404,9 @@
     </div>
 </section>
 
-<section class="section band band-pink">
+<section class="section">
     <div class="sec-header">
-        <span class="sec-label pink">Questions</span>
+        <span class="sec-label">Questions</span>
         <h2 class="sec-title">Things people <span class="title-accent">actually ask us</span></h2>
     </div>
     <div class="faq-list">
@@ -635,17 +434,6 @@
             <summary><span class="faq-num">Q6</span>Where are your chapters located?</summary>
             <div class="faq-body">Our chapters are student-run teams based wherever a teen decides to start one. Check the Chapters page for the current map and each chapter's city and president.</div>
         </details>
-    </div>
-</section>
-
-<section class="cta-banner">
-    <div class="cta-banner-inner">
-        <h2>Bring Bridge the Gap kits to your school or community</h2>
-        <p>If you're a school, charity, hospital, or organization serving underserved students, tell us what you need — we'll get kits into your students' hands.</p>
-        <a href="https://forms.gle/dE12xJAFhw1fswNU9" class="lp-btn" target="_blank" rel="noopener">
-            Request a Kit &mdash; Fill Out the Form
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
-        </a>
     </div>
 </section>
 
@@ -690,7 +478,6 @@
         </div>
     </div>
 </section>
-
 {% endblock %}
 
 {% block scripts %}
