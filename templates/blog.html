@@ -1,10 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Blog - Bridge the Gap{% endblock %}
 {% block content %}
-<section class="hero hero-compact">
-    <p class="hero-tagline">Engineering Blog</p>
-    <h1>Blog</h1>
-    <p class="hero-sub">Insights, stories, and updates from the Bridge the Gap Robotics Foundation.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">Engineering Blog</span>
+        <h1>Blog</h1>
+        <p>Insights, stories, and updates from the Bridge the Gap Robotics Foundation.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ posts|length }}</b>
+                <span>Posts published</span>
+            </div>
+            <div>
+                <b>Student</b>
+                <span>Written by</span>
+            </div>
+            <div>
+                <b>Open</b>
+                <span>To contributors</span>
+            </div>
+        </div>
+    </div>
 </section>
 
 <section class="section">

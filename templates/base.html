@@ -7,10 +7,10 @@
     <meta name="description" content="{% block meta_description %}Bridge the Gap Robotics Foundation is a 100% teen-led nonprofit building and donating robotics kits, running hands-on workshops, and bringing STEM education to underserved communities worldwide.{% endblock %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/system.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.png') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {% block head %}{% endblock %}
@@ -38,8 +38,16 @@
                 <a href="/blog" class="nav-link{% if request.path.startswith('/blog') %} active{% endif %}">Blog</a>
                 <a href="/board" class="nav-link{% if request.path.startswith('/board') %} active{% endif %}">Board</a>
                 {% if current_user %}
-                <a href="/dashboard" class="nav-link" style="color:var(--accent);font-weight:600;">Dashboard</a>
+                <a href="/dashboard" class="nav-link{% if request.path.startswith('/dashboard') %} active{% endif %}">Dashboard</a>
                 {% endif %}
+
+                <div class="nav-drawer-actions">
+                    <a href="https://forms.gle/dE12xJAFhw1fswNU9" class="s-btn s-btn-ghost" target="_blank" rel="noopener">Request a Kit</a>
+                    <a href="https://hcb.hackclub.com/donations/start/bridge-the-gap-robotics-foundation" class="s-btn s-btn-solid" target="_blank" rel="noopener">Donate</a>
+                    {% if current_user %}
+                    <a href="{{ url_for('auth.logout') }}" class="s-btn s-btn-ghost" data-logout>Logout</a>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="nav-controls">

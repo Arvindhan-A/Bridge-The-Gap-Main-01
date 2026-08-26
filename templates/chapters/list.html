@@ -1,10 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Chapters | Bridge the Gap Robotics{% endblock %}
 {% block content %}
-<section class="hero hero-compact">
-    <p class="hero-tagline">Our Network</p>
-    <h1>Chapters</h1>
-    <p class="hero-sub">Student-led teams across the globe bringing robotics education to their communities.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">Our Network</span>
+        <h1>Chapters</h1>
+        <p>Student-led teams across the globe bringing robotics education to their communities.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ chapters|length }}</b>
+                <span>Chapters</span>
+            </div>
+            <div>
+                <b>{{ chapters|selectattr('status', 'equalto', 'active')|list|length }}</b>
+                <span>Active now</span>
+            </div>
+            <div>
+                <b>100%</b>
+                <span>Student-led</span>
+            </div>
+        </div>
+    </div>
 </section>
 
 <section class="section">

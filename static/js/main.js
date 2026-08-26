@@ -149,3 +149,74 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'ArrowRight') navigate(1);
     });
 });
+
+/* ===== SCROLL REVEAL =====
+   Tags section content with .s-reveal and eases it in once. Skipped entirely
+   when the visitor asks for reduced motion, and anything already on screen at
+   load is shown immediately so nothing waits for a scroll that never comes. */
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var blocks = document.querySelectorAll(
+        '.s-section .s-head, .s-band .s-head, .s-grid > *, .s-media-grid > *, ' +
+        '.s-stats > *, .s-nums > *, .s-quotes > *, .s-tiles > *, .s-steps > *, ' +
+        '.s-feature > *, .s-contact > *, .s-faq > *'
+    );
+    if (!blocks.length) return;
+
+    blocks.forEach(function (el) { el.classList.add('s-reveal'); });
+
+    function show(el, i) {
+        el.style.setProperty('--s-delay', Math.min(i * 60, 300) + 'ms');
+        el.classList.add('is-in');
+    }
+
+    // group siblings so a row of cards staggers together rather than by document order
+    var seen = new Map();
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            var parent = el.parentElement;
+            var n = seen.get(parent) || 0;
+            seen.set(parent, n + 1);
+            show(el, n);
+            io.unobserve(el);
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    blocks.forEach(function (el) { io.observe(el); });
+
+    requestAnimationFrame(function () {
+        blocks.forEach(function (el) {
+            var r = el.getBoundingClientRect();
+            if (r.top < window.innerHeight && r.bottom > 0) {
+                el.classList.add('is-in');
+                io.unobserve(el);
+            }
+        });
+    });
+});
+
+/* ===== HEADER: condensed state once the page scrolls ===== */
+document.addEventListener('DOMContentLoaded', function () {
+    var header = document.querySelector('.site-header');
+    if (!header) return;
+    var ticking = false;
+    // hysteresis: separate on/off thresholds so a value hovering at the
+    // boundary cannot flip the class back and forth every frame
+    function sync() {
+        var y = window.scrollY;
+        if (y > 24) header.classList.add('is-scrolled');
+        else if (y < 8) header.classList.remove('is-scrolled');
+        ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(sync); }
+    }, { passive: true });
+    sync();
+
+    // stagger the drawer rows
+    var links = document.querySelectorAll('.nav-links .nav-link');
+    links.forEach(function (el, i) { el.style.setProperty('--i', i); });
+});

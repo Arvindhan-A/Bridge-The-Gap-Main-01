@@ -1,0 +1,1207 @@
+/* ===== SITE DESIGN SYSTEM =====
+   The restrained language every page shares: a two-colour palette, thin
+   rules and soft shadows. Started life as the Programs page stylesheet and
+   was promoted site-wide, so `.s-*` here means "site", not "section".
+   Loaded globally from base.html, after style.css and components.css. */
+
+:root {
+    --s-ink:        #1E1B29;
+    --s-muted:      #5A5570;
+    --s-faint:      #6F6986;
+    --s-line:       #E4E1EC;
+    --s-surface:    #FFFFFF;
+    --s-soft:       #F7F6FA;
+    --s-brand:      #4B238F;
+    --s-brand-mid:  #6840A5;
+    --s-brand-soft: rgba(75, 35, 143, .06);
+    --s-accent:     #1C796D;
+    --s-accent-soft:rgba(28, 122, 110, .09);
+    --s-radius:     10px;
+    /* one vertical rhythm and one content width for every page */
+    --s-max:        1240px;
+    --s-space:      clamp(3rem, 5.6vw, 4.5rem);
+    --s-space-hero: clamp(3rem, 6.4vw, 5.5rem);
+    --s-head-gap:   clamp(1.75rem, 3vw, 2.5rem);
+    /* the brand gradient, also consumed by .cta-banner in components.css */
+    --hero-grad-1:  #3D1C75;
+    --hero-grad-2:  #5A3595;
+    --accent-deep:  #3D1C75;
+}
+:root.dark-mode {
+    --s-ink: #F3F0F8;
+    --s-muted: #BDB6CC;
+    --s-faint: #948DA6;
+    --s-line: rgba(255,255,255,.11);
+    --s-surface: #1B1926;
+    --s-soft: #151320;
+    --s-brand: #C9AEF5;
+    --s-brand-mid: #B092E8;
+    --s-brand-soft: rgba(201,174,245,.12);
+    --s-accent: #6CD6C4;
+    --s-accent-soft: rgba(108,214,196,.12);
+}
+
+
+/* ---------- HERO ---------- */
+.s-hero {
+    position: relative; overflow: hidden;
+    width: 100vw; margin-left: calc(-50vw + 50%);
+    background: linear-gradient(135deg, #3D1C75 0%, #5A3595 100%);
+    padding: var(--s-space-hero) var(--pad);
+    color: #fff;
+}
+.s-hero::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255,255,255,.07), transparent 42%),
+      radial-gradient(circle at 12% 88%, rgba(255,255,255,.05), transparent 38%);
+    pointer-events: none;
+}
+.s-hero-inner { position: relative; z-index: 1; max-width: var(--s-max); margin: 0 auto; }
+.s-eyebrow {
+    font-family: var(--font-mono);
+    font-size: .6875rem; font-weight: 600;
+    letter-spacing: .18em; text-transform: uppercase;
+    color: rgba(255,255,255,.74);
+    display: block; margin-bottom: 1rem;
+}
+.s-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 4.6vw, 3.5rem);
+    font-weight: 600; line-height: 1.1; letter-spacing: -.02em;
+    margin-bottom: 1.1rem;
+}
+.s-hero p {
+    font-size: 1.0625rem; line-height: 1.75;
+    color: rgba(255,255,255,.82); max-width: 620px;
+}
+.s-hero-meta {
+    display: flex; flex-wrap: wrap; gap: 2.5rem;
+    margin-top: 2.75rem; padding-top: 1.75rem;
+    border-top: 1px solid rgba(255,255,255,.16);
+}
+.s-hero-meta div { min-width: 90px; }
+.s-hero-meta b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.75rem; font-weight: 600; line-height: 1.1;
+    margin-bottom: .3rem;
+}
+.s-hero-meta span {
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: rgba(255,255,255,.74);
+}
+
+/* ---------- SECTION SHELL ---------- */
+.s-section {
+    width: 100vw; margin-left: calc(-50vw + 50%);
+    padding: var(--s-space) var(--pad);
+    border-bottom: 1px solid var(--s-line);
+    background: var(--s-surface);
+}
+.s-section.alt { background: var(--s-soft); }
+.s-inner { max-width: var(--s-max); margin: 0 auto; }
+.s-head { max-width: 680px; margin-bottom: var(--s-head-gap); }
+.s-head .s-eyebrow { color: var(--s-brand); }
+.s-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.5vw, 2.125rem);
+    font-weight: 600; line-height: 1.2; letter-spacing: -.015em;
+    color: var(--s-ink); margin-bottom: .7rem;
+}
+.s-head p { font-size: 1rem; line-height: 1.75; color: var(--s-muted); }
+
+/* ---------- FILTER BAR ---------- */
+.s-filters {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--s-line);
+}
+.s-tab {
+    font-family: inherit;
+    font-size: .8125rem; font-weight: 500;
+    padding: 8px 16px; border-radius: 6px;
+    border: 1px solid var(--s-line);
+    background: transparent; color: var(--s-muted);
+    cursor: pointer;
+    transition: color .18s ease, border-color .18s ease, background .18s ease;
+}
+.s-tab:hover { color: var(--s-ink); border-color: var(--s-faint); }
+.s-tab.is-on {
+    background: var(--s-brand); border-color: var(--s-brand); color: #fff;
+}
+:root.dark-mode .s-tab.is-on { color: #1a1a1a; }
+
+/* ---------- PROGRAM GRID ---------- */
+/* plain gap + bordered cards: a 1px-gap grid would paint empty cells
+   whenever the card count doesn't fill the last row */
+.s-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.s-card {
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    padding: 1.8rem 1.7rem 1.9rem;
+    display: flex; flex-direction: column;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+    text-decoration: none; color: inherit;
+}
+.s-card:hover {
+    background: var(--s-brand-soft);
+    border-color: var(--s-brand);
+    transform: translateY(-2px);
+}
+.s-card.is-hidden { display: none; }
+.s-card-icon {
+    width: 38px; height: 38px; border-radius: 8px;
+    background: var(--s-brand-soft); color: var(--s-brand);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.1rem;
+}
+.s-card-icon svg { width: 19px; height: 19px; }
+.s-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.0625rem; font-weight: 600; letter-spacing: -.01em;
+    color: var(--s-ink); margin-bottom: .55rem;
+}
+.s-card p { font-size: .875rem; line-height: 1.7; color: var(--s-muted); flex: 1; }
+.s-card-meta {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 1.25rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--s-line);
+}
+.s-chip {
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 4px;
+    background: var(--s-soft); color: var(--s-faint);
+    border: 1px solid var(--s-line);
+}
+.s-chip.accent { background: var(--s-accent-soft); color: var(--s-accent); border-color: transparent; }
+:root.dark-mode .s-chip { background: rgba(255,255,255,.05); }
+
+/* ---------- PROCESS ---------- */
+.s-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+.s-step { padding-top: 1.25rem; border-top: 2px solid var(--s-brand); }
+.s-step span {
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--s-brand); display: block; margin-bottom: .6rem;
+}
+.s-step h3 {
+    font-family: var(--font-display);
+    font-size: 1rem; font-weight: 600; color: var(--s-ink); margin-bottom: .45rem;
+}
+.s-step p { font-size: .875rem; line-height: 1.7; color: var(--s-muted); }
+
+/* ---------- EVENTS ---------- */
+.s-event {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; flex-wrap: wrap;
+    padding: 1.35rem 0;
+    border-bottom: 1px solid var(--s-line);
+}
+.s-event:first-of-type { border-top: 1px solid var(--s-line); }
+.s-event h3 {
+    font-family: var(--font-display);
+    font-size: .9375rem; font-weight: 600; color: var(--s-ink); margin-bottom: .25rem;
+}
+.s-event-meta { font-size: .8125rem; color: var(--s-faint); }
+.s-date {
+    font-family: var(--font-mono);
+    font-size: .6875rem; font-weight: 600; letter-spacing: .06em;
+    color: var(--s-brand); text-transform: uppercase;
+    min-width: 96px;
+}
+
+/* ---------- BUTTONS ---------- */
+.s-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: inherit; font-size: .875rem; font-weight: 600;
+    padding: 11px 22px; border-radius: 7px;
+    text-decoration: none; border: 1px solid transparent;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+.s-btn svg { width: 15px; height: 15px; transition: transform .18s ease; }
+.s-btn:hover svg { transform: translateX(3px); }
+.s-btn-solid { background: var(--s-brand); color: #fff; }
+.s-btn-solid:hover { background: var(--s-brand-mid); }
+:root.dark-mode .s-btn-solid { color: #1a1a1a; }
+.s-btn-ghost { border-color: var(--s-line); color: var(--s-ink); }
+.s-btn-ghost:hover { border-color: var(--s-brand); color: var(--s-brand); }
+.s-btn-light { background: #fff; color: #3D1C75; }
+.s-btn-light:hover { background: rgba(255,255,255,.9); }
+
+/* ---------- CLOSING CTA ---------- */
+.s-cta {
+    width: 100vw; margin-left: calc(-50vw + 50%);
+    background: linear-gradient(135deg, #3D1C75 0%, #5A3595 100%);
+    padding: var(--s-space) var(--pad);
+    text-align: center; color: #fff;
+}
+.s-cta h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 600;
+    letter-spacing: -.015em; margin-bottom: .8rem;
+}
+.s-cta p {
+    font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,.82);
+    max-width: 560px; margin: 0 auto 2rem;
+}
+.s-cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.s-cta .s-btn-ghost { border-color: rgba(255,255,255,.4); color: #fff; }
+.s-cta .s-btn-ghost:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,.08); }
+
+.s-empty {
+    padding: 2.5rem 0; color: var(--s-muted); font-size: .9375rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1024px) {
+    .s-grid { grid-template-columns: repeat(2, 1fr); }
+    .s-steps { grid-template-columns: 1fr; gap: 1.75rem; }
+}
+@media (max-width: 700px) {
+    .s-hero { padding: 3.5rem var(--pad) 3rem; }
+    .s-hero-meta { gap: 1.5rem; margin-top: 2rem; }
+    .s-hero-meta b { font-size: 1.375rem; }
+    .s-grid { grid-template-columns: 1fr; }
+    .s-card { padding: 1.5rem 1.35rem 1.6rem; }
+    .s-event { padding: 1.1rem 0; }
+    .s-date { min-width: 0; }
+}
+
+/* =========================================================
+   PAGE COMPOSITION
+   Larger pieces built from the tokens above. Everything here
+   is shared: the home page uses all of it, interior pages use
+   the hero, section shell and band.
+   ========================================================= */
+
+/* ---------- FULL-BLEED PURPLE BAND ---------- */
+.s-band {
+    position: relative; overflow: hidden;
+    width: 100vw; margin-left: calc(-50vw + 50%);
+    background: linear-gradient(135deg, #3D1C75 0%, #5A3595 100%);
+    padding: var(--s-space) var(--pad);
+    color: #fff;
+}
+.s-band::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255,255,255,.07), transparent 42%),
+      radial-gradient(circle at 12% 88%, rgba(255,255,255,.05), transparent 38%);
+}
+.s-band > .s-inner { position: relative; z-index: 1; }
+.s-band .s-head .s-eyebrow { color: rgba(255,255,255,.74); }
+.s-band .s-head h2 { color: #fff; }
+.s-band .s-head p { color: rgba(255,255,255,.82); }
+
+/* ---------- HERO: SPLIT WITH MEDIA (home) ---------- */
+.s-hero-split .s-hero-inner {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3.5rem; align-items: center;
+}
+.s-hero-split .s-hero-copy { min-width: 0; }
+.s-hero-badge {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-family: var(--font-display);
+    font-size: .75rem; font-weight: 600;
+    letter-spacing: .01em;
+    color: #fff;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 100px; padding: 7px 16px 7px 12px;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(8px);
+}
+.s-hero-badge svg { width: 14px; height: 14px; color: #7BE0CD; flex-shrink: 0; }
+.s-hero-badge em {
+    font-style: normal; color: rgba(255,255,255,.55);
+    margin: 0 -2px;
+}
+.s-hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
+.s-hero-media {
+    position: relative; border-radius: 14px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.2);
+    box-shadow: 0 24px 60px rgba(0,0,0,.3);
+}
+.s-hero-media img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.s-hero-tag {
+    position: absolute; left: 14px; bottom: 14px;
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    background: rgba(20,10,40,.72); color: #fff;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 100px; padding: 6px 12px;
+    backdrop-filter: blur(6px);
+}
+.s-hero-tag i {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #6CD6C4; flex-shrink: 0;
+}
+
+/* ---------- TWO-COLUMN SPLIT ---------- */
+.s-split {
+    display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+    gap: 3.5rem; align-items: center;
+}
+.s-split .s-head { margin-bottom: 1.75rem; }
+
+/* ---------- STAT CARDS ---------- */
+.s-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.s-stat {
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    padding: 1.7rem 1.3rem;
+    text-align: center;
+}
+.s-stat-icon {
+    width: 34px; height: 34px; border-radius: 8px; margin: 0 auto .9rem;
+    background: var(--s-brand-soft); color: var(--s-brand);
+    display: flex; align-items: center; justify-content: center;
+}
+.s-stat-icon svg { width: 17px; height: 17px; }
+.s-stat b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.9rem; font-weight: 600; line-height: 1.1;
+    color: var(--s-brand); margin-bottom: .35rem;
+}
+.s-stat span {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--s-ink); margin-bottom: .4rem;
+}
+.s-stat i { display: block; font-style: normal; font-size: .75rem; line-height: 1.55; color: var(--s-muted); }
+
+/* ---------- MEDIA CARDS ---------- */
+.s-media-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.s-media-card {
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    overflow: hidden; display: flex; flex-direction: column;
+}
+.s-band .s-media-card { border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.06); }
+.s-media-card > img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.s-media-card-body { padding: 1.4rem 1.35rem 1.5rem; flex: 1; }
+.s-media-card-icon {
+    width: 34px; height: 34px; border-radius: 8px; margin-bottom: .9rem;
+    background: var(--s-brand-soft); color: var(--s-brand);
+    display: flex; align-items: center; justify-content: center;
+}
+.s-band .s-media-card-icon { background: rgba(255,255,255,.14); color: #fff; }
+.s-media-card-icon svg { width: 17px; height: 17px; }
+.s-media-card h3 {
+    font-family: var(--font-display);
+    font-size: 1rem; font-weight: 600; color: var(--s-ink); margin-bottom: .45rem;
+}
+.s-media-card p { font-size: .8125rem; line-height: 1.7; color: var(--s-muted); }
+.s-band .s-media-card h3 { color: #fff; }
+.s-band .s-media-card p { color: rgba(255,255,255,.82); }
+
+/* ---------- BIG NUMBERS ---------- */
+.s-nums { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; }
+.s-num { padding-top: 1.1rem; border-top: 2px solid var(--s-brand); }
+.s-num b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 2.25rem; font-weight: 600; line-height: 1.05;
+    color: var(--s-ink); margin-bottom: .4rem;
+}
+.s-num span { font-size: .8125rem; line-height: 1.6; color: var(--s-muted); }
+
+/* ---------- QUOTES ---------- */
+.s-quotes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.75rem; }
+.s-quote { padding-left: 1.25rem; border-left: 2px solid var(--s-brand); }
+.s-quote p { font-size: .9375rem; line-height: 1.8; color: var(--s-muted); margin-bottom: .9rem; }
+.s-quote b {
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--s-brand);
+}
+
+/* ---------- FEATURE (image beside copy) ---------- */
+.s-feature {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 2.5rem; align-items: center;
+}
+.s-feature-img {
+    border-radius: var(--s-radius); overflow: hidden; border: 1px solid var(--s-line);
+}
+.s-feature-img img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.s-feature h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem; font-weight: 600; color: var(--s-ink); margin-bottom: 1rem;
+}
+.s-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.25rem; }
+.s-checks { list-style: none; padding: 0; margin: 0 0 1.5rem; }
+.s-checks li {
+    position: relative; padding-left: 1.4rem; margin-bottom: .6rem;
+    font-size: .875rem; line-height: 1.7; color: var(--s-muted);
+}
+.s-checks li::before {
+    content: ''; position: absolute; left: 0; top: .55em;
+    width: 7px; height: 7px; border-radius: 50%; background: var(--s-brand);
+}
+
+/* ---------- TILES ---------- */
+.s-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }
+.s-tile {
+    display: block; text-decoration: none;
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    padding: 1.25rem 1.2rem;
+    transition: border-color .18s ease, background .18s ease, transform .18s ease;
+}
+.s-tile:hover { border-color: var(--s-brand); background: var(--s-brand-soft); transform: translateY(-2px); }
+.s-tile h3 {
+    font-family: var(--font-display);
+    font-size: .9375rem; font-weight: 600; color: var(--s-ink); margin-bottom: .35rem;
+}
+.s-tile p { font-size: .8125rem; line-height: 1.65; color: var(--s-muted); }
+
+/* ---------- FOUNDER NOTE ---------- */
+.s-note {
+    max-width: 760px; margin: 0 auto;
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    padding: 2.5rem 2.25rem;
+}
+.s-note h2 {
+    font-family: var(--font-display);
+    font-size: 1.375rem; font-weight: 600; color: var(--s-ink);
+    margin: .6rem 0 1.1rem;
+}
+.s-note p { font-size: .9375rem; line-height: 1.85; color: var(--s-muted); margin-bottom: .9rem; }
+.s-note-sig { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--s-line); }
+.s-note-sig b {
+    display: block;
+    font-family: var(--font-display);
+    font-size: .9375rem; font-weight: 600; color: var(--s-ink);
+}
+.s-note-sig span { font-size: .8125rem; color: var(--s-faint); }
+
+/* ---------- FAQ ---------- */
+.s-faq { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2.5rem; }
+.s-faq details { border-bottom: 1px solid var(--s-line); }
+.s-faq summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: flex-start; gap: .75rem;
+    padding: 1.15rem 0;
+    font-family: var(--font-display);
+    font-size: .9375rem; font-weight: 600; color: var(--s-ink);
+}
+.s-faq summary::-webkit-details-marker { display: none; }
+.s-faq summary::after {
+    content: '+'; margin-left: auto; flex-shrink: 0;
+    font-weight: 400; font-size: 1.25rem; line-height: 1; color: var(--s-brand);
+    transition: transform .18s ease;
+}
+.s-faq details[open] summary::after { transform: rotate(45deg); }
+.s-faq summary b {
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 700; letter-spacing: .1em;
+    color: var(--s-brand); padding-top: .3em; flex-shrink: 0;
+}
+.s-faq-body { padding: 0 0 1.25rem 2.1rem; font-size: .875rem; line-height: 1.8; color: var(--s-muted); }
+.s-band .s-faq details { border-bottom-color: rgba(255,255,255,.16); }
+.s-band .s-faq summary { color: #fff; }
+.s-band .s-faq summary b, .s-band .s-faq summary::after { color: rgba(255,255,255,.8); }
+.s-band .s-faq-body { color: rgba(255,255,255,.82); }
+
+/* ---------- GALLERY STRIP ---------- */
+.s-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+.s-gallery figure {
+    position: relative; margin: 0; cursor: pointer;
+    border-radius: 8px; overflow: hidden; border: 1px solid var(--s-line);
+}
+.s-gallery img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; display: block; transition: transform .3s ease; }
+.s-gallery figure:hover img { transform: scale(1.05); }
+.s-gallery figcaption {
+    position: absolute; inset-inline: 0; bottom: 0;
+    padding: 1.5rem .6rem .5rem;
+    font-size: .6875rem; line-height: 1.4; color: #fff;
+    background: linear-gradient(to top, rgba(0,0,0,.72), transparent);
+}
+
+/* ---------- CONTACT ---------- */
+.s-contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; align-items: center; }
+.s-contact-cards { display: flex; flex-direction: column; gap: 1rem; }
+.s-contact-card {
+    display: flex; align-items: center; gap: 1rem;
+    text-decoration: none;
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    padding: 1.25rem 1.3rem;
+    transition: border-color .18s ease, background .18s ease;
+}
+.s-contact-card:hover { border-color: var(--s-brand); background: var(--s-brand-soft); }
+.s-contact-icon {
+    width: 40px; height: 40px; border-radius: 9px; flex-shrink: 0;
+    background: var(--s-brand-soft); color: var(--s-brand);
+    display: flex; align-items: center; justify-content: center;
+}
+.s-contact-icon svg { width: 19px; height: 19px; }
+.s-contact-card b {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--s-faint); margin-bottom: .25rem;
+}
+.s-contact-card span { font-size: .875rem; color: var(--s-ink); word-break: break-word; }
+
+/* ---------- CARD RAIL (horizontal scroll) ---------- */
+.s-rail {
+    display: flex; gap: 1rem; overflow-x: auto;
+    padding-bottom: 10px; scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+}
+.s-rail > * { flex: 0 0 clamp(220px, 26vw, 280px); scroll-snap-align: start; }
+.s-rail::-webkit-scrollbar { height: 6px; }
+.s-rail::-webkit-scrollbar-thumb { background: var(--s-line); border-radius: 100px; }
+
+/* ---------- CENTERED HEAD + LINK ---------- */
+.s-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.s-more { text-align: center; margin-top: 1.75rem; }
+
+/* =========================================================
+   RESPONSIVE LADDER
+   --pad shrinks with the viewport so full-bleed sections keep
+   their gutters proportional instead of eating the content.
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .s-hero-split .s-hero-inner { gap: 2.5rem; }
+    .s-split { gap: 2.5rem; }
+    .s-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .s-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .s-quotes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+    .s-hero-split .s-hero-inner { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+    .s-hero-split .s-hero-media { order: -1; }
+    .s-split { grid-template-columns: minmax(0, 1fr); }
+    .s-feature { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+    .s-contact { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+    .s-faq { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .s-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+    .s-stat { padding: 1.4rem 1rem; }
+    .s-stat b { font-size: 1.6rem; }
+}
+
+@media (max-width: 700px) {
+    .s-media-grid { grid-template-columns: minmax(0, 1fr); }
+    .s-quotes { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+    .s-stats { grid-template-columns: minmax(0, 1fr); }
+    .s-hero-ctas { margin-top: 1.5rem; }
+    .s-hero-ctas .s-btn { flex: 1 1 100%; justify-content: center; }
+    .s-note { padding: 1.75rem 1.4rem; }
+    .s-tiles { grid-template-columns: minmax(0, 1fr); }
+    .s-gallery { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; }
+    .s-rail > * { flex-basis: 78vw; }
+}
+
+@media (max-width: 560px) {
+    .s-hero h1 { font-size: clamp(1.9rem, 8vw, 2.4rem); }
+    .s-hero p { font-size: .9375rem; }
+    .s-hero-meta { gap: 1.25rem 2rem; }
+    .s-nums { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    .s-num b { font-size: 1.9rem; }
+    .s-feature-img img, .s-hero-media img { aspect-ratio: 16 / 11; }
+    .s-faq summary { font-size: .875rem; }
+    .s-faq-body { padding-left: 0; }
+    .s-contact-card { padding: 1rem; }
+}
+
+/* very wide screens: stop the content from stretching thin */
+@media (min-width: 1600px) {
+    .s-hero-inner, .s-inner { max-width: 1360px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .s-tile, .s-card, .s-gallery img, .s-btn svg { transition: none !important; }
+    .s-gallery figure:hover img { transform: none; }
+}
+
+/* media cards double as links, and as numbered step markers */
+a.s-media-card { text-decoration: none; color: inherit; transition: border-color .18s ease, transform .18s ease; }
+a.s-media-card:hover { transform: translateY(-2px); border-color: var(--s-brand); }
+.s-band a.s-media-card:hover { border-color: rgba(255,255,255,.45); }
+.s-media-card-icon {
+    font-family: var(--font-mono);
+    font-size: .8125rem; font-weight: 700; letter-spacing: .04em;
+}
+
+/* four-up grid: keeps a set of four from orphaning one card on a second row */
+.s-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .s-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px)  { .s-grid.four { grid-template-columns: minmax(0, 1fr); } }
+
+/* Ghost buttons sitting on a purple surface: the base rule paints them with
+   --s-ink, which is near-black and unreadable there. Anywhere the background
+   is the brand gradient, they need to be white. */
+.s-hero .s-btn-ghost,
+.s-band .s-btn-ghost {
+    border-color: rgba(255,255,255,.45);
+    color: #fff;
+    background: rgba(255,255,255,.06);
+}
+.s-hero .s-btn-ghost:hover,
+.s-band .s-btn-ghost:hover {
+    border-color: #fff; color: #fff; background: rgba(255,255,255,.16);
+}
+
+/* ---------- PARTS LIST ----------
+   Replaces a ragged cloud of pills: a two-column spec sheet reads as a
+   contents list, which is what it actually is. */
+.s-parts {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 2rem; margin-bottom: 1.75rem;
+    border-top: 1px solid var(--s-line);
+}
+.s-parts span {
+    position: relative;
+    display: flex; align-items: center;
+    padding: .7rem 0 .7rem 1.1rem;
+    font-size: .875rem; color: var(--s-ink);
+    border-bottom: 1px solid var(--s-line);
+}
+.s-parts span::before {
+    content: ''; position: absolute; left: 0;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--s-brand);
+}
+@media (max-width: 560px) {
+    .s-parts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
+
+/* =========================================================
+   INTERACTION LAYER
+   One easing curve and one timing scale for the whole site, so
+   every hover, focus and press feels like the same product.
+   Everything here collapses under prefers-reduced-motion.
+   ========================================================= */
+
+:root {
+    --s-ease: cubic-bezier(.2, .8, .2, 1);
+    --s-fast: .16s;
+    --s-med:  .26s;
+}
+
+/* --- baseline: anything interactive eases rather than snaps --- */
+a, button, summary, input, select, textarea,
+.s-card, .s-tile, .s-media-card, .s-contact-card, .s-stat, .s-chip, .s-btn {
+    transition:
+        color var(--s-fast) var(--s-ease),
+        background-color var(--s-fast) var(--s-ease),
+        border-color var(--s-fast) var(--s-ease),
+        box-shadow var(--s-med) var(--s-ease),
+        transform var(--s-med) var(--s-ease),
+        opacity var(--s-fast) var(--s-ease);
+}
+
+/* --- press feedback: everything clickable acknowledges the tap --- */
+.s-btn:active, .s-tile:active, .s-card:active,
+.s-media-card:active, .s-contact-card:active,
+.btn:active, .btn-outline:active, .btn-accent:active {
+    transform: translateY(1px) scale(.994);
+}
+
+/* --- lift on hover, but only where a pointer can actually hover --- */
+@media (hover: hover) {
+    .s-btn-solid:hover, .s-btn-light:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(61,28,117,.22); }
+    .s-stat:hover { transform: translateY(-3px); border-color: var(--s-brand); box-shadow: 0 12px 30px rgba(61,28,117,.10); }
+    .s-tile:hover, .s-card:hover, .s-contact-card:hover { box-shadow: 0 12px 30px rgba(61,28,117,.10); }
+    .s-chip:hover { border-color: var(--s-brand); color: var(--s-brand); }
+    .s-parts span:hover { color: var(--s-brand); }
+}
+
+/* --- keyboard focus: always visible, never clipped --- */
+a:focus-visible, button:focus-visible, summary:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+.s-tile:focus-visible, .s-card:focus-visible,
+.s-media-card:focus-visible, .s-contact-card:focus-visible {
+    outline: 2px solid var(--s-brand);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+.s-hero a:focus-visible, .s-band a:focus-visible, .s-cta a:focus-visible {
+    outline-color: #fff;
+}
+
+/* --- nav links get an underline that grows from the centre --- */
+.nav-link { position: relative; }
+.nav-link::after {
+    content: ''; position: absolute;
+    left: 10px; right: 10px; bottom: 2px; height: 2px;
+    background: var(--s-brand); border-radius: 2px;
+    transform: scaleX(0); transform-origin: center;
+    transition: transform var(--s-med) var(--s-ease);
+}
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+
+/* --- arrows in buttons track forward on hover --- */
+@media (hover: hover) {
+    .s-btn:hover svg { transform: translateX(3px); }
+}
+
+/* --- FAQ disclosure opens instead of popping --- */
+.s-faq details[open] .s-faq-body { animation: sFade var(--s-med) var(--s-ease) both; }
+@keyframes sFade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* --- images in cards settle on hover --- */
+@media (hover: hover) {
+    .s-media-card > img { transition: transform .45s var(--s-ease); }
+    a.s-media-card:hover > img { transform: scale(1.03); }
+}
+
+/* --- sections ease in as they scroll into view (JS adds .is-in) --- */
+.s-reveal { opacity: 0; transform: translateY(14px); }
+.s-reveal.is-in {
+    opacity: 1; transform: none;
+    transition: opacity .5s var(--s-ease), transform .5s var(--s-ease);
+    transition-delay: var(--s-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+    .s-reveal { opacity: 1; transform: none; }
+}
+
+/* four-up media grid (the chapter steps). Declared as a class, not an inline
+   style, so the responsive rules below can actually win. */
+.s-media-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .s-media-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px)  { .s-media-grid.four { grid-template-columns: minmax(0, 1fr); } }
+
+/* =========================================================
+   TOP NAVIGATION
+   Re-themed onto the system palette. Loaded after style.css so
+   these win over the older nav rules without editing them.
+   ========================================================= */
+
+.site-header {
+    background: color-mix(in srgb, var(--s-surface) 82%, transparent);
+    backdrop-filter: blur(18px) saturate(1.7);
+    -webkit-backdrop-filter: blur(18px) saturate(1.7);
+    border-bottom: 1px solid transparent;
+    transition: background var(--s-med) var(--s-ease),
+                border-color var(--s-med) var(--s-ease),
+                box-shadow var(--s-med) var(--s-ease);
+}
+/* JS adds .is-scrolled once the page leaves the top */
+.site-header.is-scrolled {
+    border-bottom-color: var(--s-line);
+    box-shadow: 0 6px 24px rgba(30, 27, 41, .07);
+}
+:root.dark-mode .site-header.is-scrolled { box-shadow: 0 6px 24px rgba(0, 0, 0, .5); }
+
+/* The header keeps a fixed height on purpose. Animating it on scroll changed
+   the page height, which moved the scroll position, which re-fired the scroll
+   handler — a feedback loop that read as the page jittering. Only the
+   background, border and shadow react to scrolling now; nothing reflows. */
+.nav-inner { height: 72px; }
+
+/* --- brand --- */
+.nav-brand { gap: 11px; }
+.nav-logo { transition: transform var(--s-med) var(--s-ease), opacity var(--s-fast) var(--s-ease); }
+.nav-brand:hover .nav-logo { opacity: 1; transform: scale(1.06) rotate(-3deg); }
+.nav-brand-text { color: var(--s-ink); font-weight: 600; }
+.nav-brand-sub { color: var(--s-faint); }
+
+/* --- links: a centred underline, no pill --- */
+.nav-link {
+    color: var(--s-muted);
+    font-size: .8125rem; font-weight: 500;
+    padding: 8px 12px; border-radius: 6px;
+    background: none;
+}
+.nav-link:hover { color: var(--s-ink); background: none; }
+.nav-link.active { color: var(--s-brand); font-weight: 600; }
+.nav-link::after { background: var(--s-brand); }
+
+/* --- controls --- */
+.nav-controls .btn-outline {
+    border: 2px solid var(--s-line); color: var(--s-ink);
+    background: none; border-radius: 7px; font-weight: 600;
+}
+.nav-controls .btn-outline:hover {
+    border-color: var(--s-brand); color: var(--s-brand);
+    background: var(--s-brand-soft); transform: translateY(-1px);
+}
+.nav-controls .btn-accent {
+    background: var(--s-brand); color: #fff;
+    border-radius: 7px; font-weight: 600; box-shadow: none;
+}
+.nav-controls .btn-accent:hover {
+    background: var(--s-brand-mid); transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(61, 28, 117, .28);
+}
+:root.dark-mode .nav-controls .btn-accent { color: #1a1a1a; }
+
+.dark-toggle { color: var(--s-muted) !important; border-radius: 7px !important; }
+.dark-toggle:hover { color: var(--s-brand) !important; background: var(--s-brand-soft) !important; }
+.dark-toggle svg { transition: transform .45s var(--s-ease); }
+.dark-toggle:hover svg { transform: rotate(35deg); }
+
+.nav-toggle { color: var(--s-muted); border-radius: 7px; }
+.nav-toggle:hover { color: var(--s-brand); background: var(--s-brand-soft); }
+
+/* --- mobile drawer --- */
+@media (max-width: 1024px) {
+    .nav-links {
+        position: fixed; inset: 72px 0 auto 0;
+        flex-direction: column; align-items: stretch;
+        gap: 2px; padding: 1rem var(--pad) 1.5rem;
+        background: var(--s-surface);
+        border-bottom: 1px solid var(--s-line);
+        box-shadow: 0 18px 40px rgba(30, 27, 41, .12);
+        opacity: 0; visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity var(--s-med) var(--s-ease),
+                    transform var(--s-med) var(--s-ease),
+                    visibility var(--s-med);
+    }
+    .nav-links.open { opacity: 1; visibility: visible; transform: none; }
+    .nav-links .nav-link {
+        padding: 12px 14px; border-radius: 8px;
+        font-size: .9375rem;
+    }
+    .nav-links .nav-link::after { display: none; }
+    .nav-links .nav-link:hover { background: var(--s-brand-soft); color: var(--s-brand); }
+    .nav-links .nav-link.active { background: var(--s-brand); color: #fff; }
+    /* each row eases in behind the one above it */
+    .nav-links.open .nav-link {
+        animation: navRow .32s var(--s-ease) both;
+        animation-delay: calc(var(--i, 0) * 35ms);
+    }
+    @keyframes navRow { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-links.open .nav-link { animation: none; }
+    .nav-inner, .site-header { transition: none; }
+}
+
+/* =========================================================
+   TYPOGRAPHY
+   Google Sans carries the headings; Inter carries body copy,
+   where it has visibly better texture at small sizes. Loaded
+   last so these win over the older rules in style.css.
+   ========================================================= */
+
+:root {
+    --font-display: 'Google Sans', 'Inter', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* headings: display face, tighter as they get larger */
+h1, h2, h3, h4, h5, h6,
+.nav-brand-text, .s-hero h1, .s-head h2, .s-btn {
+    font-family: var(--font-display);
+    font-weight: 600;
+}
+.s-hero h1 { letter-spacing: -0.028em; line-height: 1.08; }
+.s-head h2, h2 { letter-spacing: -0.021em; line-height: 1.18; }
+h3, .s-card h3, .s-tile h3, .s-media-card h3 { letter-spacing: -0.012em; line-height: 1.3; }
+
+/* body copy: a comfortable measure and a slightly open leading */
+p { line-height: 1.72; }
+.s-head p, .s-hero p { max-width: 62ch; }
+.s-card p, .s-tile p, .s-media-card p, .s-quote p, .s-note p { max-width: 60ch; }
+
+/* numerals line up in stat rows instead of wobbling */
+.s-stat b, .s-num b, .s-hero-meta b {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+/* the small mono labels: enough tracking to read as a label, not as shouting */
+.s-eyebrow, .s-chip, .s-hero-meta span, .s-stat span,
+.s-step span, .s-quote b, .s-contact-card b, .s-date {
+    font-family: var(--font-mono);
+    font-feature-settings: 'zero' 1;
+}
+
+/* long words (URLs, emails) must never push a card wider than the screen */
+.s-card, .s-tile, .s-media-card, .s-contact-card, .s-note, .s-quote {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+    body { font-size: 15.5px; }
+    .s-head h2 { letter-spacing: -0.015em; }
+}
+
+/* --- nav actions move into the drawer on small screens ---
+   style.css only hid .btn on mobile, so .btn-outline ("Request a Kit", and
+   "Logout" once signed in) stayed in the bar and overflowed it. */
+.nav-drawer-actions { display: none; }
+
+@media (max-width: 1024px) {
+    .nav-controls .btn,
+    .nav-controls .btn-outline { display: none; }
+    .nav-drawer-actions {
+        display: flex; flex-direction: column; gap: 8px;
+        margin-top: 1rem; padding-top: 1rem;
+        border-top: 1px solid var(--s-line);
+    }
+    .nav-drawer-actions .s-btn { justify-content: center; width: 100%; }
+    /* the drawer hangs off the header, which changes height when scrolled */
+    .nav-links { top: var(--nav-h, 72px); }
+}
+:root { --nav-h: 72px; }
+
+/* --- hero stat row: keep the columns aligned when values are words, not numbers --- */
+.s-hero-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+    gap: 1.5rem 3rem;
+    align-items: start;
+}
+.s-hero-meta div { min-width: 0; }
+.s-hero-meta b { font-size: clamp(1.35rem, 3.4vw, 1.75rem); }
+@media (max-width: 560px) {
+    .s-hero-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem 1.25rem;
+    }
+    .s-hero-meta b { font-size: 1.3rem; }
+    .s-hero-meta span { font-size: .5625rem; letter-spacing: .1em; }
+}
+
+/* =========================================================
+   CARD HOVER — SITE-WIDE
+   The older card components in style.css/components.css predate the
+   system layer; give them the same lift so hovering feels uniform
+   on every page, not just the ones rebuilt on .s-* classes.
+   ========================================================= */
+.home-card, .kit-card, .step-card, .lp-card, .ch-card, .advisor-card,
+.list-tile, .org-card, .hl-card, .faq-item, .event-row, .pillar,
+.chapter-card, .chapter-card-item, .chapter-preview, .blog-card,
+.event-card, .impact-card, .contact-link, .masonry-item, .initiative-card {
+    transition:
+        transform var(--s-med) var(--s-ease),
+        box-shadow var(--s-med) var(--s-ease),
+        border-color var(--s-fast) var(--s-ease),
+        background-color var(--s-fast) var(--s-ease);
+}
+@media (hover: hover) {
+    .home-card:hover, .kit-card:hover, .step-card:hover, .lp-card:hover,
+    .ch-card:hover, .advisor-card:hover, .list-tile:hover, .org-card:hover,
+    .hl-card:hover, .event-row:hover, .pillar:hover, .chapter-card:hover,
+    .chapter-preview:hover, .blog-card:hover, .event-card:hover,
+    .impact-card:hover, .contact-link:hover, .initiative-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--s-brand);
+        box-shadow: 0 12px 30px rgba(61, 28, 117, .12);
+    }
+    .masonry-item:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(61, 28, 117, .16); }
+    /* the chapter list already lifts its own wrapper; don't double it */
+    .chapter-card-item:hover { transform: none; }
+}
+.home-card:active, .kit-card:active, .list-tile:active, .org-card:active,
+.hl-card:active, .chapter-preview:active, .blog-card:active, .contact-link:active {
+    transform: translateY(1px) scale(.994);
+}
+@media (prefers-reduced-motion: reduce) {
+    .home-card, .kit-card, .step-card, .list-tile, .org-card, .hl-card,
+    .chapter-preview, .blog-card, .event-card, .contact-link, .masonry-item {
+        transition: none !important; transform: none !important;
+    }
+}
+
+/* Full-bleed sections use 100vw, which counts the vertical scrollbar and so
+   overflows the page by its width. `overflow-x: clip` trims that without
+   turning <html> into a scroll container, which would break position:sticky. */
+html { overflow-x: clip; }
+body { overflow-x: clip; }
+
+/* meta line inside a media card (venue / chapter) */
+.s-media-card-meta {
+    display: flex; flex-wrap: wrap; gap: .4rem 1rem;
+    margin-top: 1rem; padding-top: .9rem;
+    border-top: 1px solid var(--s-line);
+}
+.s-media-card-meta span {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .75rem; color: var(--s-faint);
+}
+.s-media-card-meta svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* =========================================================
+   LEGACY BRIDGE
+   Pages not yet rebuilt on .s-* markup still carry the older
+   component classes. Rather than keeping two visual languages
+   alive, those classes are re-pointed at the system's tokens
+   here, so the same thing looks the same everywhere.
+   ========================================================= */
+
+/* --- section shell: match .s-section's rhythm and measure --- */
+.main > .section,
+.main > section.section {
+    max-width: var(--s-max);
+    margin-inline: auto;
+    padding: var(--s-space) 0;
+    border-top: 1px solid var(--s-line);
+}
+.main > .section:first-child { border-top: none; }
+
+/* --- section header == .s-head --- */
+.sec-header { max-width: 680px; margin-bottom: var(--s-head-gap); }
+.sec-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: .6875rem; font-weight: 600;
+    letter-spacing: .18em; text-transform: uppercase;
+    color: var(--s-brand); margin-bottom: 1rem;
+}
+/* the old colour variants collapse into one brand label */
+.sec-label.teal, .sec-label.coral, .sec-label.pink, .sec-label.sun, .sec-label.purple { color: var(--s-brand); }
+.sec-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.5vw, 2.125rem);
+    font-weight: 600; line-height: 1.2; letter-spacing: -.021em;
+    color: var(--s-ink); margin-bottom: .7rem;
+}
+.sec-desc { font-size: 1rem; line-height: 1.75; color: var(--s-muted); max-width: 62ch; }
+.title-accent { color: var(--s-brand); }
+
+/* --- buttons == .s-btn family --- */
+.btn, .btn-outline, .btn-accent {
+    font-family: var(--font-display);
+    font-size: .875rem; font-weight: 600;
+    padding: 11px 22px; border-radius: 7px;
+    border: 1px solid transparent;
+    display: inline-flex; align-items: center; gap: 7px;
+    box-shadow: none;
+}
+.btn-sm, .btn-outline.btn-sm { font-size: .8125rem; padding: 8px 16px; }
+.btn-accent { background: var(--s-brand); color: #fff; }
+.btn-accent:hover { background: var(--s-brand-mid); color: #fff; }
+:root.dark-mode .btn-accent { color: #1a1a1a; }
+.btn-outline { background: none; border-color: var(--s-line); color: var(--s-ink); }
+.btn-outline:hover { border-color: var(--s-brand); color: var(--s-brand); background: var(--s-brand-soft); }
+.btn:hover { transform: translateY(-2px); }
+.btn-text {
+    font-family: var(--font-display);
+    font-size: .875rem; font-weight: 600; color: var(--s-brand);
+    display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-text svg { width: 15px; height: 15px; transition: transform var(--s-fast) var(--s-ease); }
+.btn-text:hover svg { transform: translateX(3px); }
+/* purple surfaces flip the outline button to white, as .s-btn-ghost does */
+.s-band .btn-outline, .cta-banner .btn-outline, .s-hero .btn-outline {
+    border-color: rgba(255,255,255,.45); color: #fff; background: rgba(255,255,255,.06);
+}
+
+/* --- chips / tags / filter pills == .s-chip and .s-tab --- */
+.chip, .tag {
+    font-family: var(--font-mono);
+    font-size: .625rem; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 4px;
+    background: var(--s-soft); color: var(--s-faint);
+    border: 1px solid var(--s-line);
+}
+.tag-purple, .tag-coral, .tag-teal {
+    background: var(--s-accent-soft); color: var(--s-accent); border-color: transparent;
+}
+.pill-tab, .filter-pill {
+    font-family: inherit;
+    font-size: .8125rem; font-weight: 500;
+    padding: 8px 16px; border-radius: 6px;
+    border: 1px solid var(--s-line);
+    background: transparent; color: var(--s-muted);
+}
+.pill-tab:hover, .filter-pill:hover {
+    color: var(--s-ink); border-color: var(--s-faint); transform: none; background: transparent;
+}
+.pill-tab.is-on, .filter-pill.is-on {
+    background: var(--s-brand); border-color: var(--s-brand); color: #fff;
+}
+:root.dark-mode .pill-tab.is-on, :root.dark-mode .filter-pill.is-on { color: #1a1a1a; }
+
+/* --- cards: one border, one radius, no soft drop shadows --- */
+.home-card, .kit-card, .step-card, .list-tile, .org-card, .hl-card,
+.advisor-card, .ch-card, .pillar, .initiative-card, .event-card, .impact-card {
+    background: var(--s-surface);
+    border: 1px solid var(--s-line);
+    border-radius: var(--s-radius);
+    box-shadow: none;
+}
+.home-card h3, .kit-card h3, .step-card h3, .list-tile h3, .advisor-card h3,
+.pillar h3, .event-card h3 {
+    font-family: var(--font-display);
+    font-weight: 600; color: var(--s-ink); letter-spacing: -.012em;
+}
+.home-card p, .kit-card p, .step-card p, .list-tile p, .pillar p {
+    color: var(--s-muted);
+}
+
+/* --- empty state == .s-empty --- */
+.empty-state, .s-empty, .event-card-empty {
+    padding: 2.5rem 0; color: var(--s-muted); font-size: .9375rem;
+    background: none; border: none;
+}
+.empty-state h3, .event-card-empty h3 {
+    font-family: var(--font-display); font-size: 1rem;
+    color: var(--s-ink); margin-bottom: .35rem;
+}
+
+/* --- the old CTA banner is the same object as .s-cta --- */
+.cta-banner { padding: var(--s-space) var(--pad); }
+.cta-banner h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 600;
+    letter-spacing: -.015em; color: #fff;
+}
+.cta-banner p { color: rgba(255,255,255,.82); }
+.cta-banner-inner { max-width: var(--s-max); }
+
+/* the first band under a hero never needs a divider, and templates should not
+   have to say so inline */
+.s-hero + .section,
+.s-hero + .s-section,
+.s-hero + section > .section:first-child { border-top: none; }
+
+/* filter bar sits a consistent distance above the grid it controls */
+.pill-tabs, .s-filters, .chapter-filters {
+    margin-bottom: 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--s-line);
+}
+.pill-tabs + *, .s-filters + *, .chapter-filters + * { margin-top: 2rem !important; }

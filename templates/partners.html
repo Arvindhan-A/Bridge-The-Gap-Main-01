@@ -1,10 +1,26 @@
 {% extends "base.html" %}
 {% block title %}Partners - Bridge the Gap{% endblock %}
 {% block content %}
-<section class="hero hero-compact">
-    <p class="hero-tagline">Collaborate With Us</p>
-    <h1>Partners</h1>
-    <p class="hero-sub">Together, we can make a bigger impact. Partner with us to bring robotics education to those who need it most.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">Collaborate With Us</span>
+        <h1>Partners</h1>
+        <p>Together, we can make a bigger impact. Partner with us to bring robotics education to those who need it most.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ sponsors|length }}</b>
+                <span>Partners</span>
+            </div>
+            <div>
+                <b>Global</b>
+                <span>Reach</span>
+            </div>
+            <div>
+                <b>Open</b>
+                <span>To new partners</span>
+            </div>
+        </div>
+    </div>
 </section>
 
 {% if sponsors %}

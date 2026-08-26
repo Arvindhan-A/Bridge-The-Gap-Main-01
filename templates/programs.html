@@ -1,17 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Programs | Bridge the Gap Robotics{% endblock %}
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/programs.css') }}">
-{% endblock %}
 {% block content %}
-<div class="pg">
-
-<section class="pg-hero">
-    <div class="pg-hero-inner">
-        <span class="pg-eyebrow">What we run</span>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">What we run</span>
         <h1>Programs</h1>
         <p>Eight programs, all student-run, covering the full path from a four-year-old's first paper bridge to a high schooler pitching their own startup. Every one of them is free to the communities we work with.</p>
-        <div class="pg-hero-meta">
+        <div class="s-hero-meta">
             <div>
                 <b>8</b>
                 <span>Programs</span>
@@ -32,140 +27,140 @@
     </div>
 </section>
 
-<section class="pg-section">
-    <div class="pg-inner">
-        <div class="pg-head">
-            <span class="pg-eyebrow">The catalogue</span>
+<section class="s-section">
+    <div class="s-inner">
+        <div class="s-head">
+            <span class="s-eyebrow">The catalogue</span>
             <h2>Every program we run</h2>
             <p>Filter by who a program is built for. Each one is designed so a chapter can pick it up and run it without specialist equipment or a background in robotics.</p>
         </div>
 
-        <div class="pg-filters" id="pgFilters">
-            <button class="pg-tab is-on" data-filter="all">All programs</button>
-            <button class="pg-tab" data-filter="schools">For schools</button>
-            <button class="pg-tab" data-filter="students">For students</button>
-            <button class="pg-tab" data-filter="community">For the community</button>
+        <div class="s-filters" id="pgFilters">
+            <button class="s-tab is-on" data-filter="all">All programs</button>
+            <button class="s-tab" data-filter="schools">For schools</button>
+            <button class="s-tab" data-filter="students">For students</button>
+            <button class="s-tab" data-filter="community">For the community</button>
         </div>
 
-        <div class="pg-grid" id="pgGrid">
-            <div class="pg-card" data-cat="schools community">
-                <div class="pg-card-icon">
+        <div class="s-grid" id="pgGrid">
+            <div class="s-card" data-cat="schools community">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
                 </div>
                 <h3>Preschool Demos</h3>
                 <p>Hands-on STEM for the youngest learners, built around simple, playful structures like paper bridges and craft-stick towers that turn abstract ideas into something a child can hold.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip">Ages 3&ndash;5</span>
-                    <span class="pg-chip">In person</span>
+                <div class="s-card-meta">
+                    <span class="s-chip">Ages 3&ndash;5</span>
+                    <span class="s-chip">In person</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="schools community">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="schools community">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l9 4.9v10.2L12 22l-9-4.9V6.9z"/><path d="M12 22V12"/><path d="M21 6.9L12 12 3 6.9"/></svg>
                 </div>
                 <h3>LaunchPad</h3>
                 <p>Our 3D-printing initiative. We pair printers with starter kits for chapters, libraries and Title I schools, so a site can keep producing parts and projects long after our team has left.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip accent">Flagship</span>
-                    <span class="pg-chip">Equipment</span>
+                <div class="s-card-meta">
+                    <span class="s-chip accent">Flagship</span>
+                    <span class="s-chip">Equipment</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="students">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="students">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
                 </div>
                 <h3>Young Founders Lab</h3>
                 <p>An entrepreneurship lab taught by high school mentors, walking students through developing a startup idea and pitching it &mdash; the business half of building something people actually use.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip">Ages 13&ndash;18</span>
-                    <span class="pg-chip">Cohort</span>
+                <div class="s-card-meta">
+                    <span class="s-chip">Ages 13&ndash;18</span>
+                    <span class="s-chip">Cohort</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="students community">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="students community">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 </div>
                 <h3>Homeschool STEAM Webinars</h3>
                 <p>A monthly webinar series, each session spotlighting one letter of STEAM and connecting it to a real robotics application. Built in partnership with homeschool communities.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip">Monthly</span>
-                    <span class="pg-chip">Online</span>
+                <div class="s-card-meta">
+                    <span class="s-chip">Monthly</span>
+                    <span class="s-chip">Online</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="schools">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="schools">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
                 </div>
                 <h3>Government School Curriculum</h3>
                 <p>Open-source robotics curriculum written for public and government classrooms &mdash; designed around affordable materials and teachable by staff with no prior robotics background.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip accent">Open source</span>
-                    <span class="pg-chip">Curriculum</span>
+                <div class="s-card-meta">
+                    <span class="s-chip accent">Open source</span>
+                    <span class="s-chip">Curriculum</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="students community">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="students community">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v13H5.5L4 19z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg>
                 </div>
                 <h3>STEM Magazines</h3>
                 <p>Free digital magazines spotlighting STEM concepts and the people behind them &mdash; written by students, for students, and distributed to every chapter in the network.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip">Quarterly</span>
-                    <span class="pg-chip">Digital</span>
+                <div class="s-card-meta">
+                    <span class="s-chip">Quarterly</span>
+                    <span class="s-chip">Digital</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="students community">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="students community">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
                 </div>
                 <h3>The Bridge the Gap Podcast</h3>
                 <p>Conversations with engineers, researchers, entrepreneurs and educators about the paths they took &mdash; aimed at students who have never met anyone doing the job they're curious about.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip">Interviews</span>
-                    <span class="pg-chip">Audio</span>
+                <div class="s-card-meta">
+                    <span class="s-chip">Interviews</span>
+                    <span class="s-chip">Audio</span>
                 </div>
             </div>
 
-            <div class="pg-card" data-cat="community schools">
-                <div class="pg-card-icon">
+            <div class="s-card" data-cat="community schools">
+                <div class="s-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 </div>
                 <h3>Workshops &amp; Kit Drives</h3>
                 <p>The in-person core of what we do: chapters run build sessions in schools, hospitals and community centres, and every participant keeps the kit they assembled.</p>
-                <div class="pg-card-meta">
-                    <span class="pg-chip accent">Year-round</span>
-                    <span class="pg-chip">In person</span>
+                <div class="s-card-meta">
+                    <span class="s-chip accent">Year-round</span>
+                    <span class="s-chip">In person</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="pg-section alt">
-    <div class="pg-inner">
-        <div class="pg-head">
-            <span class="pg-eyebrow">How it works</span>
+<section class="s-section alt">
+    <div class="s-inner">
+        <div class="s-head">
+            <span class="s-eyebrow">How it works</span>
             <h2>How a program reaches a community</h2>
             <p>The same three steps whether it's a single afternoon workshop or a printer that stays for years.</p>
         </div>
-        <div class="pg-steps">
-            <div class="pg-step">
+        <div class="s-steps">
+            <div class="s-step">
                 <span>Step 01</span>
                 <h3>A chapter proposes it</h3>
                 <p>A student team identifies a school, shelter or hospital in their area and tells us what that community actually needs &mdash; not what we assume it needs.</p>
             </div>
-            <div class="pg-step">
+            <div class="s-step">
                 <span>Step 02</span>
                 <h3>We supply and train</h3>
                 <p>We ship the kits or equipment and hand over the curriculum, then pair the chapter with a president who has already run that program elsewhere.</p>
             </div>
-            <div class="pg-step">
+            <div class="s-step">
                 <span>Step 03</span>
                 <h3>Students run it</h3>
                 <p>The chapter delivers the sessions themselves and reports back on what worked, which feeds straight into the next revision of the curriculum.</p>
@@ -174,57 +169,56 @@
     </div>
 </section>
 
-<section class="pg-section">
-    <div class="pg-inner">
-        <div class="pg-head">
-            <span class="pg-eyebrow">Calendar</span>
+<section class="s-section">
+    <div class="s-inner">
+        <div class="s-head">
+            <span class="s-eyebrow">Calendar</span>
             <h2>Upcoming sessions</h2>
             <p>Public workshops and events currently scheduled across our chapters.</p>
         </div>
         {% if upcoming_events %}
         {% for event in upcoming_events %}
-        <div class="pg-event">
-            <span class="pg-date">{{ event.date.strftime('%b %d') }}</span>
+        <div class="s-event">
+            <span class="s-date">{{ event.date.strftime('%b %d') }}</span>
             <div style="flex:1;min-width:220px;">
                 <h3>{{ event.title }}</h3>
-                <p class="pg-event-meta">
+                <p class="s-event-meta">
                     {{ event.date.strftime('%Y') }}
                     {% if event.venue %} &middot; {{ event.venue }}{% endif %}
                     {% if event.chapter %} &middot; {{ event.chapter.name }}{% endif %}
                 </p>
             </div>
-            <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="pg-btn pg-btn-ghost">Details</a>
+            <a href="{{ url_for('public.event_detail', event_id=event.id) }}" class="s-btn s-btn-ghost">Details</a>
         </div>
         {% endfor %}
         <div style="margin-top:2rem;">
-            <a href="{{ url_for('public.events') }}" class="pg-btn pg-btn-solid">
+            <a href="{{ url_for('public.events') }}" class="s-btn s-btn-solid">
                 View the full calendar
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
             </a>
         </div>
         {% else %}
-        <p class="pg-empty">
+        <p class="s-empty">
             Nothing on the public calendar right now.
-            <a href="{{ url_for('public.events') }}" style="color:var(--pg-brand);font-weight:600;">Browse past events</a>
+            <a href="{{ url_for('public.events') }}" style="color:var(--s-brand);font-weight:600;">Browse past events</a>
             to see what our chapters have run.
         </p>
         {% endif %}
     </div>
 </section>
 
-<section class="pg-cta">
+<section class="s-cta">
     <h2>Want to run one of these?</h2>
     <p>Every program on this page is delivered by student volunteers. If you'd like to teach, mentor, or bring one of them to your school or community, we'll help you get it off the ground.</p>
-    <div class="pg-cta-actions">
-        <a href="/chapters" class="pg-btn pg-btn-light">
+    <div class="s-cta-actions">
+        <a href="/chapters" class="s-btn s-btn-light">
             Start a chapter
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </a>
-        <a href="mailto:bridgethegap.robotics@gmail.com" class="pg-btn pg-btn-ghost">Talk to our team</a>
+        <a href="mailto:bridgethegap.robotics@gmail.com" class="s-btn s-btn-ghost">Talk to our team</a>
     </div>
 </section>
 
-</div>
 {% endblock %}
 
 {% block scripts %}
@@ -234,13 +228,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var grid = document.getElementById('pgGrid');
     if (!bar || !grid) return;
     bar.addEventListener('click', function (e) {
-        var tab = e.target.closest('.pg-tab');
+        var tab = e.target.closest('.s-tab');
         if (!tab) return;
         var want = tab.dataset.filter;
-        bar.querySelectorAll('.pg-tab').forEach(function (t) {
+        bar.querySelectorAll('.s-tab').forEach(function (t) {
             t.classList.toggle('is-on', t === tab);
         });
-        grid.querySelectorAll('.pg-card').forEach(function (card) {
+        grid.querySelectorAll('.s-card').forEach(function (card) {
             var cats = (card.dataset.cat || '').split(' ');
             card.classList.toggle('is-hidden', want !== 'all' && cats.indexOf(want) === -1);
         });

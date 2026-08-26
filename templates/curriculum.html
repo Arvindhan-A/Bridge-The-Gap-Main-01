@@ -2,13 +2,34 @@
 {% block title %}Curriculum Library | Bridge the Gap Robotics{% endblock %}
 {% block content %}
 
-<section class="hero hero-compact">
-    <p class="hero-tagline">Open Source</p>
-    <h1>Curriculum Library</h1>
-    <p class="hero-sub">A growing library of open-source STEM curriculum developed by Bridge the Gap volunteers and chapter leaders.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">Open Source</span>
+        <h1>Curriculum Library</h1>
+        <p>A growing library of open-source STEM curriculum developed by Bridge the Gap volunteers and chapter leaders.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ items|length }}</b>
+                <span>Modules</span>
+            </div>
+            <div>
+                <b>Open source</b>
+                <span>Licence</span>
+            </div>
+            <div>
+                <b>Free</b>
+                <span>To download</span>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="section" style="border-top:none;">
+<section class="section">
+    <div class="sec-header">
+        <span class="sec-label">The Library</span>
+        <h2 class="sec-title">Every module we've published</h2>
+        <p class="sec-desc">Filter by status. Everything here is free to download and licensed for any chapter or classroom to use.</p>
+    </div>
     {% if items %}
     <div class="pill-tabs" id="curriculumFilters">
         <button class="pill-tab is-on" data-filter="all">All</button>

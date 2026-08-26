@@ -2,13 +2,34 @@
 {% block title %}Board of Advisors | Bridge the Gap Robotics{% endblock %}
 {% block content %}
 
-<section class="hero hero-compact">
-    <p class="hero-tagline">Meet The Board</p>
-    <h1>Board of Advisors</h1>
-    <p class="hero-sub">Experienced professionals guiding Bridge the Gap's growth across curriculum, outreach, and technology.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">Meet The Board</span>
+        <h1>Board of Advisors</h1>
+        <p>Experienced professionals guiding Bridge the Gap's growth across curriculum, outreach, and technology.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ advisors|length }}</b>
+                <span>Advisors</span>
+            </div>
+            <div>
+                <b>Volunteer</b>
+                <span>Every seat</span>
+            </div>
+            <div>
+                <b>Open</b>
+                <span>To new advisors</span>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="section" style="border-top:none;">
+<section class="section">
+    <div class="sec-header">
+        <span class="sec-label">The People</span>
+        <h2 class="sec-title">Who advises us</h2>
+        <p class="sec-desc">Each advisor volunteers their time to guide a specific part of what we do.</p>
+    </div>
     {% if advisors %}
     <div class="advisor-grid">
         {% for a in advisors %}

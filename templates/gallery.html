@@ -2,13 +2,34 @@
 {% block title %}Gallery | Bridge the Gap Robotics{% endblock %}
 {% block content %}
 
-<section class="hero hero-compact">
-    <p class="hero-tagline">In The Field</p>
-    <h1>Gallery</h1>
-    <p class="hero-sub">Moments from workshops, donations, and events across the Bridge the Gap chapters worldwide.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">In The Field</span>
+        <h1>Gallery</h1>
+        <p>Moments from workshops, donations, and events across the Bridge the Gap chapters worldwide.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ images|length }}</b>
+                <span>Photos</span>
+            </div>
+            <div>
+                <b>{{ events|length }}</b>
+                <span>Events covered</span>
+            </div>
+            <div>
+                <b>Ongoing</b>
+                <span>Updated</span>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="section" style="border-top:none;">
+<section class="section">
+    <div class="sec-header">
+        <span class="sec-label">The Archive</span>
+        <h2 class="sec-title">Every photo we've published</h2>
+        <p class="sec-desc">Filter by event to see what a particular workshop or donation day actually looked like.</p>
+    </div>
     {% if images %}
     <div class="pill-tabs" id="galleryFilters">
         <button class="pill-tab is-on" data-filter="all">All</button>

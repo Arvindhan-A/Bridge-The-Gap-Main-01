@@ -449,7 +449,15 @@
   background: linear-gradient(135deg, var(--bg-warm), var(--accent-soft));
 }
 @media (max-width: 768px) {
-  .chapters-map-section { display: none; }
+  /* the map used to be hidden below this width, which left the page looking
+     half-built on a phone. Show it at a workable height instead. */
+  .chapters-map-section { padding-top: 1rem; padding-bottom: 2.5rem; }
+  .chapters-map-section .container { padding: 0; }
+  #bdg-map { min-height: 300px; border-radius: 12px; }
+  .chapter-cards { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  #bdg-map { min-height: 240px; }
 }
 /* ===== DARK MODE MAP ===== */
 :root.dark-mode #bdg-map {
@@ -518,14 +526,30 @@
 </style>
 {% endblock %}
 {% block content %}
-<section class="hero hero-compact">
-    <p class="hero-tagline">Our Network</p>
-    <h1>Chapters</h1>
-    <p class="hero-sub">Student-led teams across the globe bringing robotics education to their communities.</p>
+<section class="s-hero">
+    <div class="s-hero-inner">
+        <span class="s-eyebrow">Our Network</span>
+        <h1>Chapters</h1>
+        <p>Student-led teams across the globe bringing robotics education to their communities.</p>
+        <div class="s-hero-meta">
+            <div>
+                <b>{{ chapters|length }}</b>
+                <span>Chapters</span>
+            </div>
+            <div>
+                <b>{{ chapters|selectattr('status', 'equalto', 'active')|list|length }}</b>
+                <span>Active now</span>
+            </div>
+            <div>
+                <b>100%</b>
+                <span>Student-led</span>
+            </div>
+        </div>
+    </div>
 </section>
 
-<section class="section chapters-map-section">
-    <div class="container">
+<section class="s-section chapters-map-section">
+    <div class="s-inner">
         <div id="bdg-map">
             <svg id="world-svg" viewBox="0 0 960 480" aria-label="BDG Chapter locations world map"></svg>
             <div class="map-legend">
@@ -561,18 +585,19 @@
     </div>
 </section>
 
-<section class="section" style="padding-top:2rem;">
-    <div class="container">
+<section class="s-section alt">
+    <div class="s-inner">
         {% if chapters %}
-        <div class="sec-header">
-            <span class="sec-label">Chapters</span>
-            <h2 class="sec-title">All Chapters</h2>
+        <div class="s-head">
+            <span class="s-eyebrow">Chapters</span>
+            <h2>All chapters</h2>
+            <p>Filter by status to find a team near you.</p>
         </div>
-        <div class="chapter-filters" id="chapterFilters">
-            <button class="filter-pill is-on" data-filter="all">All</button>
-            <button class="filter-pill" data-filter="active">Active</button>
-            <button class="filter-pill" data-filter="inactive">Inactive</button>
-            <button class="filter-pill" data-filter="onboarding">Coming Soon</button>
+        <div class="s-filters" id="chapterFilters">
+            <button class="s-tab is-on" data-filter="all">All</button>
+            <button class="s-tab" data-filter="active">Active</button>
+            <button class="s-tab" data-filter="inactive">Inactive</button>
+            <button class="s-tab" data-filter="onboarding">Coming Soon</button>
         </div>
         <div class="chapter-cards" id="chapterCards">
             {% for ch in chapters %}
@@ -1013,10 +1038,10 @@ d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
     const filterBar = document.getElementById("chapterFilters");
     if (filterBar) {
       filterBar.addEventListener("click", e => {
-        const pill = e.target.closest(".filter-pill");
+        const pill = e.target.closest(".s-tab");
         if (!pill) return;
         const want = pill.dataset.filter;
-        filterBar.querySelectorAll(".filter-pill").forEach(p => p.classList.toggle("is-on", p === pill));
+        filterBar.querySelectorAll(".s-tab").forEach(p => p.classList.toggle("is-on", p === pill));
         document.querySelectorAll(".chapter-card-item").forEach(card => {
           card.classList.toggle("is-hidden", want !== "all" && card.dataset.status !== want);
         });
