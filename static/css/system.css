@@ -238,11 +238,22 @@
 
 /* ---------- CLOSING CTA ---------- */
 .s-cta {
+    position: relative; overflow: hidden;
     width: 100vw; margin-left: calc(-50vw + 50%);
     background: linear-gradient(135deg, #3D1C75 0%, #5A3595 100%);
     padding: var(--s-space) var(--pad);
     text-align: center; color: #fff;
 }
+.s-cta::before,
+.s-cta::after,
+.s-band::before {
+    content: ''; position: absolute; pointer-events: none;
+    border: 6px solid rgba(255,255,255,.10); border-radius: 50%;
+}
+.s-cta::before,
+.s-band::before { width: 300px; height: 300px; top: -150px; left: -110px; }
+.s-cta::after { width: 360px; height: 360px; right: -130px; bottom: -175px; }
+.s-cta > * { position: relative; z-index: 1; }
 .s-cta h2 {
     font-family: var(--font-display);
     font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 600;
@@ -296,55 +307,113 @@
       radial-gradient(circle at 82% 18%, rgba(255,255,255,.07), transparent 42%),
       radial-gradient(circle at 12% 88%, rgba(255,255,255,.05), transparent 38%);
 }
+.s-band::before { z-index: 0; }
 .s-band > .s-inner { position: relative; z-index: 1; }
 .s-band .s-head .s-eyebrow { color: rgba(255,255,255,.74); }
 .s-band .s-head h2 { color: #fff; }
 .s-band .s-head p { color: rgba(255,255,255,.82); }
 
-/* ---------- HERO: SPLIT WITH MEDIA (home) ---------- */
-.s-hero-split .s-hero-inner {
-    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 3.5rem; align-items: center;
+/* ---------- HERO: FULL-BLEED PHOTOGRAPH (home) ----------
+   The photograph is the hero itself, not a card sitting on top of one, and
+   it stays sharp everywhere the eye is meant to look. Two stacked copies do
+   the work: the sharp one underneath, a blurred one on top masked to the
+   left, so the blur exists only where the headline and copy sit and fades
+   out well before the students on the right. */
+.s-hero-feature {
+    display: flex; align-items: center;
+    min-height: clamp(440px, 72vh, 660px);
+    padding: clamp(4.5rem, 9vw, 7rem) var(--pad);
+    /* own stacking context so photo / scrim / copy layer predictably */
+    isolation: isolate;
 }
-.s-hero-split .s-hero-copy { min-width: 0; }
-.s-hero-badge {
-    display: inline-flex; align-items: center; gap: 9px;
-    font-family: var(--font-display);
-    font-size: .75rem; font-weight: 600;
-    letter-spacing: .01em;
-    color: #fff;
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.22);
-    border-radius: 100px; padding: 7px 16px 7px 12px;
-    margin-bottom: 1.5rem;
-    backdrop-filter: blur(8px);
+.s-hero-feature .s-hero-inner { width: 100%; z-index: 2; }
+.s-hero-photo {
+    position: absolute; inset: 0; z-index: 0;
+    overflow: hidden;
 }
-.s-hero-badge svg { width: 14px; height: 14px; color: #7BE0CD; flex-shrink: 0; }
-.s-hero-badge em {
-    font-style: normal; color: rgba(255,255,255,.55);
-    margin: 0 -2px;
+.s-hero-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: 64% 42%;
 }
-.s-hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
-.s-hero-media {
-    position: relative; border-radius: 14px; overflow: hidden;
-    border: 1px solid rgba(255,255,255,.2);
-    box-shadow: 0 24px 60px rgba(0,0,0,.3);
+.s-hero-photo-sharp { filter: saturate(.95) brightness(.9); }
+/* the blurred pane: scaled past its box so the blur has nothing to feather
+   into at the edges, then masked to the copy side only */
+.s-hero-photo-blur {
+    filter: blur(14px) saturate(.9) brightness(.88);
+    transform: scale(1.08);
+    -webkit-mask-image: linear-gradient(100deg,
+        #000 0%, #000 30%, rgba(0, 0, 0, .55) 46%, transparent 60%);
+            mask-image: linear-gradient(100deg,
+        #000 0%, #000 30%, rgba(0, 0, 0, .55) 46%, transparent 60%);
 }
-.s-hero-media img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.s-hero-tag {
-    position: absolute; left: 14px; bottom: 14px;
-    display: inline-flex; align-items: center; gap: 7px;
+/* .s-hero::after already covers the section; this only swaps what it paints */
+.s-hero-feature::after {
+    z-index: 1;
+    background:
+      linear-gradient(100deg,
+        rgba(21, 9, 46, .93) 0%,
+        rgba(25, 11, 54, .84) 30%,
+        rgba(33, 15, 68, .50) 56%,
+        rgba(40, 19, 80, .20) 100%),
+      linear-gradient(to bottom,
+        rgba(15, 6, 34, .34) 0%,
+        transparent 26%,
+        rgba(15, 6, 34, .40) 100%);
+}
+.s-hero-feature .s-hero-copy { max-width: 660px; }
+.s-hero-feature h1 {
+    font-size: clamp(2.4rem, 5vw, 3.7rem);
+    text-shadow: 0 2px 28px rgba(10, 4, 24, .38);
+}
+.s-hero-feature p {
+    max-width: 540px;
+    color: rgba(255, 255, 255, .87);
+    text-shadow: 0 1px 18px rgba(10, 4, 24, .3);
+}
+/* a rule and a label instead of a glass pill */
+.s-hero-kicker {
+    display: inline-flex; align-items: center; gap: 13px;
     font-family: var(--font-mono);
-    font-size: .625rem; font-weight: 600;
-    letter-spacing: .1em; text-transform: uppercase;
-    background: rgba(20,10,40,.72); color: #fff;
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: 100px; padding: 6px 12px;
-    backdrop-filter: blur(6px);
+    font-size: .6875rem; font-weight: 600;
+    letter-spacing: .16em; text-transform: uppercase;
+    color: rgba(255, 255, 255, .74);
+    margin-bottom: 1.375rem;
 }
-.s-hero-tag i {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #6CD6C4; flex-shrink: 0;
+.s-hero-kicker::before {
+    content: ''; flex-shrink: 0;
+    width: 36px; height: 1px;
+    background: rgba(255, 255, 255, .5);
+}
+.s-hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2.25rem; }
+
+/* narrow screens stack copy over photo, so the blur and the scrim both
+   turn vertical: soft behind the words, clear over the students below */
+@media (max-width: 780px) {
+    .s-hero-feature {
+        min-height: clamp(460px, 70vh, 600px);
+        padding-top: 4.5rem;
+        padding-bottom: 3.5rem;
+    }
+    /* Keep the students and robotics equipment in frame on the tall phone
+       crop instead of centering on the empty wall at the left. */
+    .s-hero-photo img { object-position: 72% 36%; }
+    .s-hero-photo-sharp { filter: saturate(1.02) brightness(.76) contrast(1.04); }
+    .s-hero-photo-blur {
+        filter: blur(12px) saturate(.9) brightness(.78);
+        -webkit-mask-image: linear-gradient(to bottom,
+            #000 0%, #000 46%, rgba(0, 0, 0, .5) 64%, transparent 80%);
+                mask-image: linear-gradient(to bottom,
+            #000 0%, #000 46%, rgba(0, 0, 0, .5) 64%, transparent 80%);
+    }
+    .s-hero-feature::after {
+        background:
+          linear-gradient(to bottom,
+            rgba(19, 9, 42, .9) 0%,
+            rgba(26, 12, 54, .68) 46%,
+            rgba(34, 16, 70, .76) 100%);
+    }
+    .s-hero-feature .s-hero-copy, .s-hero-feature p { max-width: none; }
 }
 
 /* ---------- TWO-COLUMN SPLIT ---------- */
@@ -586,7 +655,6 @@
    ========================================================= */
 
 @media (max-width: 1100px) {
-    .s-hero-split .s-hero-inner { gap: 2.5rem; }
     .s-split { gap: 2.5rem; }
     .s-media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .s-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -594,8 +662,6 @@
 }
 
 @media (max-width: 900px) {
-    .s-hero-split .s-hero-inner { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
-    .s-hero-split .s-hero-media { order: -1; }
     .s-split { grid-template-columns: minmax(0, 1fr); }
     .s-feature { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
     .s-contact { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
@@ -609,6 +675,11 @@
     .s-media-grid { grid-template-columns: minmax(0, 1fr); }
     .s-quotes { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
     .s-stats { grid-template-columns: minmax(0, 1fr); }
+    .s-stat { padding: 1rem .85rem; }
+    .s-stat-icon { margin-bottom: .55rem; }
+    .s-stat b { font-size: 2.35rem; line-height: 1; margin-bottom: .2rem; }
+    .s-stat span { margin-bottom: .25rem; }
+    .s-stat i { font-size: .6875rem; line-height: 1.35; }
     .s-hero-ctas { margin-top: 1.5rem; }
     .s-hero-ctas .s-btn { flex: 1 1 100%; justify-content: center; }
     .s-note { padding: 1.75rem 1.4rem; }
@@ -623,15 +694,18 @@
     .s-hero-meta { gap: 1.25rem 2rem; }
     .s-nums { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
     .s-num b { font-size: 1.9rem; }
-    .s-feature-img img, .s-hero-media img { aspect-ratio: 16 / 11; }
+    .s-feature-img img { aspect-ratio: 16 / 11; }
     .s-faq summary { font-size: .875rem; }
     .s-faq-body { padding-left: 0; }
     .s-contact-card { padding: 1rem; }
 }
 
 /* very wide screens: stop the content from stretching thin */
+/* On very wide screens the column widens. This changes --s-max itself, not
+   just .s-inner, so the nav, the footer and the legacy sections widen with
+   it and every page keeps one gutter. */
 @media (min-width: 1600px) {
-    .s-hero-inner, .s-inner { max-width: 1360px; }
+    :root { --s-max: 1360px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -640,9 +714,8 @@
 }
 
 /* media cards double as links, and as numbered step markers */
-a.s-media-card { text-decoration: none; color: inherit; transition: border-color .18s ease, transform .18s ease; }
-a.s-media-card:hover { transform: translateY(-2px); border-color: var(--s-brand); }
-.s-band a.s-media-card:hover { border-color: rgba(255,255,255,.45); }
+/* hover for every media card, link or not, lives in the card-hover block below */
+a.s-media-card { text-decoration: none; color: inherit; }
 .s-media-card-icon {
     font-family: var(--font-mono);
     font-size: .8125rem; font-weight: 700; letter-spacing: .04em;
@@ -768,7 +841,52 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
 /* --- images in cards settle on hover --- */
 @media (hover: hover) {
     .s-media-card > img { transition: transform .45s var(--s-ease); }
-    a.s-media-card:hover > img { transform: scale(1.03); }
+    .s-media-card:hover > img { transform: scale(1.03); }
+}
+
+/* --- card hover, completed ---------------------------------------------
+   .s-card / .s-tile / .s-contact-card had their own hover from the start,
+   but three of the system's cards were missing pieces: .s-media-card only
+   reacted when it happened to be a link, .s-stat had a :hover with nothing
+   to transition it, and the rule-topped blocks (.s-num, .s-step, .s-quote)
+   had no feedback at all. The blocks are not clickable, so they warm their
+   accent rule instead of lifting — motion stays reserved for things that
+   actually go somewhere. */
+.s-media-card, .s-stat {
+    transition:
+        transform var(--s-med) var(--s-ease),
+        box-shadow var(--s-med) var(--s-ease),
+        border-color var(--s-fast) var(--s-ease),
+        background-color var(--s-fast) var(--s-ease);
+}
+.s-num, .s-step, .s-quote {
+    transition:
+        border-color var(--s-fast) var(--s-ease),
+        color var(--s-fast) var(--s-ease);
+}
+@media (hover: hover) {
+    .s-media-card:hover {
+        transform: translateY(-3px);
+        border-color: var(--s-brand);
+        box-shadow: 0 12px 30px rgba(61, 28, 117, .12);
+    }
+    /* on the purple bands a brand-coloured border would disappear */
+    .s-band .s-media-card:hover {
+        border-color: rgba(255, 255, 255, .45);
+        background: rgba(255, 255, 255, .10);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, .22);
+    }
+    .s-num:hover, .s-step:hover { border-top-color: var(--s-accent); }
+    .s-quote:hover { border-left-color: var(--s-accent); }
+    .s-faq summary:hover { color: var(--s-brand); }
+}
+/* only the ones that navigate acknowledge a press */
+a.s-media-card:active { transform: translateY(1px) scale(.994); }
+@media (prefers-reduced-motion: reduce) {
+    .s-media-card, .s-stat, .s-num, .s-step, .s-quote {
+        transition: none !important; transform: none !important;
+    }
+    .s-media-card:hover > img { transform: none; }
 }
 
 /* --- sections ease in as they scroll into view (JS adds .is-in) --- */
@@ -802,6 +920,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
    ========================================================= */
 
 .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1100;
     background: color-mix(in srgb, var(--s-surface) 82%, transparent);
     backdrop-filter: blur(18px) saturate(1.7);
     -webkit-backdrop-filter: blur(18px) saturate(1.7);
@@ -821,7 +942,14 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
    the page height, which moved the scroll position, which re-fired the scroll
    handler — a feedback loop that read as the page jittering. Only the
    background, border and shadow react to scrolling now; nothing reflows. */
-.nav-inner { height: 72px; }
+/* The bar carries its own gutter, so its cap is the content column plus that
+   gutter on each side; that lands the brand on the same line as the page
+   content instead of hard against the window edge on wide screens. */
+.nav-inner {
+    height: 72px;
+    max-width: calc(var(--s-max) + 2 * var(--pad));
+    margin-inline: auto;
+}
 
 /* --- brand --- */
 .nav-brand { gap: 11px; }
@@ -896,6 +1024,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
         animation: navRow .32s var(--s-ease) both;
         animation-delay: calc(var(--i, 0) * 35ms);
     }
+    .nav-toggle { display: block; }
     @keyframes navRow { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 }
 
@@ -1110,9 +1239,9 @@ body { overflow-x: clip; }
     box-shadow: none;
 }
 .btn-sm, .btn-outline.btn-sm { font-size: .8125rem; padding: 8px 16px; }
-.btn-accent { background: var(--s-brand); color: #fff; }
-.btn-accent:hover { background: var(--s-brand-mid); color: #fff; }
-:root.dark-mode .btn-accent { color: #1a1a1a; }
+.btn-accent { background: rgba(255, 255, 255, 0.92); color: #3d1c75; }
+.btn-accent:hover { background: #fff; color: #3d1c75; }
+:root.dark-mode .btn-accent { color: #3d1c75; }
 .btn-outline { background: none; border-color: var(--s-line); color: var(--s-ink); }
 .btn-outline:hover { border-color: var(--s-brand); color: var(--s-brand); background: var(--s-brand-soft); }
 .btn:hover { transform: translateY(-2px); }
@@ -1205,3 +1334,77 @@ body { overflow-x: clip; }
     border-bottom: 1px solid var(--s-line);
 }
 .pill-tabs + *, .s-filters + *, .chapter-filters + * { margin-top: 2rem !important; }
+
+/* =========================================================
+   MOBILE NAV DRAWER — FINAL WORD
+   Three stylesheets had a say in this drawer and they disagreed, which is
+   why it opened wrong on phones. Everything the drawer needs is settled
+   here, last in the cascade:
+     - the toggle appears at the same 1024px breakpoint where the links
+       collapse (style.css only revealed it under 768px, so tablets lost the
+       nav entirely);
+     - open, it covers the whole screen below the bar, from wherever the
+       page happens to be scrolled to, and centres its rows;
+     - it still scrolls internally when the rows do not fit, and 100dvh
+       keeps mobile browser chrome from clipping the last one.
+   ========================================================= */
+@media (max-width: 1024px) {
+    .nav-controls .nav-toggle {
+        display: block;
+        position: relative; z-index: 1102;
+        width: 40px; height: 40px; flex-shrink: 0;
+        touch-action: manipulation;
+    }
+    .nav-controls .nav-toggle svg { transition: none; }
+
+    .site-header .nav-links {
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: flex-start;
+        /* anchor the drawer to the sticky header itself; this is more
+           reliable on mobile browsers than a fixed child inside a blurred,
+           sticky parent */
+        position: absolute; top: 100%; left: 0; right: 0;
+        width: 100%; max-height: calc(100dvh - var(--nav-h, 72px));
+        overflow-y: auto; overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px; margin-left: 0;
+        padding: 1.5rem var(--pad) calc(1.5rem + env(safe-area-inset-bottom));
+        background: var(--s-surface);
+        border-bottom: none;
+        opacity: 0; visibility: hidden; pointer-events: none;
+        transform: translateY(-6px);
+        /* Opening must be immediate and reliable at every scroll position. */
+        transition: none;
+        z-index: 1101;
+    }
+    .site-header .nav-links.open {
+        opacity: 1; visibility: visible; pointer-events: auto;
+        transform: none;
+    }
+
+    /* rows: full-width pills, sized to be tapped */
+    .site-header .nav-links .nav-link {
+        width: 100%; max-width: 340px; margin: 0;
+        padding: 15px 18px;
+        font-size: 1rem; text-align: center;
+        border-radius: 12px;
+        background: var(--s-brand-soft);
+        color: var(--s-muted);
+    }
+    .site-header .nav-links .nav-link:hover { background: var(--s-brand-soft); color: var(--s-brand); }
+    .site-header .nav-links .nav-link.active {
+        background: var(--s-brand); color: #fff; font-weight: 600;
+    }
+    :root.dark-mode .site-header .nav-links .nav-link.active { color: #1a1a1a; }
+
+    .nav-drawer-actions { width: 100%; max-width: 340px; }
+}
+
+/* --- footer joins the shared content measure ---
+   .foot supplies the gutter, so the inner grids only need the cap. Without
+   it the footer columns spread the full window while the page above them
+   stopped at 1360, which read as two different page widths. */
+.foot-inner, .foot-bottom {
+    max-width: var(--s-max);
+    margin-inline: auto;
+}

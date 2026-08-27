@@ -449,15 +449,10 @@
   background: linear-gradient(135deg, var(--bg-warm), var(--accent-soft));
 }
 @media (max-width: 768px) {
-  /* the map used to be hidden below this width, which left the page looking
-     half-built on a phone. Show it at a workable height instead. */
-  .chapters-map-section { padding-top: 1rem; padding-bottom: 2.5rem; }
-  .chapters-map-section .container { padding: 0; }
-  #bdg-map { min-height: 300px; border-radius: 12px; }
+  /* Keep the chapter directory focused on phones; the interactive world map
+     remains available on tablet and desktop screens. */
+  .chapters-map-section { display: none; }
   .chapter-cards { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 480px) {
-  #bdg-map { min-height: 240px; }
 }
 /* ===== DARK MODE MAP ===== */
 :root.dark-mode #bdg-map {

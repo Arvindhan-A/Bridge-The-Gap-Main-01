@@ -135,6 +135,8 @@ def _seed_data():
         db.session.add(admin)
         db.session.commit()
 
+    _seed_named_super_admin()
+
     if Chapter.query.count() == 0:
         samples = [
             {
@@ -224,4 +226,38 @@ def _seed_data():
                 db.session.add(img)
             db.session.commit()
 
+    db.session.commit()
+
+
+def _seed_named_super_admin():
+    """Create the super admin named in the environment, if it is not there yet.
+
+    Unlike the generic 'admin' seed this runs on every start, so the account
+    can be added to an existing database by setting the two variables and
+    restarting. An account that already uses the username is left alone —
+    a password changed inside the app must not be reset by a restart.
+    """
+    username = Config.SEED_SUPER_ADMIN_USERNAME
+    password = Config.SEED_SUPER_ADMIN_PASSWORD
+    if not username or not password:
+        return
+
+    if User.query.filter_by(username=username).first():
+        return
+
+    email = Config.SEED_SUPER_ADMIN_EMAIL or '%s@bridgethegaprobotics.org' % username
+    if User.query.filter_by(email=email).first():
+        return
+
+    role = Role.query.filter_by(name='Super Admin').first()
+    user = User(
+        name=Config.SEED_SUPER_ADMIN_NAME or username.title(),
+        email=email,
+        username=username,
+        role='super_admin',
+        role_id=role.id if role else None,
+        must_change_password=False,
+    )
+    user.set_password(password)
+    db.session.add(user)
     db.session.commit()

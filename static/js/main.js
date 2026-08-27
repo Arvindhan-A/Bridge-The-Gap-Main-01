@@ -1,30 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Mobile nav
     const navToggle = document.querySelector('.nav-toggle');
+    const siteHeader = document.querySelector('.site-header');
     const navLinks = document.querySelector('.nav-links');
-    const navClose = document.querySelector('.nav-close');
     if (navToggle && navLinks) {
+        function syncHeaderHeight() {
+            if (!siteHeader) return;
+            document.documentElement.style.setProperty('--nav-h', `${siteHeader.offsetHeight}px`);
+        }
         function openMenu() {
+            // Reset the page position immediately so the drawer is always
+            // presented from the top of the page on mobile.
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            // Fallback for browsers that do not support the `instant` value.
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+            syncHeaderHeight();
             navLinks.classList.add('open');
             navToggle.classList.add('active');
             navToggle.setAttribute('aria-expanded', 'true');
+            document.documentElement.classList.add('nav-open');
             document.body.style.overflow = 'hidden';
         }
         function closeMenu() {
             navLinks.classList.remove('open');
             navToggle.classList.remove('active');
             navToggle.setAttribute('aria-expanded', 'false');
+            document.documentElement.classList.remove('nav-open');
             document.body.style.overflow = '';
         }
         function toggleMenu() {
             navLinks.classList.contains('open') ? closeMenu() : openMenu();
         }
 
+        syncHeaderHeight();
         navToggle.addEventListener('click', toggleMenu);
-        if (navClose) navClose.addEventListener('click', closeMenu);
 
         // Close on link click
-        navLinks.querySelectorAll('.nav-link').forEach(link => {
+        navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', closeMenu);
         });
 
@@ -42,10 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Close on resize to desktop
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) closeMenu();
-        });
+        // Close once the viewport is wide enough for the full nav bar.
+        // 1024px is where the CSS collapses the links into the drawer; the
+        // old 768px check left the drawer stuck open across that gap.
+        const wide = window.matchMedia('(min-width: 1025px)');
+        const onWide = (e) => { if (e.matches) closeMenu(); };
+        wide.addEventListener ? wide.addEventListener('change', onWide)
+                              : wide.addListener(onWide);
+        window.addEventListener('resize', syncHeaderHeight, { passive: true });
+        window.addEventListener('orientationchange', syncHeaderHeight);
     }
 
     // Scroll reveal

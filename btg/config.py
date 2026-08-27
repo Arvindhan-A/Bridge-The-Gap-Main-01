@@ -35,6 +35,15 @@ class Config:
     SEED_ADMIN_PASSWORD = os.environ.get('BTG_ADMIN_PASSWORD', '')
     SEED_PRESIDENT_PASSWORD = os.environ.get('BTG_PRESIDENT_PASSWORD', '')
 
+    # A named super admin alongside the generic 'admin' seed above. Created on
+    # first run when both the username and password are set; an existing
+    # account with that username is left untouched, so changing the password
+    # here after the fact will not overwrite one set in the app.
+    SEED_SUPER_ADMIN_USERNAME = os.environ.get('BTG_SUPER_ADMIN_USERNAME', '').strip().lower()
+    SEED_SUPER_ADMIN_PASSWORD = os.environ.get('BTG_SUPER_ADMIN_PASSWORD', '')
+    SEED_SUPER_ADMIN_NAME = os.environ.get('BTG_SUPER_ADMIN_NAME', '')
+    SEED_SUPER_ADMIN_EMAIL = os.environ.get('BTG_SUPER_ADMIN_EMAIL', '').strip().lower()
+
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
