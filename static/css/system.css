@@ -76,22 +76,35 @@
     color: rgba(255,255,255,.82); max-width: 620px;
 }
 .s-hero-meta {
-    display: flex; flex-wrap: wrap; gap: 2.5rem;
-    margin-top: 2.75rem; padding-top: 1.75rem;
+    display: flex; flex-wrap: wrap; gap: 1.5rem;
+    margin-top: 2rem; padding-top: 1.5rem;
     border-top: 1px solid rgba(255,255,255,.16);
+    align-items: start;
 }
-.s-hero-meta div { min-width: 90px; }
+.s-hero-meta div {
+    flex: 0 0 minmax(100px, auto);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 4px;
+}
 .s-hero-meta b {
-    display: block;
     font-family: var(--font-display);
     font-size: 1.75rem; font-weight: 600; line-height: 1.1;
-    margin-bottom: .3rem;
+    color: #fff;
+    margin-bottom: .2rem;
 }
 .s-hero-meta span {
     font-family: var(--font-mono);
-    font-size: .625rem; font-weight: 600;
-    letter-spacing: .12em; text-transform: uppercase;
-    color: rgba(255,255,255,.74);
+    font-size: .5625rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: rgba(255,255,255,.7);
+}
+.s-hero-meta div:hover b {
+    color: #ffd6e3;
+    transform: translateY(-2px);
+    transition: color .2s ease, transform .2s ease;
+}
+.s-hero-meta div:hover span {
+    color: rgba(255,255,255,.9);
 }
 
 /* ---------- SECTION SHELL ---------- */
@@ -999,7 +1012,7 @@ a.s-media-card:active { transform: translateY(1px) scale(.994); }
 /* --- mobile drawer --- */
 @media (max-width: 1024px) {
     .nav-links {
-        position: fixed; inset: 72px 0 auto 0;
+        position: fixed; top: var(--nav-h, 72px); right: auto; bottom: 0; left: 0;
         flex-direction: column; align-items: stretch;
         gap: 2px; padding: 1rem var(--pad) 1.5rem;
         background: var(--s-surface);
@@ -1113,24 +1126,6 @@ p { line-height: 1.72; }
     .nav-links { top: var(--nav-h, 72px); }
 }
 :root { --nav-h: 72px; }
-
-/* --- hero stat row: keep the columns aligned when values are words, not numbers --- */
-.s-hero-meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
-    gap: 1.5rem 3rem;
-    align-items: start;
-}
-.s-hero-meta div { min-width: 0; }
-.s-hero-meta b { font-size: clamp(1.35rem, 3.4vw, 1.75rem); }
-@media (max-width: 560px) {
-    .s-hero-meta {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.25rem 1.25rem;
-    }
-    .s-hero-meta b { font-size: 1.3rem; }
-    .s-hero-meta span { font-size: .5625rem; letter-spacing: .1em; }
-}
 
 /* =========================================================
    CARD HOVER — SITE-WIDE
@@ -1407,4 +1402,162 @@ body { overflow-x: clip; }
 .foot-inner, .foot-bottom {
     max-width: var(--s-max);
     margin-inline: auto;
+}
+
+/* =========================================================
+   FOOTER
+   A quieter, editorial finish that makes the navigation and contact paths
+   easy to scan without competing with the page above it.
+   ========================================================= */
+.foot {
+    position: relative;
+    background: linear-gradient(145deg, var(--surface), var(--bg-warm));
+    border-top-color: var(--border);
+    padding-top: 4.25rem;
+}
+.foot::before {
+    content: '';
+    position: absolute; top: 0; left: var(--pad); right: var(--pad);
+    height: 3px; border-radius: 0 0 4px 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-3), transparent 72%);
+    opacity: .85;
+}
+.foot-inner { grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: clamp(2rem, 4vw, 4.5rem); padding-bottom: 3rem; }
+.foot-brand { gap: 1.15rem; }
+.foot-logo-img { height: 42px; }
+.foot-logo-text { font-size: .9375rem; letter-spacing: -.01em; }
+.foot-desc { max-width: 340px; font-size: .875rem; line-height: 1.72; }
+.foot-col { gap: .8rem; }
+.foot-heading { color: var(--text-1); margin-bottom: .45rem; letter-spacing: .11em; }
+.foot-link {
+    width: fit-content; position: relative;
+    padding: .15rem 0; color: var(--text-2);
+    transition: color .28s var(--ease), transform .28s var(--ease);
+}
+.foot-link::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left;
+    transition: transform .32s var(--ease);
+}
+.foot-link:hover { color: var(--accent); transform: translateX(3px); }
+.foot-link:hover::after { transform: scaleX(1); }
+.foot .newsletter-form { margin-top: .2rem; }
+.foot .newsletter-form input[type="email"] { min-height: 40px; background: color-mix(in srgb, var(--surface) 88%, transparent); }
+.foot .newsletter-form button { min-height: 40px; }
+.foot-bottom { padding: 1.4rem 0; }
+.foot-bottom p { font-size: .75rem; }
+
+/* FAQ transitions are driven by the native details state plus the measured
+   animation in main.js, so close is just as deliberate as open. */
+.s-faq details { overflow: hidden; }
+.s-faq summary { transition: color .28s var(--ease), padding .28s var(--ease); }
+.s-faq summary::after { transition: transform .42s var(--ease), color .28s var(--ease); }
+.s-faq details[open] summary { padding-bottom: .85rem; }
+.s-faq details[open] summary::after { transform: rotate(45deg); }
+.s-faq details[open] .s-faq-body { animation: none; }
+.s-faq details[open] { border-bottom-color: var(--s-brand); }
+.s-band .s-faq details[open] { border-bottom-color: rgba(255, 255, 255, .55); }
+
+@media (max-width: 900px) {
+    .foot-inner { grid-template-columns: 1.5fr 1fr 1fr; }
+    .foot-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+    .foot { padding-top: 3.25rem; }
+    .foot-inner { grid-template-columns: 1fr 1fr; gap: 2rem 1.25rem; }
+    .foot-col:last-child { grid-column: 1 / -1; }
+}
+
+/* =========================================================
+   SHARED CARD SYSTEM
+   Three reusable variants keep the site feeling coherent while each feature
+   keeps its semantic class for layout and content-specific styling.
+   ========================================================= */
+.c-card {
+    transition: transform .62s var(--ease), box-shadow .62s var(--ease),
+                border-color .62s var(--ease), background-color .62s var(--ease);
+    will-change: transform;
+}
+.c-card:hover {
+    /* Motion and depth only — the card's colours remain unchanged. */
+    transform: translateY(-5px);
+    background-color: var(--surface);
+    border-color: var(--border);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .13);
+}
+.c-card:focus-within {
+    border-color: var(--border);
+    box-shadow: var(--sh-card-hover);
+}
+.c-card:hover h1, .c-card:hover h2, .c-card:hover h3, .c-card:hover h4 {
+    color: var(--text-1);
+}
+
+/* Standard: content, people, and information cards. */
+.c-card--standard { background-color: var(--surface); }
+
+/* Media: image-led cards get the same lift plus a subtle image zoom. */
+.c-card--media { overflow: hidden; }
+.c-card--media > img,
+.c-card--media .card-img img,
+.c-card--media .hl-card-img img,
+.c-card--media .event-card-slide img,
+.c-card--media .chapter-preview-img img,
+.c-card--media .photo-card img {
+    transition: transform .42s var(--ease);
+}
+.c-card--media:hover > img,
+.c-card--media:hover .card-img img,
+.c-card--media:hover .hl-card-img img,
+.c-card--media:hover .event-card-slide img,
+.c-card--media:hover .chapter-preview-img img,
+.c-card--media:hover .photo-card img { transform: scale(1.035); }
+
+/* The three feature cards sit on a dark band, so they retain a bright
+   neutral border and explicit white text during the hover lift. */
+.s-band .s-media-card.c-card:hover {
+    background: rgba(255, 255, 255, .10);
+    border-color: rgba(255, 255, 255, .65);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, .24);
+}
+.s-band .s-media-card.c-card:hover h3 { color: #fff; }
+.s-band .s-media-card.c-card:hover p { color: rgba(255, 255, 255, .9); }
+.s-band .s-media-card.c-card > img { transition-duration: .62s; }
+
+/* Compact: denser metric and utility cards retain a lighter lift. */
+.c-card--compact:hover { transform: translateY(-3px); }
+
+/* Fixed back-to-top control. It is only interactive after a useful scroll. */
+.scroll-top {
+    position: fixed;
+    right: max(1.25rem, env(safe-area-inset-right));
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+    z-index: 950;
+    width: 46px; height: 46px;
+    display: grid; place-items: center;
+    border: 1px solid var(--border-accent);
+    border-radius: 50%;
+    background: var(--accent); color: #fff;
+    box-shadow: 0 10px 24px rgba(40, 24, 75, .24);
+    cursor: pointer;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transform: translateY(12px) scale(.9);
+    transition: opacity .28s var(--ease), transform .28s var(--ease),
+                visibility .28s var(--ease), background-color .2s var(--ease),
+                box-shadow .2s var(--ease);
+}
+.scroll-top svg { width: 21px; height: 21px; transition: transform .22s var(--ease); }
+.scroll-top.is-visible { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); }
+.scroll-top:hover { background: var(--accent-hover); box-shadow: 0 14px 30px rgba(40, 24, 75, .34); transform: translateY(-3px) scale(1.06); }
+.scroll-top:hover svg { transform: translateY(-2px); }
+.scroll-top:focus-visible { outline: 3px solid var(--accent-soft); outline-offset: 3px; }
+
+@media (max-width: 700px) {
+    .scroll-top { right: 1rem; bottom: 1rem; width: 42px; height: 42px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .c-card, .scroll-top, .scroll-top svg, .c-card--media > img,
+    .c-card--media .card-img img, .c-card--media .hl-card-img img,
+    .c-card--media .event-card-slide img, .c-card--media .chapter-preview-img img,
+    .c-card--media .photo-card img { transition: none; }
 }

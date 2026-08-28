@@ -238,3 +238,106 @@ document.addEventListener('DOMContentLoaded', function () {
     var links = document.querySelectorAll('.nav-links .nav-link');
     links.forEach(function (el, i) { el.style.setProperty('--i', i); });
 });
+
+/* ===== BACK TO TOP =====
+   The control stays out of the tab order until it is useful, then uses the
+   browser's native smooth scrolling (or instant motion when reduced motion is
+   requested). */
+document.addEventListener('DOMContentLoaded', function () {
+    var button = document.querySelector('.scroll-top');
+    if (!button) return;
+
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var ticking = false;
+    function updateVisibility() {
+        button.classList.toggle('is-visible', window.scrollY > 360);
+        button.tabIndex = window.scrollY > 360 ? 0 : -1;
+        ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(updateVisibility);
+        }
+    }, { passive: true });
+    button.addEventListener('click', function () {
+        window.scrollTo({ top: 0, left: 0, behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+    });
+    updateVisibility();
+});
+
+/* ===== SHARED CARD VARIANTS =====
+   Legacy semantic names remain intact, while every card gets one of the three
+   shared visual behaviours: standard, media, or compact. */
+document.addEventListener('DOMContentLoaded', function () {
+    var variants = {
+        standard: '.card, .kit-card, .partner-card, .why-card, .serve-card, .impact-card, .step-card, .scroll-card, .post-card, .advisor-card, .initiative-card, .team-card, .announcement-card, .sidebar-card, .home-card, .s-card, .s-tile, .s-contact-card, .org-card, .list-tile, .user-card, .stat-card, .role-card, .role-create-card, .form-card, .ch-card, .pu-card',
+        media: '.hl-card, .s-media-card, .event-card, .chapter-preview, .masonry-item, .photo-card',
+        compact: '.hero-stat-card, .pillar, .event-row, .admin-section, .event-card-empty'
+    };
+    Object.keys(variants).forEach(function (variant) {
+        document.querySelectorAll(variants[variant]).forEach(function (card) {
+            card.classList.add('c-card', 'c-card--' + variant);
+        });
+    });
+});
+
+/* ===== FAQ ACCORDION =====
+   Native details elements keep their keyboard and screen-reader behaviour;
+   this only supplies a measured height animation for both opening and closing. */
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    document.querySelectorAll('.s-faq details').forEach(function (details) {
+        var summary = details.querySelector('summary');
+        var body = details.querySelector('.s-faq-body');
+        if (!summary || !body) return;
+
+        var animation = null;
+        function finish(closing) {
+            if (closing) details.open = false;
+            details.style.height = '';
+            details.style.overflow = '';
+            details.classList.remove('is-animating');
+            animation = null;
+        }
+        function open() {
+            details.open = true;
+            var start = summary.offsetHeight;
+            var end = start + body.offsetHeight;
+            details.style.height = start + 'px';
+            details.style.overflow = 'hidden';
+            details.classList.add('is-animating');
+            animation = details.animate(
+                { height: [start + 'px', end + 'px'] },
+                { duration: 460, easing: 'cubic-bezier(.16, 1, .3, 1)' }
+            );
+            body.animate(
+                { opacity: [0, 1], transform: ['translateY(-8px)', 'translateY(0)'] },
+                { duration: 360, delay: 70, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' }
+            );
+            animation.onfinish = function () { finish(false); };
+        }
+        function close() {
+            var start = details.offsetHeight;
+            var end = summary.offsetHeight;
+            details.style.height = start + 'px';
+            details.style.overflow = 'hidden';
+            details.classList.add('is-animating');
+            animation = details.animate(
+                { height: [start + 'px', end + 'px'] },
+                { duration: 360, easing: 'cubic-bezier(.4, 0, 1, 1)' }
+            );
+            body.animate(
+                { opacity: [1, 0], transform: ['translateY(0)', 'translateY(-6px)'] },
+                { duration: 220, easing: 'ease-in', fill: 'both' }
+            );
+            animation.onfinish = function () { finish(true); };
+        }
+        summary.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (animation) animation.cancel();
+            details.open ? close() : open();
+        });
+    });
+});
