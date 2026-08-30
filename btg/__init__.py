@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import glob
+import click
 from flask import Flask, session, render_template
 from datetime import datetime
 
@@ -81,6 +82,30 @@ def create_app(config_class=None):
             format='%(asctime)s [%(levelname)s] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
+
+    # CLI
+    @app.cli.command('set-password')
+    @click.argument('identifier')
+    @click.password_option('--password', prompt=True, confirmation_prompt=True)
+    @click.option('--force-change/--no-force-change', default=False,
+                  help='Require the user to change this password at next login.')
+    def set_password_command(identifier, password, force_change):
+        """Set a user's password by username or email.
+
+        Rewrites the stored hash with the currently configured method, so it
+        is also the way to migrate an account off a legacy hash without
+        waiting for its owner to log in once.
+        """
+        user = User.query.filter(
+            db.or_(User.email == identifier.strip().lower(),
+                   User.username == identifier.strip().lower())
+        ).first()
+        if not user:
+            raise click.ClickException(f'No user matching {identifier!r}.')
+        user.set_password(password)
+        user.must_change_password = force_change
+        db.session.commit()
+        click.echo(f'Password updated for {user.username or user.email}.')
 
     # Initialize database
     with app.app_context():

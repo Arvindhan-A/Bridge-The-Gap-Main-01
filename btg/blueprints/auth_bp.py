@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from sqlalchemy.exc import SQLAlchemyError
 
 from btg.extensions import db
 from btg.models import User
@@ -22,6 +23,13 @@ def login():
             db.or_(User.email == credential, User.username == credential)
         ).first()
         if user and user.check_password(password):
+            # check_password rewrites a legacy hash in place on success; persist
+            # it, but never fail the login if that write does not go through.
+            try:
+                db.session.commit()
+            except SQLAlchemyError:
+                db.session.rollback()
+
             session['user_id'] = user.id
             session['role'] = user.role
             session['chapter_id'] = user.chapter_id
@@ -72,6 +80,7 @@ def change_password():
             return render_template('change_password.html')
 
         user.set_password(new)
+        user.must_change_password = False
         db.session.commit()
         flash('Password changed successfully.', 'success')
         if user.role == 'super_admin':

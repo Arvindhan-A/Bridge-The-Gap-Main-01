@@ -831,17 +831,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
     outline-color: #fff;
 }
 
-/* --- nav links get an underline that grows from the centre --- */
-.nav-link { position: relative; }
-.nav-link::after {
-    content: ''; position: absolute;
-    left: 10px; right: 10px; bottom: 2px; height: 2px;
-    background: var(--s-brand); border-radius: 2px;
-    transform: scaleX(0); transform-origin: center;
-    transition: transform var(--s-med) var(--s-ease);
-}
-.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
-
 /* --- arrows in buttons track forward on hover --- */
 @media (hover: hover) {
     .s-btn:hover svg { transform: translateX(3px); }
@@ -927,15 +916,41 @@ a.s-media-card:active { transform: translateY(1px) scale(.994); }
 @media (max-width: 700px)  { .s-media-grid.four { grid-template-columns: minmax(0, 1fr); } }
 
 /* =========================================================
-   TOP NAVIGATION
-   Re-themed onto the system palette. Loaded after style.css so
-   these win over the older nav rules without editing them.
+   TOP NAVIGATION — the only place nav is styled
+   =========================================================
+   This used to be spread over four blocks (one in style.css, three here),
+   each written to override the last. The blocks disagreed about the
+   breakpoint (768px vs 1024px) and about how the drawer is positioned
+   (fixed vs absolute), so which rules won depended on the viewport width and
+   on selector-specificity ties — that is why the hamburger looked and behaved
+   differently at different sizes. It is one block now. Keep it that way.
+
+   Two things worth knowing before editing:
+
+   1. --nav-breakpoint is the single width at which the bar becomes a drawer.
+      main.js reads the same custom property for its media-query trigger, and
+      then confirms against the rendered layout (the hamburger is displayed
+      only in drawer mode), so CSS and JS cannot drift apart.
+   2. .site-header has a backdrop-filter, which makes it the containing block
+      for `position: fixed` descendants. A fixed drawer therefore resolves
+      against the header box, not the viewport — the drawer must be
+      `position: absolute; top: 100%` instead. The header is sticky at top: 0,
+      so that is viewport-anchored anyway, at any scroll position.
    ========================================================= */
 
+:root {
+    --nav-h: 72px;
+    /* Measured, not guessed: signed in, the bar carries the brand lockup,
+       nine links and three buttons, and the link row stops fitting below
+       1240px. 1260 leaves a little slack. */
+    --nav-breakpoint: 1260px;
+}
+@media (max-width: 560px) { :root { --nav-h: 62px; } }
+
+/* ---------- bar ---------- */
+
 .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 1100;
+    position: sticky; top: 0; z-index: 1100;
     background: color-mix(in srgb, var(--s-surface) 82%, transparent);
     backdrop-filter: blur(18px) saturate(1.7);
     -webkit-backdrop-filter: blur(18px) saturate(1.7);
@@ -944,48 +959,107 @@ a.s-media-card:active { transform: translateY(1px) scale(.994); }
                 border-color var(--s-med) var(--s-ease),
                 box-shadow var(--s-med) var(--s-ease);
 }
-/* JS adds .is-scrolled once the page leaves the top */
+/* JS adds .is-scrolled once the page leaves the top. The bar keeps a fixed
+   height on purpose: animating it changed the page height, which moved the
+   scroll position, which re-fired the scroll handler — a loop that read as
+   the page jittering. Only paint properties react to scrolling. */
 .site-header.is-scrolled {
     border-bottom-color: var(--s-line);
     box-shadow: 0 6px 24px rgba(30, 27, 41, .07);
 }
 :root.dark-mode .site-header.is-scrolled { box-shadow: 0 6px 24px rgba(0, 0, 0, .5); }
+/* an open drawer needs an opaque bar above it, or the page shows through */
+:root.nav-open .site-header { background: var(--s-surface); }
 
-/* The header keeps a fixed height on purpose. Animating it on scroll changed
-   the page height, which moved the scroll position, which re-fired the scroll
-   handler — a feedback loop that read as the page jittering. Only the
-   background, border and shadow react to scrolling now; nothing reflows. */
 /* The bar carries its own gutter, so its cap is the content column plus that
-   gutter on each side; that lands the brand on the same line as the page
-   content instead of hard against the window edge on wide screens. */
+   gutter each side; that lands the brand on the same line as page content. */
 .nav-inner {
-    height: 72px;
+    display: flex; align-items: center;
+    gap: clamp(.5rem, 1.6vw, 1rem);
+    height: var(--nav-h);
+    width: 100%;
     max-width: calc(var(--s-max) + 2 * var(--pad));
     margin-inline: auto;
+    padding-inline: var(--pad);
 }
 
-/* --- brand --- */
-.nav-brand { gap: 11px; }
-.nav-logo { transition: transform var(--s-med) var(--s-ease), opacity var(--s-fast) var(--s-ease); }
-.nav-brand:hover .nav-logo { opacity: 1; transform: scale(1.06) rotate(-3deg); }
-.nav-brand-text { color: var(--s-ink); font-weight: 600; }
-.nav-brand-sub { color: var(--s-faint); }
+/* ---------- brand ---------- */
 
-/* --- links: a centred underline, no pill --- */
+.nav-brand {
+    display: flex; align-items: center; gap: 11px;
+    flex: 0 0 auto;
+    text-decoration: none;
+}
+.nav-logo {
+    display: block;
+    height: clamp(30px, 5.2vw, 42px); width: auto; flex-shrink: 0;
+    transition: transform var(--s-med) var(--s-ease), opacity var(--s-fast) var(--s-ease);
+}
+.nav-brand:hover .nav-logo { opacity: 1; transform: scale(1.06) rotate(-3deg); }
+.nav-logo-dark { display: none; }
+:root.dark-mode .nav-logo-light { display: none; }
+:root.dark-mode .nav-logo-dark { display: block; }
+
+.nav-brand-text {
+    /* never wrap: squeezed between the links and the buttons this used to
+       break onto two lines and blow the bar's 72px out of proportion */
+    white-space: nowrap;
+    font-size: clamp(.8125rem, 1.5vw, 1rem); font-weight: 600;
+    line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--s-ink);
+}
+.nav-brand-sub {
+    display: block;
+    font-size: clamp(.5625rem, .9vw, .625rem); font-weight: 500;
+    letter-spacing: .02em; color: var(--s-faint);
+}
+/* below this the two-line lockup costs more room than it earns */
+@media (max-width: 420px) { .nav-brand-sub { display: none; } }
+
+/* ---------- links: bar layout ---------- */
+
+.nav-links {
+    display: flex; align-items: center;
+    flex: 1 1 auto; min-width: 0;
+    justify-content: center; gap: 2px;
+}
 .nav-link {
-    color: var(--s-muted);
-    font-size: .8125rem; font-weight: 500;
+    position: relative;
     padding: 8px 12px; border-radius: 6px;
-    background: none;
+    font-size: .8125rem; font-weight: 500;
+    color: var(--s-muted); background: none;
+    white-space: nowrap;
+    transition: color var(--s-fast) var(--s-ease), background var(--s-fast) var(--s-ease);
 }
 .nav-link:hover { color: var(--s-ink); background: none; }
 .nav-link.active { color: var(--s-brand); font-weight: 600; }
-.nav-link::after { background: var(--s-brand); }
+/* an underline that grows from the centre */
+.nav-link::after {
+    content: ''; position: absolute;
+    left: 10px; right: 10px; bottom: 2px; height: 2px;
+    background: var(--s-brand); border-radius: 2px;
+    transform: scaleX(0); transform-origin: center;
+    transition: transform var(--s-med) var(--s-ease);
+}
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
 
-/* --- controls --- */
+/* Nine links, a two-line brand and three buttons is a lot of bar. Tighten the
+   links through the band just above the drawer breakpoint so the row never
+   has to wrap or overflow while it is still a row. */
+@media (max-width: 1360px) {
+    .nav-link { padding: 7px 9px; font-size: .78125rem; }
+}
+
+/* ---------- controls ---------- */
+
+.nav-controls {
+    display: flex; align-items: center; gap: 8px;
+    flex: 0 0 auto; margin-left: auto;
+}
 .nav-controls .btn-outline {
     border: 2px solid var(--s-line); color: var(--s-ink);
     background: none; border-radius: 7px; font-weight: 600;
+    white-space: nowrap;
 }
 .nav-controls .btn-outline:hover {
     border-color: var(--s-brand); color: var(--s-brand);
@@ -994,6 +1068,7 @@ a.s-media-card:active { transform: translateY(1px) scale(.994); }
 .nav-controls .btn-accent {
     background: var(--s-brand); color: #fff;
     border-radius: 7px; font-weight: 600; box-shadow: none;
+    white-space: nowrap;
 }
 .nav-controls .btn-accent:hover {
     background: var(--s-brand-mid); transform: translateY(-1px);
@@ -1006,44 +1081,156 @@ a.s-media-card:active { transform: translateY(1px) scale(.994); }
 .dark-toggle svg { transition: transform .45s var(--s-ease); }
 .dark-toggle:hover svg { transform: rotate(35deg); }
 
-.nav-toggle { color: var(--s-muted); border-radius: 7px; }
-.nav-toggle:hover { color: var(--s-brand); background: var(--s-brand-soft); }
+/* ---------- hamburger ---------- */
 
-/* --- mobile drawer --- */
-@media (max-width: 1024px) {
+.nav-toggle {
+    display: none;                 /* the drawer query turns it on */
+    position: relative; z-index: 1102;
+    flex: 0 0 auto;
+    width: 42px; height: 42px; padding: 0; margin: 0;
+    align-items: center; justify-content: center;
+    background: none; border: 0; border-radius: 9px;
+    color: var(--s-muted); cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--s-fast) var(--s-ease), background var(--s-fast) var(--s-ease);
+}
+.nav-toggle:hover { color: var(--s-brand); background: var(--s-brand-soft); }
+.nav-toggle[aria-expanded="true"] { color: var(--s-brand); background: var(--s-brand-soft); }
+/* both icons stack in the same spot and cross-fade */
+.nav-toggle svg {
+    position: absolute; top: 50%; left: 50%;
+    width: 22px; height: 22px;
+    transform: translate(-50%, -50%);
+    transition: opacity .22s var(--s-ease), transform .22s var(--s-ease);
+}
+.nav-toggle .icon-close { opacity: 0; transform: translate(-50%, -50%) rotate(-90deg); }
+.nav-toggle[aria-expanded="true"] .icon-menu { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
+.nav-toggle[aria-expanded="true"] .icon-close { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+
+.nav-toggle:focus-visible,
+.dark-toggle:focus-visible,
+.nav-link:focus-visible,
+.nav-brand:focus-visible {
+    outline: 2px solid var(--s-brand);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+/* ---------- scrim ---------- */
+
+/* A sibling of the header, not a child: the header's backdrop-filter would
+   trap a fixed child inside the 72px bar. */
+.nav-scrim {
+    position: fixed; inset: 0; z-index: 1090;
+    background: rgba(20, 18, 30, .45);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .22s var(--s-ease), visibility 0s linear .22s;
+}
+:root.nav-open .nav-scrim {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transition: opacity .22s var(--s-ease), visibility 0s;
+}
+
+/* ---------- drawer ---------- */
+
+/* The drawer's copies of the bar buttons. Declared before the media query
+   below, not after it: both rules are one class deep, so a later
+   `display: none` would win the tie and the buttons would never appear. */
+.nav-drawer-actions { display: none; }
+
+
+@media (max-width: 1260px) {                 /* keep in sync with --nav-breakpoint */
+    .nav-toggle { display: flex; }
+
+    /* the bar's buttons move into the drawer, where they get room to breathe */
+    .nav-controls .btn,
+    .nav-controls .btn-outline { display: none; }
+
     .nav-links {
-        position: fixed; top: var(--nav-h, 72px); right: auto; bottom: 0; left: 0;
-        flex-direction: column; align-items: stretch;
-        gap: 2px; padding: 1rem var(--pad) 1.5rem;
+        position: absolute; top: 100%; left: 0; right: 0;
+        z-index: 1101;
+        flex-direction: column; align-items: center; justify-content: flex-start;
+        gap: 8px;
+        /* dvh, so mobile browser chrome cannot clip the last row */
+        max-height: calc(100dvh - var(--nav-h));
+        overflow-y: auto; overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        padding: 1.25rem var(--pad) calc(1.5rem + env(safe-area-inset-bottom, 0px));
         background: var(--s-surface);
         border-bottom: 1px solid var(--s-line);
-        box-shadow: 0 18px 40px rgba(30, 27, 41, .12);
-        opacity: 0; visibility: hidden;
-        transform: translateY(-10px);
-        transition: opacity var(--s-med) var(--s-ease),
-                    transform var(--s-med) var(--s-ease),
-                    visibility var(--s-med);
+        box-shadow: 0 24px 48px rgba(30, 27, 41, .16);
+
+        opacity: 0; visibility: hidden; pointer-events: none;
+        transform: translateY(-8px);
+        /* visibility flips only after the fade finishes, so closing animates */
+        transition: opacity .22s var(--s-ease),
+                    transform .22s var(--s-ease),
+                    visibility 0s linear .22s;
     }
-    .nav-links.open { opacity: 1; visibility: visible; transform: none; }
+    .nav-links.open {
+        opacity: 1; visibility: visible; pointer-events: auto;
+        transform: none;
+        transition: opacity .22s var(--s-ease),
+                    transform .22s var(--s-ease),
+                    visibility 0s;
+    }
+    :root.dark-mode .nav-links { box-shadow: 0 24px 48px rgba(0, 0, 0, .5); }
+
+    /* rows: full-width pills, comfortably above the 44px tap target minimum */
     .nav-links .nav-link {
-        padding: 12px 14px; border-radius: 8px;
-        font-size: .9375rem;
+        width: 100%; max-width: 380px; margin: 0;
+        padding: 14px 18px;
+        font-size: 1rem; font-weight: 500; text-align: center;
+        border-radius: 12px;
+        background: var(--s-brand-soft); color: var(--s-muted);
     }
     .nav-links .nav-link::after { display: none; }
     .nav-links .nav-link:hover { background: var(--s-brand-soft); color: var(--s-brand); }
-    .nav-links .nav-link.active { background: var(--s-brand); color: #fff; }
-    /* each row eases in behind the one above it */
-    .nav-links.open .nav-link {
-        animation: navRow .32s var(--s-ease) both;
-        animation-delay: calc(var(--i, 0) * 35ms);
+    .nav-links .nav-link.active {
+        background: var(--s-brand); color: #fff; font-weight: 600;
     }
-    .nav-toggle { display: block; }
+    :root.dark-mode .nav-links .nav-link.active { color: #1a1a1a; }
+
+    /* each row eases in behind the one above it; --i is set by main.js */
+    .nav-links.open .nav-link {
+        animation: navRow .3s var(--s-ease) both;
+        animation-delay: calc(var(--i, 0) * 32ms);
+    }
     @keyframes navRow { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+    .nav-drawer-actions {
+        display: flex; flex-direction: column; gap: 8px;
+        width: 100%; max-width: 380px;
+        margin-top: 1rem; padding-top: 1rem;
+        border-top: 1px solid var(--s-line);
+    }
+    .nav-drawer-actions .s-btn { justify-content: center; width: 100%; }
+}
+
+/* Short viewports — a phone in landscape gets ~290px of drawer. Shrink the
+   rows so most of the menu fits without scrolling, rather than showing three
+   oversized ones. */
+@media (max-width: 1260px) and (max-height: 620px) {
+    .nav-links { gap: 6px; padding-block: .875rem 1rem; }
+    .nav-links .nav-link { padding: 10px 16px; font-size: .9375rem; border-radius: 10px; }
+    .nav-drawer-actions { margin-top: .75rem; padding-top: .75rem; }
+}
+
+/* Narrow phones: give the rows the full width minus the gutter. */
+@media (max-width: 480px) {
+    .nav-links { padding-inline: 1rem; }
+    .nav-links .nav-link,
+    .nav-drawer-actions { max-width: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .nav-links,
+    .nav-links.open { transition: opacity .01ms, visibility .01ms; transform: none; }
     .nav-links.open .nav-link { animation: none; }
-    .nav-inner, .site-header { transition: none; }
+    .nav-scrim, :root.nav-open .nav-scrim { transition: none; }
+    .nav-inner, .site-header, .nav-toggle svg, .nav-logo { transition: none; }
+    .nav-brand:hover .nav-logo { transform: none; }
 }
 
 /* =========================================================
@@ -1107,25 +1294,6 @@ p { line-height: 1.72; }
     body { font-size: 15.5px; }
     .s-head h2 { letter-spacing: -0.015em; }
 }
-
-/* --- nav actions move into the drawer on small screens ---
-   style.css only hid .btn on mobile, so .btn-outline ("Request a Kit", and
-   "Logout" once signed in) stayed in the bar and overflowed it. */
-.nav-drawer-actions { display: none; }
-
-@media (max-width: 1024px) {
-    .nav-controls .btn,
-    .nav-controls .btn-outline { display: none; }
-    .nav-drawer-actions {
-        display: flex; flex-direction: column; gap: 8px;
-        margin-top: 1rem; padding-top: 1rem;
-        border-top: 1px solid var(--s-line);
-    }
-    .nav-drawer-actions .s-btn { justify-content: center; width: 100%; }
-    /* the drawer hangs off the header, which changes height when scrolled */
-    .nav-links { top: var(--nav-h, 72px); }
-}
-:root { --nav-h: 72px; }
 
 /* =========================================================
    CARD HOVER — SITE-WIDE
@@ -1330,71 +1498,6 @@ body { overflow-x: clip; }
 }
 .pill-tabs + *, .s-filters + *, .chapter-filters + * { margin-top: 2rem !important; }
 
-/* =========================================================
-   MOBILE NAV DRAWER — FINAL WORD
-   Three stylesheets had a say in this drawer and they disagreed, which is
-   why it opened wrong on phones. Everything the drawer needs is settled
-   here, last in the cascade:
-     - the toggle appears at the same 1024px breakpoint where the links
-       collapse (style.css only revealed it under 768px, so tablets lost the
-       nav entirely);
-     - open, it covers the whole screen below the bar, from wherever the
-       page happens to be scrolled to, and centres its rows;
-     - it still scrolls internally when the rows do not fit, and 100dvh
-       keeps mobile browser chrome from clipping the last one.
-   ========================================================= */
-@media (max-width: 1024px) {
-    .nav-controls .nav-toggle {
-        display: block;
-        position: relative; z-index: 1102;
-        width: 40px; height: 40px; flex-shrink: 0;
-        touch-action: manipulation;
-    }
-    .nav-controls .nav-toggle svg { transition: none; }
-
-    .site-header .nav-links {
-        display: flex; flex-direction: column;
-        align-items: center; justify-content: flex-start;
-        /* anchor the drawer to the sticky header itself; this is more
-           reliable on mobile browsers than a fixed child inside a blurred,
-           sticky parent */
-        position: absolute; top: 100%; left: 0; right: 0;
-        width: 100%; max-height: calc(100dvh - var(--nav-h, 72px));
-        overflow-y: auto; overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
-        gap: 8px; margin-left: 0;
-        padding: 1.5rem var(--pad) calc(1.5rem + env(safe-area-inset-bottom));
-        background: var(--s-surface);
-        border-bottom: none;
-        opacity: 0; visibility: hidden; pointer-events: none;
-        transform: translateY(-6px);
-        /* Opening must be immediate and reliable at every scroll position. */
-        transition: none;
-        z-index: 1101;
-    }
-    .site-header .nav-links.open {
-        opacity: 1; visibility: visible; pointer-events: auto;
-        transform: none;
-    }
-
-    /* rows: full-width pills, sized to be tapped */
-    .site-header .nav-links .nav-link {
-        width: 100%; max-width: 340px; margin: 0;
-        padding: 15px 18px;
-        font-size: 1rem; text-align: center;
-        border-radius: 12px;
-        background: var(--s-brand-soft);
-        color: var(--s-muted);
-    }
-    .site-header .nav-links .nav-link:hover { background: var(--s-brand-soft); color: var(--s-brand); }
-    .site-header .nav-links .nav-link.active {
-        background: var(--s-brand); color: #fff; font-weight: 600;
-    }
-    :root.dark-mode .site-header .nav-links .nav-link.active { color: #1a1a1a; }
-
-    .nav-drawer-actions { width: 100%; max-width: 340px; }
-}
-
 /* --- footer joins the shared content measure ---
    .foot supplies the gutter, so the inner grids only need the cap. Without
    it the footer columns spread the full window while the page above them
@@ -1414,13 +1517,6 @@ body { overflow-x: clip; }
     background: linear-gradient(145deg, var(--surface), var(--bg-warm));
     border-top-color: var(--border);
     padding-top: 4.25rem;
-}
-.foot::before {
-    content: '';
-    position: absolute; top: 0; left: var(--pad); right: var(--pad);
-    height: 3px; border-radius: 0 0 4px 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-3), transparent 72%);
-    opacity: .85;
 }
 .foot-inner { grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: clamp(2rem, 4vw, 4.5rem); padding-bottom: 3rem; }
 .foot-brand { gap: 1.15rem; }

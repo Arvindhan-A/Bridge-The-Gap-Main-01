@@ -2,8 +2,25 @@ import json
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
+from btg.config import Config
 from btg.extensions import db
 from btg.services.upload import delete_upload
+
+# The method prefix Werkzeug actually writes for Config.PASSWORD_HASH_METHOD.
+# Werkzeug fills in its own defaults (a bare 'pbkdf2' is stored as
+# 'pbkdf2:sha256:1000000'), so comparing a stored hash against the raw config
+# string would mark every freshly written hash as stale and re-hash on every
+# single login. Derived once per process, on first use.
+_current_hash_prefix = None
+
+
+def _hash_prefix():
+    global _current_hash_prefix
+    if _current_hash_prefix is None:
+        _current_hash_prefix = generate_password_hash(
+            'prefix-probe', method=Config.PASSWORD_HASH_METHOD, salt_length=1
+        ).split('$', 1)[0]
+    return _current_hash_prefix
 
 
 class User(db.Model):
@@ -38,11 +55,44 @@ class User(db.Model):
             self.role = self.custom_role.name.lower().replace(' ', '_')
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-        self.must_change_password = False
+        """Store `password` using the configured hash method.
+
+        Deliberately does not touch `must_change_password`: whether a new
+        password clears the forced-change flag depends on who set it (the
+        owner clears it, an admin issuing a temporary one does not), so every
+        caller states its own intent.
+        """
+        self.password_hash = generate_password_hash(
+            password, method=Config.PASSWORD_HASH_METHOD
+        )
+
+    @property
+    def needs_password_rehash(self):
+        """True when the stored hash predates the configured method."""
+        if not self.password_hash:
+            return False
+        return self.password_hash.split('$', 1)[0] != _hash_prefix()
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        """Verify `password`, upgrading a legacy hash on the way through.
+
+        A hash written by an older method (scrypt, before the switch to
+        pbkdf2) still verifies, and is rewritten in place on success so the
+        expensive method is used at most once more per account. The caller is
+        responsible for committing the session.
+        """
+        if not self.password_hash:
+            return False
+        try:
+            matched = check_password_hash(self.password_hash, password)
+        except (ValueError, MemoryError):
+            # A stored hash this build of OpenSSL cannot compute (unknown
+            # method, or scrypt over its memory limit) is a failed login,
+            # not a 500 that takes the request down with it.
+            return False
+        if matched and self.needs_password_rehash:
+            self.set_password(password)
+        return matched
 
 
 # Predefined permission flags

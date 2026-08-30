@@ -1,71 +1,154 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Mobile nav
-    const navToggle = document.querySelector('.nav-toggle');
-    const siteHeader = document.querySelector('.site-header');
-    const navLinks = document.querySelector('.nav-links');
-    if (navToggle && navLinks) {
-        function syncHeaderHeight() {
-            if (!siteHeader) return;
-            document.documentElement.style.setProperty('--nav-h', `${siteHeader.offsetHeight}px`);
-        }
-        function openMenu() {
-            // Reset the page position immediately so the drawer is always
-            // presented from the top of the page on mobile.
-            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-            // Fallback for browsers that do not support the `instant` value.
-            document.documentElement.scrollTop = 0;
-            document.body.scrollTop = 0;
-            syncHeaderHeight();
-            navLinks.classList.add('open');
-            navToggle.classList.add('active');
-            navToggle.setAttribute('aria-expanded', 'true');
-            document.documentElement.classList.add('nav-open');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeMenu() {
-            navLinks.classList.remove('open');
-            navToggle.classList.remove('active');
-            navToggle.setAttribute('aria-expanded', 'false');
-            document.documentElement.classList.remove('nav-open');
-            document.body.style.overflow = '';
-        }
-        function toggleMenu() {
-            navLinks.classList.contains('open') ? closeMenu() : openMenu();
-        }
+/* ===== SCROLL LOCK =====
+   The nav drawer and the lightbox both need the page behind them to hold
+   still, and both used to set body.style.overflow themselves — so whichever
+   closed first handed scrolling back while the other was still open. One
+   counter owns it now.
 
-        syncHeaderHeight();
-        navToggle.addEventListener('click', toggleMenu);
+   `position: fixed` rather than `overflow: hidden` because iOS Safari ignores
+   the latter on <body>. The scroll offset is stashed and restored on unlock,
+   which is also what removes the need for the old "jump to the top of the page
+   before opening the menu" workaround. */
+var scrollLock = (function () {
+    var depth = 0;
+    var offset = 0;
+    var body = document.body;
+    return {
+        lock: function () {
+            if (depth++ > 0) return;
+            offset = window.scrollY || document.documentElement.scrollTop || 0;
+            body.style.position = 'fixed';
+            body.style.top = -offset + 'px';
+            body.style.left = '0';
+            body.style.right = '0';
+            body.style.width = '100%';
+        },
+        unlock: function () {
+            if (depth === 0 || --depth > 0) return;
+            body.style.position = '';
+            body.style.top = '';
+            body.style.left = '';
+            body.style.right = '';
+            body.style.width = '';
+            // `html { scroll-behavior: smooth }` would animate this, and the
+            // page would visibly fly back down from the top after every close.
+            window.scrollTo({ top: offset, left: 0, behavior: 'instant' });
+        }
+    };
+})();
 
-        // Close on link click
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', closeMenu);
+/* ===== MOBILE NAVIGATION =====
+   The breakpoint comes from the --nav-breakpoint custom property that
+   system.css declares, so this and the CSS media query cannot drift apart —
+   they used to (768px here, 1024px there), and the band between them left the
+   drawer stuck open with no way to close it. Whether the drawer layout is
+   actually in force is read back off the rendered page rather than recomputed
+   here; see inDrawerLayout below. */
+document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.querySelector('.nav-toggle');
+    var drawer = document.querySelector('.nav-links');
+    var scrim = document.querySelector('.nav-scrim');
+    if (!toggle || !drawer) return;
+
+    var width = parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--nav-breakpoint'), 10) || 1260;   // fallback matches the CSS
+    var isNarrow = window.matchMedia('(max-width: ' + width + 'px)');
+
+    // per-row entrance delay, read back by the CSS animation
+    drawer.querySelectorAll('.nav-link').forEach(function (el, i) {
+        el.style.setProperty('--i', i);
+    });
+
+    function isOpen() { return drawer.classList.contains('open'); }
+
+    /* Everything in the header that can take focus, in document order — which
+       is also tab order. Used to keep Tab inside the menu while it covers the
+       page, and to pick the first thing to focus on open. */
+    function stops() {
+        var nodes = document.querySelectorAll(
+            '.site-header .nav-links a[href], .site-header .nav-links button:not([disabled]),' +
+            '.site-header .nav-controls a[href], .site-header .nav-controls button:not([disabled])'
+        );
+        return Array.prototype.filter.call(nodes, function (el) {
+            return el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0;
         });
-
-        // Close on outside click
-        document.addEventListener('click', (e) => {
-            if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
-                closeMenu();
-            }
-        });
-
-        // Close on Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-                closeMenu();
-            }
-        });
-
-        // Close once the viewport is wide enough for the full nav bar.
-        // 1024px is where the CSS collapses the links into the drawer; the
-        // old 768px check left the drawer stuck open across that gap.
-        const wide = window.matchMedia('(min-width: 1025px)');
-        const onWide = (e) => { if (e.matches) closeMenu(); };
-        wide.addEventListener ? wide.addEventListener('change', onWide)
-                              : wide.addListener(onWide);
-        window.addEventListener('resize', syncHeaderHeight, { passive: true });
-        window.addEventListener('orientationchange', syncHeaderHeight);
     }
 
+    function open() {
+        if (isOpen() || !inDrawerLayout()) return;
+        drawer.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        document.documentElement.classList.add('nav-open');
+        scrollLock.lock();
+        var first = drawer.querySelector('a[href]');
+        if (first) first.focus({ preventScroll: true });
+    }
+
+    function close(returnFocus) {
+        if (!isOpen()) return;
+        drawer.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+        document.documentElement.classList.remove('nav-open');
+        scrollLock.unlock();
+        if (returnFocus) toggle.focus({ preventScroll: true });
+    }
+
+    toggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        isOpen() ? close(true) : open();
+    });
+
+    // the scrim covers everything the drawer does not, so it replaces the old
+    // document-wide "click anywhere else" listener
+    if (scrim) scrim.addEventListener('click', function () { close(true); });
+
+    drawer.addEventListener('click', function (e) {
+        if (e.target.closest('a[href]')) close(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (!isOpen()) return;
+        if (e.key === 'Escape') { close(true); return; }
+        if (e.key !== 'Tab') return;
+
+        var focusable = stops();
+        if (!focusable.length) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    });
+
+    /* Crossing back to the wide layout has to clear the open state, or the
+       scroll lock and the .nav-open class survive into a bar that no longer
+       has a drawer to close.
+
+       The truth is read off the rendered page — the hamburger is displayed
+       only while the drawer layout is active — rather than trusted from the
+       event. Two triggers because neither is guaranteed on its own: the media
+       query is the precise one, the resize is the fallback. */
+    function inDrawerLayout() {
+        return getComputedStyle(toggle).display !== 'none';
+    }
+    function syncToLayout() {
+        if (!inDrawerLayout()) close(false);
+    }
+    if (isNarrow.addEventListener) isNarrow.addEventListener('change', syncToLayout);
+    else isNarrow.addListener(syncToLayout);
+
+    window.addEventListener('resize', syncToLayout, { passive: true });
+    window.addEventListener('orientationchange', syncToLayout);
+
+    // a back-button restore from bfcache can bring back an open drawer along
+    // with a scroll lock that nothing will ever release
+    window.addEventListener('pageshow', function () { close(false); });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
     // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -114,13 +197,17 @@ document.addEventListener('DOMContentLoaded', () => {
         currentIndex = index;
         lightboxImg.src = images[index];
         updateCounter();
-        lightbox.classList.add('open');
-        document.body.style.overflow = 'hidden';
+        // opening over an already-open lightbox must not take a second lock
+        if (!lightbox.classList.contains('open')) {
+            lightbox.classList.add('open');
+            scrollLock.lock();
+        }
     }
 
     function closeLightbox() {
+        if (!lightbox.classList.contains('open')) return;
         lightbox.classList.remove('open');
-        document.body.style.overflow = '';
+        scrollLock.unlock();
     }
 
     function updateCounter() {
@@ -233,10 +320,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!ticking) { ticking = true; requestAnimationFrame(sync); }
     }, { passive: true });
     sync();
-
-    // stagger the drawer rows
-    var links = document.querySelectorAll('.nav-links .nav-link');
-    links.forEach(function (el, i) { el.style.setProperty('--i', i); });
 });
 
 /* ===== BACK TO TOP =====

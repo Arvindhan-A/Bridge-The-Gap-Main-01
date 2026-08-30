@@ -27,6 +27,23 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 40 * 1024 * 1024
+
+    # Password hashing.
+    #
+    # Werkzeug's default is scrypt:32768:8:1, which asks OpenSSL for ~33 MiB of
+    # scratch memory for every single hash or verify. With one gunicorn worker
+    # per CPU each handling a login, that transient spike is enough to put a
+    # small VPS under memory pressure; the supervisor then SIGTERMs the unit
+    # mid-`hashlib.scrypt` and the whole service restarts. pbkdf2 costs a
+    # comparable amount of CPU but only a few hundred KB of memory, so it
+    # cannot take the box down.
+    #
+    # Must be a fully-qualified Werkzeug method string. Existing hashes made
+    # with another method still verify, and User.check_password upgrades them
+    # to this one on the owner's next successful login.
+    PASSWORD_HASH_METHOD = os.environ.get(
+        'BTG_PASSWORD_HASH_METHOD', 'pbkdf2:sha256:600000'
+    )
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = 3600
 

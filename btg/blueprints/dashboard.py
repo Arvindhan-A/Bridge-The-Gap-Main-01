@@ -597,7 +597,9 @@ def profile():
             user.username = username
         password = request.form.get('password', '')
         if password:
+            # The owner setting their own password clears the forced-change flag.
             user.set_password(password)
+            user.must_change_password = False
         db.session.commit()
         flash('Profile updated!', 'success')
         return redirect(url_for('dashboard.profile'))
